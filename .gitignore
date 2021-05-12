@@ -1,0 +1,8 @@
+*/src
+*/pkg
+
+*/config.last
+
+*.tar
+*.tar.*
+*.sign
