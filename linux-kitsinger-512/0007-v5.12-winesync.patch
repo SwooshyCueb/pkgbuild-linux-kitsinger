@@ -14,7 +14,7 @@ index 63fd4e6a014b..dc9a30b5f1a2 100644
  
    11 char	Raw keyboard device	(Linux/SPARC only)
 diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index acd2cc2a538d..1950883c333e 100644
+index d29b020e5622..d2ddbf9ad8cb 100644
 --- a/Documentation/userspace-api/index.rst
 +++ b/Documentation/userspace-api/index.rst
 @@ -25,6 +25,7 @@ place where this information is gathered.
@@ -26,10 +26,10 @@ index acd2cc2a538d..1950883c333e 100644
  .. only::  subproject and html
  
 diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index a4c75a28c839..e79d6b307e9b 100644
+index 599bd4493944..825c6b2d2623 100644
 --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
 +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -362,6 +362,8 @@ Code  Seq#    Include File                                           Comments
+@@ -366,6 +366,8 @@ Code  Seq#    Include File                                           Comments
                                                                       <mailto:thomas@winischhofer.net>
  0xF6  all                                                            LTTng Linux Trace Toolkit Next Generation
                                                                       <mailto:mathieu.desnoyers@efficios.com>
@@ -40,7 +40,7 @@ index a4c75a28c839..e79d6b307e9b 100644
  ====  =====  ======================================================= ================================================================
 diff --git a/Documentation/userspace-api/winesync.rst b/Documentation/userspace-api/winesync.rst
 new file mode 100644
-index 000000000000..c980eab9f2ee
+index 000000000000..751c70f1ffce
 --- /dev/null
 +++ b/Documentation/userspace-api/winesync.rst
 @@ -0,0 +1,373 @@
@@ -84,8 +84,8 @@ index 000000000000..c980eab9f2ee
 +thread death, but rather must be communicated using
 +``WINESYNC_IOC_KILL_OWNER``.
 +
-+Objects are represented by unsigned 32-bit integers. An object
-+identifier will always be less than or equal to the value of INT_MAX.
++Objects are represented by signed 32-bit integers. A valid object
++identifier will always be nonnegative.
 +
 +Char device
 +===========
@@ -103,14 +103,14 @@ index 000000000000..c980eab9f2ee
 +structures used in ioctl calls::
 +
 +   struct winesync_sem_args {
-+   	__u32 sem;
++   	__s32 sem;
 +   	__u32 count;
 +   	__u32 max;
 +   	__u32 flags;
 +   };
 +
 +   struct winesync_mutex_args {
-+   	__u32 mutex;
++   	__s32 mutex;
 +   	__u32 owner;
 +   	__u32 count;
 +   };
@@ -418,10 +418,10 @@ index 000000000000..c980eab9f2ee
 +  Fails with ``ENOMEM`` if not enough memory is available, or
 +  ``EINTR`` if a signal is received.
 diff --git a/MAINTAINERS b/MAINTAINERS
-index bfc1b86e3e73..67ffab43fcd3 100644
+index 9450e052f1b1..d33e317759bf 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -19194,6 +19194,15 @@ M:	David Härdeman <david@hardeman.nu>
+@@ -19351,6 +19351,15 @@ M:	David Härdeman <david@hardeman.nu>
  S:	Maintained
  F:	drivers/media/rc/winbond-cir.c
  
@@ -438,10 +438,10 @@ index bfc1b86e3e73..67ffab43fcd3 100644
  M:	William Breathitt Gray <vilhelm.gray@gmail.com>
  L:	linux-watchdog@vger.kernel.org
 diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index fafa8b0d8099..25bf30ab958a 100644
+index f532c59bb59b..496f20d69914 100644
 --- a/drivers/misc/Kconfig
 +++ b/drivers/misc/Kconfig
-@@ -466,6 +466,17 @@ config HISI_HIKEY_USB
+@@ -445,6 +445,17 @@ config HISI_HIKEY_USB
  	  switching between the dual-role USB-C port and the USB-A host ports
  	  using only one USB controller.
  
@@ -460,17 +460,17 @@ index fafa8b0d8099..25bf30ab958a 100644
  source "drivers/misc/eeprom/Kconfig"
  source "drivers/misc/cb710/Kconfig"
 diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index d23231e73330..8b1d4ae4ed1b 100644
+index 99b6f15a3c70..327c9628c479 100644
 --- a/drivers/misc/Makefile
 +++ b/drivers/misc/Makefile
-@@ -57,3 +57,4 @@ obj-$(CONFIG_HABANA_AI)		+= habanalabs/
+@@ -56,3 +56,4 @@ obj-$(CONFIG_HABANA_AI)		+= habanalabs/
  obj-$(CONFIG_UACCE)		+= uacce/
  obj-$(CONFIG_XILINX_SDFEC)	+= xilinx_sdfec.o
  obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
 +obj-$(CONFIG_WINESYNC)		+= winesync.o
 diff --git a/drivers/misc/winesync.c b/drivers/misc/winesync.c
 new file mode 100644
-index 000000000000..a4c1dbc2a33e
+index 000000000000..ff5749206aa9
 --- /dev/null
 +++ b/drivers/misc/winesync.c
 @@ -0,0 +1,1047 @@
@@ -863,9 +863,9 @@ index 000000000000..a4c1dbc2a33e
 +static int winesync_delete(struct winesync_device *dev, void __user *argp)
 +{
 +	struct winesync_obj *obj;
-+	__u32 id;
++	__s32 id;
 +
-+	if (get_user(id, (__u32 __user *)argp))
++	if (get_user(id, (__s32 __user *)argp))
 +		return -EFAULT;
 +
 +	mutex_lock(&dev->table_lock);
@@ -883,9 +883,9 @@ index 000000000000..a4c1dbc2a33e
 +{
 +	struct winesync_obj *sem;
 +	int ret = -EWOULDBLOCK;
-+	__u32 id;
++	__s32 id;
 +
-+	if (get_user(id, (__u32 __user *)argp))
++	if (get_user(id, (__s32 __user *)argp))
 +		return -EFAULT;
 +
 +	sem = get_obj(dev, id);
@@ -1062,7 +1062,7 @@ index 000000000000..a4c1dbc2a33e
 +	struct winesync_sem_args __user *user_args = argp;
 +	struct winesync_sem_args args;
 +	struct winesync_obj *sem;
-+	__u32 id;
++	__s32 id;
 +
 +	if (get_user(id, &user_args->sem))
 +		return -EFAULT;
@@ -1094,7 +1094,7 @@ index 000000000000..a4c1dbc2a33e
 +	struct winesync_mutex_args __user *user_args = argp;
 +	struct winesync_mutex_args args;
 +	struct winesync_obj *mutex;
-+	__u32 id;
++	__s32 id;
 +	int ret;
 +
 +	if (get_user(id, &user_args->mutex))
@@ -1220,7 +1220,7 @@ index 000000000000..a4c1dbc2a33e
 +	const __u32 count = args->count;
 +	struct winesync_q *q;
 +	ktime_t timeout = 0;
-+	__u32 *ids;
++	__s32 *ids;
 +	__u32 i, j;
 +
 +	if (args->timeout) {
@@ -1535,7 +1535,7 @@ index 0676f18093f9..350aecfcfb29 100644
  struct device;
 diff --git a/include/uapi/linux/winesync.h b/include/uapi/linux/winesync.h
 new file mode 100644
-index 000000000000..c16f423dad48
+index 000000000000..efc591795249
 --- /dev/null
 +++ b/include/uapi/linux/winesync.h
 @@ -0,0 +1,61 @@
@@ -1554,14 +1554,14 @@ index 000000000000..c16f423dad48
 +#define WINESYNC_SEM_GETONWAIT 1
 +
 +struct winesync_sem_args {
-+	__u32 sem;
++	__s32 sem;
 +	__u32 count;
 +	__u32 max;
 +	__u32 flags;
 +};
 +
 +struct winesync_mutex_args {
-+	__u32 mutex;
++	__s32 mutex;
 +	__u32 owner;
 +	__u32 count;
 +};
@@ -1579,29 +1579,29 @@ index 000000000000..c16f423dad48
 +
 +#define WINESYNC_IOC_CREATE_SEM		_IOWR(WINESYNC_IOC_BASE, 0, \
 +					      struct winesync_sem_args)
-+#define WINESYNC_IOC_CREATE_MUTEX	_IOWR(WINESYNC_IOC_BASE, 1, \
++#define WINESYNC_IOC_DELETE		_IOW (WINESYNC_IOC_BASE, 1, __s32)
++#define WINESYNC_IOC_PUT_SEM		_IOWR(WINESYNC_IOC_BASE, 2, \
++					      struct winesync_sem_args)
++#define WINESYNC_IOC_WAIT_ANY		_IOWR(WINESYNC_IOC_BASE, 3, \
++					      struct winesync_wait_args)
++#define WINESYNC_IOC_WAIT_ALL		_IOW (WINESYNC_IOC_BASE, 4, \
++					      struct winesync_wait_args)
++#define WINESYNC_IOC_CREATE_MUTEX	_IOWR(WINESYNC_IOC_BASE, 5, \
 +					      struct winesync_mutex_args)
-+#define WINESYNC_IOC_GET_SEM		_IOW (WINESYNC_IOC_BASE, 2, __u32)
-+#define WINESYNC_IOC_PULSE_SEM		_IOWR(WINESYNC_IOC_BASE, 3, \
-+					      struct winesync_sem_args)
-+#define WINESYNC_IOC_PUT_SEM		_IOWR(WINESYNC_IOC_BASE, 5, \
-+					      struct winesync_sem_args)
 +#define WINESYNC_IOC_PUT_MUTEX		_IOWR(WINESYNC_IOC_BASE, 6, \
 +					      struct winesync_mutex_args)
-+#define WINESYNC_IOC_READ_SEM		_IOWR(WINESYNC_IOC_BASE, 7, \
++#define WINESYNC_IOC_KILL_OWNER		_IOW (WINESYNC_IOC_BASE, 7, __u32)
++#define WINESYNC_IOC_READ_SEM		_IOWR(WINESYNC_IOC_BASE, 8, \
 +					      struct winesync_sem_args)
-+#define WINESYNC_IOC_READ_MUTEX		_IOWR(WINESYNC_IOC_BASE, 8, \
++#define WINESYNC_IOC_READ_MUTEX		_IOWR(WINESYNC_IOC_BASE, 9, \
 +					      struct winesync_mutex_args)
-+#define WINESYNC_IOC_KILL_OWNER		_IOW (WINESYNC_IOC_BASE, 9, __u32)
-+#define WINESYNC_IOC_DELETE		_IOW (WINESYNC_IOC_BASE, 10, __u32)
-+#define WINESYNC_IOC_WAIT_ANY		_IOWR(WINESYNC_IOC_BASE, 11, \
-+					      struct winesync_wait_args)
-+#define WINESYNC_IOC_WAIT_ALL		_IOW (WINESYNC_IOC_BASE, 12, \
-+					      struct winesync_wait_args)
++#define WINESYNC_IOC_GET_SEM		_IOW (WINESYNC_IOC_BASE, 10, __s32)
++#define WINESYNC_IOC_PULSE_SEM		_IOWR(WINESYNC_IOC_BASE, 11, \
++					      struct winesync_sem_args)
 +
 +#endif
 diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 8a917cb4426a..ed5a7b052ef2 100644
+index 6c575cf34a71..7f43a50ee19e 100644
 --- a/tools/testing/selftests/Makefile
 +++ b/tools/testing/selftests/Makefile
 @@ -9,6 +9,7 @@ TARGETS += core
@@ -1635,10 +1635,10 @@ index 000000000000..60539c826d06
 +CONFIG_WINESYNC=y
 diff --git a/tools/testing/selftests/drivers/winesync/winesync.c b/tools/testing/selftests/drivers/winesync/winesync.c
 new file mode 100644
-index 000000000000..c4ac22b7fdb7
+index 000000000000..52373fcd5c8c
 --- /dev/null
 +++ b/tools/testing/selftests/drivers/winesync/winesync.c
-@@ -0,0 +1,1482 @@
+@@ -0,0 +1,1486 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
 + * Various unit tests for the "winesync" synchronization primitive driver.
@@ -2343,7 +2343,8 @@ index 000000000000..c4ac22b7fdb7
 +	struct winesync_wait_args wait_args = {0};
 +	struct winesync_sem_args sem_args = {0};
 +	struct timespec timeout;
-+	__u32 objs[2], owner;
++	__s32 objs[2];
++	__u32 owner;
 +	int fd, ret;
 +
 +	clock_gettime(CLOCK_MONOTONIC, &timeout);
@@ -2541,7 +2542,8 @@ index 000000000000..c4ac22b7fdb7
 +	struct winesync_wait_args wait_args = {0};
 +	struct winesync_sem_args sem_args = {0};
 +	struct timespec timeout;
-+	__u32 objs[2], owner;
++	__s32 objs[2];
++	__u32 owner;
 +	int fd, ret;
 +
 +	clock_gettime(CLOCK_MONOTONIC, &timeout);
@@ -2692,7 +2694,7 @@ index 000000000000..c4ac22b7fdb7
 +	struct winesync_mutex_args mutex_args = {0};
 +	struct winesync_wait_args wait_args = {0};
 +	struct winesync_sem_args sem_args = {0};
-+	__u32 objs[2] = {0};
++	__s32 objs[2] = {0};
 +	int fd, ret;
 +
 +	fd = open("/dev/winesync", O_CLOEXEC | O_RDONLY);
@@ -2791,7 +2793,7 @@ index 000000000000..c4ac22b7fdb7
 +struct wake_args
 +{
 +	int fd;
-+	__u32 obj;
++	__s32 obj;
 +};
 +
 +struct wait_args
@@ -2835,8 +2837,9 @@ index 000000000000..c4ac22b7fdb7
 +	struct winesync_sem_args sem_args = {0};
 +	struct wait_args thread_args;
 +	struct timespec timeout;
-+	__u32 objs[2], owner;
 +	pthread_t thread;
++	__s32 objs[2];
++	__u32 owner;
 +	int fd, ret;
 +
 +	fd = open("/dev/winesync", O_CLOEXEC | O_RDONLY);
@@ -2986,8 +2989,9 @@ index 000000000000..c4ac22b7fdb7
 +	struct winesync_sem_args sem_args = {0};
 +	struct timespec timeout, timeout2;
 +	struct wait_args thread_args;
-+	__u32 objs[2], owner;
 +	pthread_t thread;
++	__s32 objs[2];
++	__u32 owner;
 +	int fd, ret;
 +
 +	fd = open("/dev/winesync", O_CLOEXEC | O_RDONLY);

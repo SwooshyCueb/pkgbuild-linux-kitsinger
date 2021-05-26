@@ -49,7 +49,7 @@ _1k_HZ_ticks=y
 pkgbase=linux-kitsinger-512
 # pkgname=('linux-kitsinger-512' 'linux-kitsinger-512-headers' 'linux-kitsinger-512-docs')
 _major=5.12
-_minor=1
+_minor=6
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -67,13 +67,14 @@ _lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
 _aufs_repo_name="aufs5-standalone"
 _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
 #_aufs_fragment="#commit=e263b32357d312b7bfc3d7b0bfc09c44d25b8d1c"
-_aufs_fragment="#commit=f6866937f66eb6ceacfed9b4fe534611030cc813"
+#_aufs_fragment="#commit=f6866937f66eb6ceacfed9b4fe534611030cc813"
+_aufs_fragment="#commit=dbe98caa11c0a3694f7833216b06a792127ff024"
 _gcc_path="cpu-patches-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
 _futex_path="futex-patches"
 _futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
 #_futex2_path="futex2-patches"
-_futex2_path="futex2-trunk-patches"
+_futex2_path="futex2-trunk-patches-v2"
 _futex2_patch="0001-futex2-resync-from-gitlab.collabora.com.patch"
 _mm_path="mm-patches"
 _mm_patch="0001-mm-5.12-protect-file-mappings-under-memory-pressure.patch"
@@ -82,7 +83,8 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.sign"
         "${_aufs_repo_name}::git+${_aufs_repo}${_aufs_fragment}"
         "${_lucjanpath}/${_gcc_path}/${_gcc_patch}"
-        "${_lucjanpath}/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+        "${_lucjanpath}/arch-patches-v5-sep/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+        "${_lucjanpath}/arch-patches-v5-sep/0002-drm-i915-gt-Disable-HiZ-Raw-Stall-Optimization-on-br.patch"
         "${_lucjanpath}/${_futex_path}/${_futex_patch}"
         "${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
         "${_lucjanpath}/${_mm_path}/${_mm_patch}"
@@ -95,6 +97,8 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/fixes-miscellaneous-sep/0013-iomap-avoid-deadlock-if-memory-reclaim-is-triggered-.patch"
         "${_lucjanpath}/zen-patches-sep/0001-ZEN-Add-VHBA-driver.patch"
         "${_lucjanpath}/zen-patches-sep/0003-ZEN-vhba-Update-to-20210418.patch"
+        "${_lucjanpath}/clearlinux-patches-v3-sep/0017-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
+        "${_lucjanpath}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
         "0001-pcie-reset-kludge.patch"
 
          # https://github.com/Frogging-Family/linux-tkg/pull/206
@@ -103,14 +107,41 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
 
          # https://github.com/kevall474/kernel-patches/tree/main/5.12/wine-patches
-         # https://github.com/Frogging-Family/linux-tkg/tree/master/linux-tkg-patches/5.11
-        "0007-v5.11-winesync.patch"
+         # https://github.com/Frogging-Family/linux-tkg/tree/master/linux-tkg-patches/5.12
+        "0007-v5.12-winesync.patch"
 
          # https://github.com/kevall474/kernel-patches/blob/main/5.12/misc-patches
         "vm.max_map_count.patch"
 
          # the main kernel config files
         'config')
+
+sha512sums=('94ed56538c0dde46f25e213ad9ba37df7af68a6d040307d4d61496a91902942b830afac04c48d8bc28b8b782365326d20c88278731e60a80736ea923f4272fac'
+            'SKIP'
+            'SKIP'
+            'c4a2ed0bbd9d348893e802079ab684518b28f163ad242af1b74dd71c7e7e0f5d2db68ace1733879f4bd575103b365e90d6af5d2d849c6e6d2dda41ac73f822a7'
+            'bc67c4af1b3e6060468e302d9ff681710b9df176660d4f6d1314c5778330048ae385d0148db6426c1905ad35a7be5197b143833b3622432cec2283b36a3642b8'
+            'caec30582052e00383baedbed9a1d6ddd27429cce510d718088c2ee91d0aba64adef892eb146a909e8338176b9200ad564cdd3a1d0dec82ec21e4b0733cc0c73'
+            '449570b8b9a04391cc2cc171cc806b3a132c6e969c7cedf9c4925d24244888e6f2e5afb6c551521fe62fcb7e2bf08cb8d396f9ec785ecfcdd5ea27dd9ffed4ea'
+            '8401895bc99310f8d5a1f1af534e63bb12502bf72bae432dbc79820b845a660db43c032c1aaf6f0297b470d6c7d4461fe44d06fe795228abc9dd8a86927f122c'
+            '0563235769866375905d9bf6c33acae6aaff7b39351b4c9693f0f7dc7fef45d5850f267519a2ab8cc05ce60899f41080f071f00a417cf09d3985d89407a40f86'
+            '988a99fec5fa38fa8e3370d870098774e345497eecad978ec89bb23cd491ff1686ea8197d82e03a7b52a6847d966d3371f017ebc01969441cfe14d0564bfdecc'
+            'f1578e12fa0af8820373a60cc919d367673f82470d5978a1119f4b08a9d297eb82471eb7ff43626c49dc67547d78da6f3e49abe4186c5685fda881e7ab66c2ba'
+            '12c08e0593f702d12a06fd2370f15b25ee03f1ede4b909bb4a96133237a1630523a6f285a45cc3c226b2b535ead3562c7f0a24b5d8d06e60b54548587fb102ce'
+            '42b90976224b392d2980ce7e84d58a00b8b26b888adc6af8d9df89395f37080a22b4cce304f4e6927be03cda27105f267b5be46c2ff0d38ad83b624df5d913bb'
+            '7667958a876f6c75827968b8556f6c960999c84994a84fc57de597a99d0b41073ce1181b084e39980d7d8cd1e07ddbd5841cb6dbf30621c302b897f6d9075c22'
+            '0ff17160713e260b768207062c74fc7348b485d8fd1021348e62a4d7fbb9c8fd0cd8bf35d5121a66ac0f4827e5ec9bd83ea05b9e0bf9b1632f90b11a5604cf4c'
+            '6508dd64d91fd3e4054081a0020df2d20421a0811c86d7d4d65ec0a50d73ee8513adb7ed711635f15a1e5cb2d773259acf85d4ad53ffb790bff0fb6a0376400f'
+            '2f127bec35a561d02f22c09811d7f4b65e53fadfc482d6385d7c8a207062c8d4baebec9387c44c8ab3aed0b6cfd7997f5e77209ae84f74a72e9560cad44fe7cf'
+            'cbd659f33bf550de0d0114c96ee3b4ceb9726211baaaebbbfebcf2f2bf4c5e14fe9a9301439684dc79a2a0e577c1a12a793b0c823b80d206a23d95c10a0b93ac'
+            '626c344d643c61007cb9d8b93fea16b221898bf40d4ced3d35ab518f373d5cad102770599729af295b5e91a95a145c5c058d5423352441c5b047367103a70016'
+            '94f14b558662ce39aceaa530568c9f7c4353d13bccb3906cd7a6cdae3b3508177032f4cb62c5c44d5056522f8f78a4d6336d563d4a88d0b1cdfd1c2af8a693f9'
+            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
+            'f55ee2f6c4f65a90fe3f59ce3afd5f48b330a3e4b7a3f94a2f61afc39f8c979f4ab398d1fe48bb621ea0a7aaf2f23762f97ff4d424165d8e3d39f43b72a0eefc'
+            '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
+            '905f97cdff3e096552159a229d069d1b1418f4142b2927134110f504bfe0883309b3f29c2aeeb94c528b63e0eec7d0d69b44c3d498211c610811969cc4d07a56'
+            'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
+            'e4200d38e744b1319cc425b39957dcce69bd6a84c6c8ccbdfcc06939370729b1d33428c0ee2a77a7a724c14f538076491ba7cfa269d654da3911cbb0871cd115')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -231,19 +262,6 @@ prepare() {
             exit
             fi
         fi
-
-    ### Enable  android stuff for anbox
-        # See https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=linux-xanmod-anbox
-        echo "Enabling android stuff for anbox..."
-        scripts/config --enable CONFIG_ASHMEM
-        scripts/config --enable CONFIG_ION
-        scripts/config --enable CONFIG_ION_CMA_HEAP
-        scripts/config --disable CONFIG_ION_SYSTEM_HEAP
-        scripts/config --enable CONFIG_ANDROID
-        scripts/config --enable CONFIG_ANDROID_BINDER_IPC
-        scripts/config --enable CONFIG_ANDROID_BINDERFS
-        scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
-        scripts/config --disable CONFIG_ANDROID_BINDER_IPC_SELFTEST
 
 
     ### Running make nconfig
@@ -402,30 +420,6 @@ for _p in "${pkgname[@]}"; do
     _package${_p#$pkgbase}
   }"
 done
-
-sha512sums=('9bb9831459557a87ecb822ee5862b27ec1cb0de7df1a0131f534bd57a152b6ea75b710fa319cf533a8f89b8cbaa6b4844bd260c4bd825e83e1d62e7734510240'
-            'SKIP'
-            'SKIP'
-            'c4a2ed0bbd9d348893e802079ab684518b28f163ad242af1b74dd71c7e7e0f5d2db68ace1733879f4bd575103b365e90d6af5d2d849c6e6d2dda41ac73f822a7'
-            '88f9f1e6ea206068fd029566e4610c16b7c3007f10363c7db37cd922fe75646437d2e4814317bc292d06eff7e9ebd29d8cd1ee82c8abf45ddd1843c1ff55f5c7'
-            '449570b8b9a04391cc2cc171cc806b3a132c6e969c7cedf9c4925d24244888e6f2e5afb6c551521fe62fcb7e2bf08cb8d396f9ec785ecfcdd5ea27dd9ffed4ea'
-            '8401895bc99310f8d5a1f1af534e63bb12502bf72bae432dbc79820b845a660db43c032c1aaf6f0297b470d6c7d4461fe44d06fe795228abc9dd8a86927f122c'
-            '0563235769866375905d9bf6c33acae6aaff7b39351b4c9693f0f7dc7fef45d5850f267519a2ab8cc05ce60899f41080f071f00a417cf09d3985d89407a40f86'
-            '988a99fec5fa38fa8e3370d870098774e345497eecad978ec89bb23cd491ff1686ea8197d82e03a7b52a6847d966d3371f017ebc01969441cfe14d0564bfdecc'
-            'f1578e12fa0af8820373a60cc919d367673f82470d5978a1119f4b08a9d297eb82471eb7ff43626c49dc67547d78da6f3e49abe4186c5685fda881e7ab66c2ba'
-            '12c08e0593f702d12a06fd2370f15b25ee03f1ede4b909bb4a96133237a1630523a6f285a45cc3c226b2b535ead3562c7f0a24b5d8d06e60b54548587fb102ce'
-            '42b90976224b392d2980ce7e84d58a00b8b26b888adc6af8d9df89395f37080a22b4cce304f4e6927be03cda27105f267b5be46c2ff0d38ad83b624df5d913bb'
-            '7667958a876f6c75827968b8556f6c960999c84994a84fc57de597a99d0b41073ce1181b084e39980d7d8cd1e07ddbd5841cb6dbf30621c302b897f6d9075c22'
-            '0ff17160713e260b768207062c74fc7348b485d8fd1021348e62a4d7fbb9c8fd0cd8bf35d5121a66ac0f4827e5ec9bd83ea05b9e0bf9b1632f90b11a5604cf4c'
-            '6508dd64d91fd3e4054081a0020df2d20421a0811c86d7d4d65ec0a50d73ee8513adb7ed711635f15a1e5cb2d773259acf85d4ad53ffb790bff0fb6a0376400f'
-            '2f127bec35a561d02f22c09811d7f4b65e53fadfc482d6385d7c8a207062c8d4baebec9387c44c8ab3aed0b6cfd7997f5e77209ae84f74a72e9560cad44fe7cf'
-            'cbd659f33bf550de0d0114c96ee3b4ceb9726211baaaebbbfebcf2f2bf4c5e14fe9a9301439684dc79a2a0e577c1a12a793b0c823b80d206a23d95c10a0b93ac'
-            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
-            'f55ee2f6c4f65a90fe3f59ce3afd5f48b330a3e4b7a3f94a2f61afc39f8c979f4ab398d1fe48bb621ea0a7aaf2f23762f97ff4d424165d8e3d39f43b72a0eefc'
-            '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
-            '473663af3c8f66c73e57e7d94d0a5eb80f5cbffcd7116bfee63010d3248fe9f3b74c5ac8b53a2ad5dc8e175563bfa5511eb814f6249ad24d8aeabc90a2a20513'
-            'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
-            '98b3a8a84d456abfc41933db973c9044573c58de01298f67ae6af32c4a2045c5a00dfcd7b517a6202246c20a060147f3ff8f6a38a7b9178d8b287ae9bcfb4f3d')
 
 validpgpkeys=(
               'ABAF11C65A2970B130ABE3C479BE3E4300411886' # Linus Torvalds
