@@ -49,7 +49,7 @@ _1k_HZ_ticks=y
 pkgbase=linux-kitsinger-512
 # pkgname=('linux-kitsinger-512' 'linux-kitsinger-512-headers' 'linux-kitsinger-512-docs')
 _major=5.12
-_minor=13
+_minor=17
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -79,6 +79,19 @@ _futex2_patch="0001-futex2-resync-from-gitlab.collabora.com.patch"
 _mm_path="mm-patches"
 _mm_patch="0001-mm-5.12-protect-file-mappings-under-memory-pressure.patch"
 
+_kernel_git_path="https://git.kernel.org/pub/scm/linux/kernel/git"
+_dtor_input_path="${_kernel_git_path}/dtor/input.git/patch/"
+_hid_path="${_kernel_git_path}/hid/hid.git/patch/"
+_tiwai_sound_path="${_kernel_git_path}/tiwai/sound.git/patch/"
+_iommu_path="${_kernel_git_path}/joro/iommu.git/patch/"
+_turbostat_path="${_kernel_git_path}/lenb/linux.git/patch/"
+
+_lkml_path="https://lore.kernel.org/lkml"
+_pci_reset_t="${_lkml_path}/20210709123813.8700"
+_pci_reset_s="ameynarkhede03@gmail.com"
+_amd_psf_t="${_lkml_path}/20210713094151.652597"
+_amd_psf_s="namit@vmware.com"
+
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.sign"
         "${_aufs_repo_name}::git+${_aufs_repo}${_aufs_fragment}"
@@ -92,7 +105,6 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/arch-patches-v7-sep/0007-x86-crash-remove-crash_reserve_low_1M.patch"
         "${_lucjanpath}/${_futex_path}/${_futex_patch}"
         "${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
-        "${_lucjanpath}/${_mm_path}/${_mm_patch}"
         "${_lucjanpath}/fixes-miscellaneous-sep/0004-mm-Disable-watermark-boosting-by-default.patch"
         "${_lucjanpath}/fixes-miscellaneous-sep/0005-mm-Stop-kswapd-early-when-nothing-s-waiting-for-it-t.patch"
         "${_lucjanpath}/fixes-miscellaneous-sep/0006-mm-Fully-disable-watermark-boosting-when-it-isn-t-us.patch"
@@ -104,7 +116,71 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/zen-patches-sep/0003-ZEN-vhba-Update-to-20210418.patch"
         "${_lucjanpath}/clearlinux-patches-v3-sep/0017-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
         "${_lucjanpath}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git/log/?h=for-linus
+        "1001-Input-xpad-add-support-for-Amazon-Game-Controller.patch::${_dtor_input_path}?id=05665cef4b745cb46b1d1b8e96deaa25464092d3"
+        "1002-Input-xpad-map-Select-button-on-Microsoft-Xbox-One-c.patch::${_dtor_input_path}?id=0b1d6c8c00157cbfcf343925c4de81af0187a7b7"
+        # https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-5.13/core
+        "1003-HID-hiddev-Return-specific-error-codes-on-connect-fa.patch::${_hid_path}?id=9951bb259dd0794db39beb63899104da9579efcc"
+        # https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-5.14/core
+        "1004-HID-replace-outdated-HID-numbers+comments-with-macro.patch::${_hid_path}?id=eb134536cf6fb2e50b5ced653f7c34d306b2d73f"
+        "1005-HID-Add-support-for-Programmable-Buttons.patch::${_hid_path}?id=bcfa8d14570d85c998a9b706b074ab151b286edf"
+
+        # https://lore.kernel.org/lkml/20210709123813.8700-1-ameynarkhede03@gmail.com/T/
+        #"2001-PCI-Add-pcie_reset_flr-to-follow-calling-convention-.patch::${_pci_reset_t}-2-${_pci_reset_s}/raw"
+        #"2002-PCI-Add-new-array-for-keeping-track-of-ordering-of-r.patch::${_pci_reset_t}-3-${_pci_reset_s}/raw"
+        #"2003-PCI-Remove-reset_fn-field-from-pci_dev.patch::${_pci_reset_t}-4-${_pci_reset_s}/raw"
+        #"2004-PCI-sysfs-Allow-userspace-to-query-and-set-device-re.patch::${_pci_reset_t}-5-${_pci_reset_s}/raw"
+        #"2005-PCI-Define-a-function-to-set-ACPI_COMPANION-in-pci_d.patch::${_pci_reset_t}-6-${_pci_reset_s}/raw"
+        #"2006-PCI-Setup-ACPI-fwnode-early-and-at-the-same-time-wit.patch::${_pci_reset_t}-7-${_pci_reset_s}/raw"
+        #"2007-PCI-Add-support-for-ACPI-_RST-reset-method.patch::${_pci_reset_t}-8-${_pci_reset_s}/raw"
+        #"2008-PCI-Change-the-type-of-probe-argument-in-reset-funct.patch::${_pci_reset_t}-9-${_pci_reset_s}/raw"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/log/?h=topic/virtio
+        "3001-uapi-virtio_ids-add-a-sound-device-type-ID-from-OASI.patch::${_tiwai_sound_path}?id=0ae0337f929a970ee8d83e0e95e6b8d05562ce3b"
+        "3002-ALSA-virtio-add-virtio-sound-driver.patch::${_tiwai_sound_path}?id=de3a9980d8c34b2479173e809afa820473db676a"
+        "3003-ALSA-virtio-handling-control-messages.patch::${_tiwai_sound_path}?id=9d45e514da88ff74fc24ffb34e7d6eb92576440b"
+        "3004-ALSA-virtio-build-PCM-devices-and-substream-hardware.patch::${_tiwai_sound_path}?id=29b96bf50ba958eb5f097cdc3fbd4c1acf9547a2"
+        "3005-ALSA-virtio-handling-control-and-IO-messages-for-the.patch::${_tiwai_sound_path}?id=f40a28679e0b7cb3a9cc6627a8dbb40961990f0a"
+        "3006-ALSA-virtio-PCM-substream-operators.patch::${_tiwai_sound_path}?id=da76e9f3e43a7195c69d370ee514cccae6517c76"
+        "3007-ALSA-virtio-introduce-jack-support.patch::${_tiwai_sound_path}?id=ca61a41f389c80db091db9d4ad5a651e2b4c9f70"
+        "3008-ALSA-virtio-introduce-PCM-channel-map-support.patch::${_tiwai_sound_path}?id=19325fedf245ca932c58a629d3888a9a393534ab"
+        "3009-ALSA-virtio-introduce-devices-suspend-resume-support.patch::${_tiwai_sound_path}?id=575483e90a3292c2afceb7161732046e411d6fdd"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4f9701057a9cc1ae6bfc533204c9d3ba386687de
+        # https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/log/?h=iommu-updates-v5.13
+        "4001-iommu-iova-add-rbtree-entry-helper.patch::${_iommu_path}?id=7ae31cec5b70e301788b95de543abb56748dcfb6"
+        "4002-iommu-iova-Improve-restart-logic.patch::${_iommu_path}?id=371d7955e3102fe38daf06de4ed9bfd29864354b"
+        "4003-iommu-amd-Remove-duplicate-check-of-pasids.patch::${_iommu_path}?id=3e84f878b56b075b9a81de6e73da7b3dc88387d8"
+        "4004-iommu-Separate-IOMMU_DEV_FEAT_IOPF-from-IOMMU_DEV_FE.patch::${_iommu_path}?id=34b48c704d194738eef0893aa06e412bdc8a972f"
+        "4005-iommu-vt-d-Support-IOMMU_DEV_FEAT_IOPF.patch::${_iommu_path}?id=9003351cb6bde752de774e6ec874109493413152"
+        "4006-uacce-Enable-IOMMU_DEV_FEAT_IOPF.patch::${_iommu_path}?id=0860788df74085a5e14c1702610b2977fd9aac5e"
+        "4007-iommu-Add-a-page-fault-handler.patch::${_iommu_path}?id=fc36479db74e957c4696b605a32c4afaa15fa6cb"
+        "4008-iommu-amd-Move-a-few-prototypes-to-include-linux-amd.patch::${_iommu_path}?id=fc1b6620501f1a4b88f583549c63666180bea177"
+        "4009-iommu-vt-d-Avoid-unnecessary-cache-flush-in-pasid-en.patch::${_iommu_path}?id=8b74b6ab253866450c131e9134642efb40439c91"
+        "4010-iommu-amd-page-specific-invalidations-for-more-than-.patch::${_iommu_path}?id=268aa4548277a1e50f326c6fbca75dd1073574d4"
+        "4011-iommu-amd-Remove-duplicate-check-of-devid.patch::${_iommu_path}?id=45ed93374a3a66ed35412f18fa356b3550c9f622"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=96c132f837ff0639702d04d229da190f636a48b5
+        # https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/log/?h=iommu-fixes-v5.13-rc3
+        "4030-iommu-amd-Fix-wrong-parentheses-on-page-specific-inv.patch::${_iommu_path}?id=a017c567915fd7a017006f8c210e2c6b30ab6fad"
+
+        # https://lore.kernel.org/lkml/20210713094151.652597-1-namit@vmware.com/T/
+        "4070-iommu-amd-Selective-flush-on-unmap.patch::${_amd_psf_t}-2-${_amd_psf_s}/raw"
+        "4071-iommu-amd-Do-not-use-flush-queue-when-NpCache-is-on.patch::${_amd_psf_t}-3-${_amd_psf_s}/raw"
+        "4072-iommu-Improve-iommu_iotlb_gather-helpers.patch::${_amd_psf_t}-4-${_amd_psf_s}/raw"
+        "4073-iommu-Factor-iommu_iotlb_gather_is_disjoint-out.patch::${_amd_psf_t}-5-${_amd_psf_s}/raw"
+        "4074-iommu-amd-Tailored-gather-logic-for-AMD.patch::${_amd_psf_t}-6-${_amd_psf_s}/raw"
+        "4075-iommu-amd-Sync-once-for-scatter-gather-operations.patch::${_amd_psf_t}-7-${_amd_psf_s}/raw"
+        "4076-iommu-amd-Use-only-natural-aligned-flushes-in-a-VM.patch::${_amd_psf_t}-8-${_amd_psf_s}/raw"
+
         "0001-pcie-reset-kludge.patch"
+
+        # The rest of the patches came from random git repositories. In my experience, random git repositories tend to
+        # vanish, so instead of pulling the files from the repositories, they will be included in this one.
+
+        # https://github.com/hakavlad/le9-patch
+        "le9db-5.10.patch"
 
          # https://github.com/Frogging-Family/linux-tkg/pull/206
          # https://github.com/kevall474/kernel-patches/tree/main/5.12/misc-patches
@@ -121,20 +197,19 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
          # the main kernel config files
         'config')
 
-sha512sums=('e6a2487c09898f29164a22f23209f2a2ef2e3dfea263e659e007208289c518f5cc16c8316c2db49195362dcba61ffdfe64a3c57c254acfcd9e82dc19f6808be5'
+sha512sums=('0de689b1c8a1529a4f261ecca456dd99d88537d63e13bd42f6a122bbf27d0d355b2fa2da7fa9ed334685fb99c1bdba245edb083f0274afaac822aa12973a9c26'
             'SKIP'
             'SKIP'
-            'c4a2ed0bbd9d348893e802079ab684518b28f163ad242af1b74dd71c7e7e0f5d2db68ace1733879f4bd575103b365e90d6af5d2d849c6e6d2dda41ac73f822a7'
-            'bc67c4af1b3e6060468e302d9ff681710b9df176660d4f6d1314c5778330048ae385d0148db6426c1905ad35a7be5197b143833b3622432cec2283b36a3642b8'
+            '89f230ad9090c9eae3795d94049d33be1b4f6b3272db3fe7ef569d5d925eaa86e7990be5a20b53969f5ba7f6876d1c34bca68b07790d75b88c686139d1b41862'
+            'dc6e19ca9e43ecc94e3fd4eb2c6c6fb40e802f22eae707b091e8d5c4a80603cd5c6236072b5759234226369066ab276ef56514b65dc2a59ea18ff47c6e36108f'
             '6b67c87e6480664844e35d001169b0238279789c0cef3b0d4b0acef87a6c4d0eaf62ceacdaf98ed5358f813c9955212fa34c925cdf21b4bf2c0b74d76d15ccde'
             'c189f8833280fd1751d2013b486be48f71d691204ba3a774842a6e7ebf72f83ca88b42914d841479e5a09dfa05a302b17bd20712e3787086290810895fb64659'
             'aba9f959ad1a698e1e6230ad3be1df4173cd731a8d1b822523185387a6dde00dba6e4f0facf44bf4d6004b236627914374384508c933f46a94bf3b936b514516'
             'd60e24ef65402bcc9c10e424eeae5fe033f08c4a12d98299e885109e9e9cadbf726fc083bb3dcd0b5d821e7ee84aa1feb97695c7905f202bc0bbe4f3e5104fee'
             '9d8dc471c35c868794dbed30df0ba95e856707d48bc53d0f15b6dcb6659faf389a56ef4177f3961a45c864bfd224add4e126640f9283898e4d836c3180935450'
             'fb84fc91e6be7b696aaf98177a124c321673c5e43c80daad8590faea13500624f5e759dac44a0eb6b6003ccccb793ca34ce27c65ccc96fb7253b0b3038df68cf'
-            '449570b8b9a04391cc2cc171cc806b3a132c6e969c7cedf9c4925d24244888e6f2e5afb6c551521fe62fcb7e2bf08cb8d396f9ec785ecfcdd5ea27dd9ffed4ea'
-            '8401895bc99310f8d5a1f1af534e63bb12502bf72bae432dbc79820b845a660db43c032c1aaf6f0297b470d6c7d4461fe44d06fe795228abc9dd8a86927f122c'
-            '0563235769866375905d9bf6c33acae6aaff7b39351b4c9693f0f7dc7fef45d5850f267519a2ab8cc05ce60899f41080f071f00a417cf09d3985d89407a40f86'
+            '4b7766c590a692a008a0daca73806a1671a81b6e2ed756aae96de4c4455505b04765568ae5e04645f89bf75bd5611e3b1bf5ededff47bb0708dbca91769b5ab7'
+            'e059b87b71f7c0c75aa580fe87dbd8b49cd30e4daf2f3002a957963a59fd4e1336d24d9e6d2f10ed15b95e4a95531de38dbd1fc6893803f1943374ca788a9251'
             '988a99fec5fa38fa8e3370d870098774e345497eecad978ec89bb23cd491ff1686ea8197d82e03a7b52a6847d966d3371f017ebc01969441cfe14d0564bfdecc'
             'f1578e12fa0af8820373a60cc919d367673f82470d5978a1119f4b08a9d297eb82471eb7ff43626c49dc67547d78da6f3e49abe4186c5685fda881e7ab66c2ba'
             '12c08e0593f702d12a06fd2370f15b25ee03f1ede4b909bb4a96133237a1630523a6f285a45cc3c226b2b535ead3562c7f0a24b5d8d06e60b54548587fb102ce'
@@ -146,7 +221,41 @@ sha512sums=('e6a2487c09898f29164a22f23209f2a2ef2e3dfea263e659e007208289c518f5cc1
             'cbd659f33bf550de0d0114c96ee3b4ceb9726211baaaebbbfebcf2f2bf4c5e14fe9a9301439684dc79a2a0e577c1a12a793b0c823b80d206a23d95c10a0b93ac'
             '626c344d643c61007cb9d8b93fea16b221898bf40d4ced3d35ab518f373d5cad102770599729af295b5e91a95a145c5c058d5423352441c5b047367103a70016'
             '94f14b558662ce39aceaa530568c9f7c4353d13bccb3906cd7a6cdae3b3508177032f4cb62c5c44d5056522f8f78a4d6336d563d4a88d0b1cdfd1c2af8a693f9'
+            'f32019713771f75c5a147224ca367a5406ed375cf6de14485b86be2d5491a242b428a0daf206aceaaa5662181713ebc9518d240b5444a84d9697212c8caa0b1a'
+            '5c84fd297976fa4d11cc0e0cb905327647d579f9eef36fbf55722b7cec5b2ec65fcceb3c2a3c738408e6a76468267765ec9f346de6ac6b439a8860835ee99217'
+            '283fa4ba86ca637406fd4d01222d7c187d974c62ec081f833318e3b76c4bcc3d60905dc3a7b3917fef8f2009361fb2fc3c1bbaed0d8c48a824ae17bb0df8a6f3'
+            'e129b45b6826927aff8d416e1a1c3faf79e3d5e905c4ca22988b92c54b351cc3c081de155577ec89f00b4b243cd3bce06b31963798fdcfd1248c0fc7ba3428c5'
+            'a00ca119738084a04a6b3db2efe6409912fba87ee4ebcc65cae3742003a4d70708ac2cd323af9155e824aadb062281ac9a0e52c1912a244f98e3f731caa950fa'
+            'd16b077ebb4a1e2052f0ba1848555328b4e5240cb8407a29649fd0125e9bfe5f2e885334911c4c2db2ed0d58ed1b0ab3947a11b1df396df1be22428534f5d931'
+            '939536530a45f9c32b52c631d63b6e85c730dfad6f134e40282e8cb9282c3da28c5738c0d6566a5e456c113ab3c7206fccb6dd607912848bb5a7f1768e3c5f1f'
+            '22ddae85fe7241fd6636f024125302087b9500097980739f8d1b2a8c103399af44f08200149ddaceef2566f304c50c17cdf1752f68ada003a946300b2a15bb9b'
+            '2dc5ed9ef2b0c8a8140bd8d64a1e6f592e3d985874ef7ffda26dbcadbef5cff3c41319da2f9221aa58151d25b9c8ec6270e66ca0b09bb577547cd0ca2cc8a1d5'
+            '38449e486f8af25345320547151b146fe03c9716c4e6d6e8301ba9b3caa29446cd749ff7cfd5499e8340d6542db13c0824f5fcffedbb316dbcc8decb2715256a'
+            '8aebe0d9c658c23d578930a5c77ac09b20a126e26eb130b34305d32cb7e5a557f260cc888804d15f48cf476abcbfd00f6f6a6b1b9a793a0b5768f57a78fab463'
+            'ee7080e020a4d3268b1ca1215a48876ac374d9d3e75d8ab7ca2c62e2bddea81985ece78a38a2a4d7ba0d90f60c0e83c7cff751ddaa46c7fefa2b64f8ea84e007'
+            'cb36af88022782fb6a9f8fe704b7ab09c4e7907decafca66614da9183a9053d1589b09b71312d91e506a47aee6a918560b59a34eda137c199b8afba4964e2344'
+            '6bb98ce1a36f8ec02d48228ca0ae60376b26ce7b8cc463b721463f2cfa9a6d174e0eb9ac7f3f37da255111d018dac1560e46f8180238529a4524a4eddb171745'
+            'a82d0288338d75b26180aa610e61b5918a565ad56776c9dfdcc3a16b35072411b9ea63c85cf90f1a4ced4961b7e59a2d48204c5ed15b5f0df08ec69584e167ed'
+            '7ab2a92fd1b771bb426723ffec01ab3d587f349c98d48ba34bdede7c330e1f238caac2b753d25818d6da37d5b719ba1bc1af8cd3d87fd6900ed59e5243b69ac4'
+            '738b96d0b18b566d858bc6ed1b9a8135c0ceae5f866b6a8b952d79a9fccbbe357099a89bb2344b64c76c2abc68e0b4ece723fb7a8c26b944f725d84aab75b1c3'
+            '81a28834cf9b1ef658dd1ce5dcc76d8944f4b0f1be7aa70c16b26095be8ab319187428d76c27049f7ad2e84e35fa379596418e05ea15f707d94056f5802faa9c'
+            '36bd683d308fa79a68b4ffc4a718fe2d576c7ccb2b620d6c51c3a122a90d508b92cab48245646e2567c2498edef25e5fab887aa3adf37fc9947f74db19f19184'
+            '569aa5d8875e88075eb91c5b93dbacc4d7b8a225cb5bf31076d172476aa3139ffa686c207680c848e3bb2e05b52c84ea67538b427727e6eb00d9c33ad06abed3'
+            '007d3ecca366eb3de46c52a9cb726ae7b068eb09648943f9fbfc5bc8765cea2595f7474e57c64aad8f81a065bcc7c9afe701dd800d23ecf99776ec358d203c82'
+            'f8516b218af68a4806a9adf6e753fcb72224b08915a154808d897d317b91959c23763bb275ca4f62c410fb35ebc62360f6ce6a529b0ca9165a23ecf1ca1c442c'
+            'a1000b6403d4867ee211eb36e2b2331ca427ce46447d24eb5403a6c6144d308516837bf533d3433a250a4dcc77ff5ce616472e74945b870648253e170d5fe694'
+            '0ff5670a4dcc30898d605977681f08d49355853effc193746117feb37eea9b10390d7de837ec91b306bee73a071b7c52f9ec0eef08631e42e76008d61a7ef70e'
+            '83e5f62804fb358cf6000d154f3da7c1a70fd00536f7f6221a8bf2bf247602008daca7ffbadb63e2c088afc41362a1369da873fc8d6bdbab8e6a5bb9150d3589'
+            '6fbdddb450423b600cce4d758d25582401a1bbf12af4c3177790ffa3692446c1080dbb83f6340a446822702bd5bdeff321530deb57f4adf74fabf0b8249fc294'
+            'c7eb616e101287d1793b2df090421cb4c11586b99cd526aefc989ff6e51b6b0fde50c3906c8c173cc18e202690ddd0410dfe52a4a2708295e9964bc014ebb629'
+            '0170a0c9cadc6f47d331174064cae6f7dbe0a19fbdbd42b97ec1b646bcfb2d66c5df175d13b03bbc135a5c29cfcd04811d6be88e578a273441c1405d422d49b8'
+            'c4b847fab1d536372e2eef5756547cab301e02636c6bc383b0a4db58fc040d93d1f75a0fb7d043af9314f7fc3f88ae707ad8c0d0c5c790a6fab92478e20b8266'
+            '115aae5cb6facfb3e2a74f7742d7825428665ed39de6d24c835e7da841931591937502556763894f12d8b1190fb089518d888a5648375211c2c27b958a2e9523'
+            '396867bc5f0447863db66d5a88cb789df85488776732a526794d125e5e8edb864ff4a553fc46f008ba132b4ced0f7ad252582e21e484dea192406872ab5c5774'
+            '9347b8913751e7efdf0a354fb6b0719e56635aeed7bffed3b8257eec2216380d72016296e176d1833bbc3210515f56184461d5982af57b1fe076388e4f5015a2'
+            '85c53e25ac0e5faf89b310e19e289a2dc1bedbf400816a092919376400385a3f20a1a2d3533e6afe12b7e68e9b2d24993a87a0467602de07131585f0f4b2bee4'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
+            '5e8121660bcc7778f41d2d856b140b05d239fac8056aefd7288075b6fb41a118187a924d0910ccdbf8405d072bb37cea54ee66572135fd25644c416aa1582a66'
             'f55ee2f6c4f65a90fe3f59ce3afd5f48b330a3e4b7a3f94a2f61afc39f8c979f4ab398d1fe48bb621ea0a7aaf2f23762f97ff4d424165d8e3d39f43b72a0eefc'
             '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
             '905f97cdff3e096552159a229d069d1b1418f4142b2927134110f504bfe0883309b3f29c2aeeb94c528b63e0eec7d0d69b44c3d498211c610811969cc4d07a56'

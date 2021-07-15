@@ -5,4 +5,5 @@
 !/0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch
 !/0002-mm-Support-soft-dirty-flag-read-with-reset.patch
 !/0007-v5.12-winesync.patch
+!/le9db-5.10.patch
 !/vm.max_map_count.patch
