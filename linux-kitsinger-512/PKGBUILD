@@ -49,11 +49,11 @@ _1k_HZ_ticks=y
 pkgbase=linux-kitsinger-512
 # pkgname=('linux-kitsinger-512' 'linux-kitsinger-512-headers' 'linux-kitsinger-512-docs')
 _major=5.12
-_minor=17
+_minor=19
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux with AUFS, pcie-reset, and futex patches'
 arch=('x86_64')
 url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
@@ -71,24 +71,22 @@ _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
 _aufs_fragment="#commit=dbe98caa11c0a3694f7833216b06a792127ff024"
 _gcc_path="cpu-patches-v6-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
+_arch_path="arch-patches-v7-sep"
 _futex_path="futex-patches-v2"
 _futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
 #_futex2_path="futex2-patches"
 _futex2_path="futex2-trunk-patches-v6"
 _futex2_patch="0001-futex2-resync-from-gitlab.collabora.com.patch"
-_mm_path="mm-patches"
-_mm_patch="0001-mm-5.12-protect-file-mappings-under-memory-pressure.patch"
+_fixes_path="fixes-miscellaneous-sep"
+_ntfs_path="ntfs3-patches-v2-sep"
 
 _kernel_git_path="https://git.kernel.org/pub/scm/linux/kernel/git"
 _dtor_input_path="${_kernel_git_path}/dtor/input.git/patch/"
 _hid_path="${_kernel_git_path}/hid/hid.git/patch/"
 _tiwai_sound_path="${_kernel_git_path}/tiwai/sound.git/patch/"
 _iommu_path="${_kernel_git_path}/joro/iommu.git/patch/"
-_turbostat_path="${_kernel_git_path}/lenb/linux.git/patch/"
 
 _lkml_path="https://lore.kernel.org/lkml"
-_pci_reset_t="${_lkml_path}/20210709123813.8700"
-_pci_reset_s="ameynarkhede03@gmail.com"
 _amd_psf_t="${_lkml_path}/20210713094151.652597"
 _amd_psf_s="namit@vmware.com"
 
@@ -96,22 +94,50 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.sign"
         "${_aufs_repo_name}::git+${_aufs_repo}${_aufs_fragment}"
         "${_lucjanpath}/${_gcc_path}/${_gcc_patch}"
-        "${_lucjanpath}/arch-patches-v7-sep/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-        "${_lucjanpath}/arch-patches-v7-sep/0002-x86-setup-Consolidate-early-memory-reservations.patch"
-        "${_lucjanpath}/arch-patches-v7-sep/0003-x86-setup-Merge-several-reservations-of-start-of-mem.patch"
-        "${_lucjanpath}/arch-patches-v7-sep/0004-x86-setup-Move-trim_snb_memory-later-in-setup_arch-t.patch"
-        "${_lucjanpath}/arch-patches-v7-sep/0005-x86-setup-always-reserve-the-first-1M-of-RAM.patch"
-        "${_lucjanpath}/arch-patches-v7-sep/0006-x86-setup-remove-CONFIG_X86_RESERVE_LOW-and-reservel.patch"
-        "${_lucjanpath}/arch-patches-v7-sep/0007-x86-crash-remove-crash_reserve_low_1M.patch"
+        "${_lucjanpath}/${_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+        "${_lucjanpath}/${_arch_path}/0002-x86-setup-Consolidate-early-memory-reservations.patch"
+        "${_lucjanpath}/${_arch_path}/0003-x86-setup-Merge-several-reservations-of-start-of-mem.patch"
+        "${_lucjanpath}/${_arch_path}/0004-x86-setup-Move-trim_snb_memory-later-in-setup_arch-t.patch"
+        "${_lucjanpath}/${_arch_path}/0005-x86-setup-always-reserve-the-first-1M-of-RAM.patch"
+        "${_lucjanpath}/${_arch_path}/0006-x86-setup-remove-CONFIG_X86_RESERVE_LOW-and-reservel.patch"
+        "${_lucjanpath}/${_arch_path}/0007-x86-crash-remove-crash_reserve_low_1M.patch"
         "${_lucjanpath}/${_futex_path}/${_futex_patch}"
         "${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0004-mm-Disable-watermark-boosting-by-default.patch"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0005-mm-Stop-kswapd-early-when-nothing-s-waiting-for-it-t.patch"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0006-mm-Fully-disable-watermark-boosting-when-it-isn-t-us.patch"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0007-mm-Don-t-stop-kswapd-on-a-per-node-basis-when-there-.patch"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0008-kbuild-Disable-stack-conservation-for-GCC.patch"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0012-scsi-sd-Optimal-I-O-size-should-be-a-multiple-of-rep.patch"
-        "${_lucjanpath}/fixes-miscellaneous-sep/0013-iomap-avoid-deadlock-if-memory-reclaim-is-triggered-.patch"
+        "${_lucjanpath}/${_fixes_path}/0001-net-sched-allow-configuring-cake-qdisc-as-default.patch"
+        "${_lucjanpath}/${_fixes_path}/0002-infiniband-Fix-__read_overflow2-error-with-O3-inlini.patch"
+        "${_lucjanpath}/${_fixes_path}/0003-kbuild-add-fcf-protection-none-to-retpoline-flags.patch"
+        "${_lucjanpath}/${_fixes_path}/0004-mm-Disable-watermark-boosting-by-default.patch"
+        "${_lucjanpath}/${_fixes_path}/0005-mm-Stop-kswapd-early-when-nothing-s-waiting-for-it-t.patch"
+        "${_lucjanpath}/${_fixes_path}/0006-mm-Fully-disable-watermark-boosting-when-it-isn-t-us.patch"
+        "${_lucjanpath}/${_fixes_path}/0007-mm-Don-t-stop-kswapd-on-a-per-node-basis-when-there-.patch"
+        "${_lucjanpath}/${_fixes_path}/0008-kbuild-Disable-stack-conservation-for-GCC.patch"
+        "${_lucjanpath}/${_fixes_path}/0009-pci-Enable-overrides-for-missing-ACS-capabilities.patch"
+        "${_lucjanpath}/${_fixes_path}/0010-ZEN-Add-OpenRGB-patches.patch"
+        "${_lucjanpath}/${_fixes_path}/0011-tty-Allow-setting-the-number-of-available-virtual-TT.patch"
+        "${_lucjanpath}/${_fixes_path}/0012-scsi-sd-Optimal-I-O-size-should-be-a-multiple-of-rep.patch"
+        "${_lucjanpath}/${_fixes_path}/0013-iomap-avoid-deadlock-if-memory-reclaim-is-triggered-.patch"
+        "${_lucjanpath}/${_fixes_path}/0014-xfs-log-stripe-roundoff-is-a-property-of-the-log.patch"
+        "${_lucjanpath}/${_fixes_path}/0015-xfs-separate-CIL-commit-record-IO.patch"
+        "${_lucjanpath}/${_fixes_path}/0016-xfs-journal-IO-cache-flush-reductions.patch"
+        "${_lucjanpath}/${_fixes_path}/0017-xfs-Fix-CIL-throttle-hang-when-CIL-space-used-going-.patch"
+        "${_lucjanpath}/${_fixes_path}/0018-xfs-reduce-buffer-log-item-shadow-allocations.patch"
+        "${_lucjanpath}/${_fixes_path}/0019-xfs-Skip-repetitive-warnings-about-mount-options.patch"
+        "${_lucjanpath}/${_fixes_path}/0020-nfsd-Ensure-knfsd-shuts-down-when-the-nfsd-pseudofs-.patch"
+        "${_lucjanpath}/${_fixes_path}/0021-xfs-No-need-for-inode-number-error-injection-in-__xf.patch"
+        "${_lucjanpath}/${_fixes_path}/0022-xfs-type-verification-is-expensive.patch"
+        "${_lucjanpath}/${_fixes_path}/0023-xfs-only-reset-incore-inode-health-state-flags-when-.patch"
+        "${_lucjanpath}/${_fixes_path}/0024-NFS-Fix-up-the-support-for-CONFIG_NFS_DISABLE_UDP_SU.patch"
+        "${_lucjanpath}/${_ntfs_path}/0001-fs-ntfs3-Add-headers-and-misc-files.patch"
+        "${_lucjanpath}/${_ntfs_path}/0002-fs-ntfs3-Add-initialization-of-super-block.patch"
+        "${_lucjanpath}/${_ntfs_path}/0003-fs-ntfs3-Add-bitmap.patch"
+        "${_lucjanpath}/${_ntfs_path}/0004-fs-ntfs3-Add-file-operations-and-implementation.patch"
+        "${_lucjanpath}/${_ntfs_path}/0005-fs-ntfs3-Add-attrib-operations.patch"
+        "${_lucjanpath}/${_ntfs_path}/0006-fs-ntfs3-Add-compression.patch"
+        "${_lucjanpath}/${_ntfs_path}/0007-fs-ntfs3-Add-NTFS-journal.patch"
+        "${_lucjanpath}/${_ntfs_path}/0008-fs-ntfs3-Add-Kconfig-Makefile-and-doc.patch"
+        "${_lucjanpath}/${_ntfs_path}/0009-fs-ntfs3-Add-NTFS3-in-fs-Kconfig-and-fs-Makefile.patch"
+        "${_lucjanpath}/${_ntfs_path}/0010-fs-ntfs3-Add-MAINTAINERS.patch"
+        "${_lucjanpath}/${_ntfs_path}/0011-fs-ntfs3-Fix-unsupported-flags-by-clang.patch"
         "${_lucjanpath}/zen-patches-sep/0001-ZEN-Add-VHBA-driver.patch"
         "${_lucjanpath}/zen-patches-sep/0003-ZEN-vhba-Update-to-20210418.patch"
         "${_lucjanpath}/clearlinux-patches-v3-sep/0017-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
@@ -125,16 +151,6 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-5.14/core
         "1004-HID-replace-outdated-HID-numbers+comments-with-macro.patch::${_hid_path}?id=eb134536cf6fb2e50b5ced653f7c34d306b2d73f"
         "1005-HID-Add-support-for-Programmable-Buttons.patch::${_hid_path}?id=bcfa8d14570d85c998a9b706b074ab151b286edf"
-
-        # https://lore.kernel.org/lkml/20210709123813.8700-1-ameynarkhede03@gmail.com/T/
-        #"2001-PCI-Add-pcie_reset_flr-to-follow-calling-convention-.patch::${_pci_reset_t}-2-${_pci_reset_s}/raw"
-        #"2002-PCI-Add-new-array-for-keeping-track-of-ordering-of-r.patch::${_pci_reset_t}-3-${_pci_reset_s}/raw"
-        #"2003-PCI-Remove-reset_fn-field-from-pci_dev.patch::${_pci_reset_t}-4-${_pci_reset_s}/raw"
-        #"2004-PCI-sysfs-Allow-userspace-to-query-and-set-device-re.patch::${_pci_reset_t}-5-${_pci_reset_s}/raw"
-        #"2005-PCI-Define-a-function-to-set-ACPI_COMPANION-in-pci_d.patch::${_pci_reset_t}-6-${_pci_reset_s}/raw"
-        #"2006-PCI-Setup-ACPI-fwnode-early-and-at-the-same-time-wit.patch::${_pci_reset_t}-7-${_pci_reset_s}/raw"
-        #"2007-PCI-Add-support-for-ACPI-_RST-reset-method.patch::${_pci_reset_t}-8-${_pci_reset_s}/raw"
-        #"2008-PCI-Change-the-type-of-probe-argument-in-reset-funct.patch::${_pci_reset_t}-9-${_pci_reset_s}/raw"
 
         # https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/log/?h=topic/virtio
         "3001-uapi-virtio_ids-add-a-sound-device-type-ID-from-OASI.patch::${_tiwai_sound_path}?id=0ae0337f929a970ee8d83e0e95e6b8d05562ce3b"
@@ -180,24 +196,23 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # vanish, so instead of pulling the files from the repositories, they will be included in this one.
 
         # https://github.com/hakavlad/le9-patch
-        "le9db-5.10.patch"
+        "le9ec-5.10.patch"
 
-         # https://github.com/Frogging-Family/linux-tkg/pull/206
-         # https://github.com/kevall474/kernel-patches/tree/main/5.12/misc-patches
+        # https://github.com/hakavlad/disable-i915-gem-shrinker
+        "disable-drm-i915-gem-shrinker-5.10.patch"
+
+        # https://github.com/Frogging-Family/linux-tkg/pull/206
+        # https://github.com/kevall474/kernel-patches/tree/main/5.12/misc-patches
         "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
         "0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
 
-         # https://github.com/kevall474/kernel-patches/tree/main/5.12/wine-patches
-         # https://github.com/Frogging-Family/linux-tkg/tree/master/linux-tkg-patches/5.12
-        "0007-v5.12-winesync.patch"
-
-         # https://github.com/kevall474/kernel-patches/blob/main/5.12/misc-patches
+        # https://github.com/kevall474/kernel-patches/blob/main/5.12/misc-patches
         "vm.max_map_count.patch"
 
-         # the main kernel config files
+        # the main kernel config files
         'config')
 
-sha512sums=('0de689b1c8a1529a4f261ecca456dd99d88537d63e13bd42f6a122bbf27d0d355b2fa2da7fa9ed334685fb99c1bdba245edb083f0274afaac822aa12973a9c26'
+sha512sums=('2d010d6d75052083300b1a629dbec25a39f6314a1871ed355133bb59946453915a2265f4ba26e60119ee0d05abb9859c5ee7d8fb8dd816c476ebfdb76d3399ef'
             'SKIP'
             'SKIP'
             '89f230ad9090c9eae3795d94049d33be1b4f6b3272db3fe7ef569d5d925eaa86e7990be5a20b53969f5ba7f6876d1c34bca68b07790d75b88c686139d1b41862'
@@ -210,13 +225,41 @@ sha512sums=('0de689b1c8a1529a4f261ecca456dd99d88537d63e13bd42f6a122bbf27d0d355b2
             'fb84fc91e6be7b696aaf98177a124c321673c5e43c80daad8590faea13500624f5e759dac44a0eb6b6003ccccb793ca34ce27c65ccc96fb7253b0b3038df68cf'
             '4b7766c590a692a008a0daca73806a1671a81b6e2ed756aae96de4c4455505b04765568ae5e04645f89bf75bd5611e3b1bf5ededff47bb0708dbca91769b5ab7'
             'e059b87b71f7c0c75aa580fe87dbd8b49cd30e4daf2f3002a957963a59fd4e1336d24d9e6d2f10ed15b95e4a95531de38dbd1fc6893803f1943374ca788a9251'
+            'b49059280ad4e2093b1ad80fbeab8d2fd157ae2cbb31340ff83d5e5dc1f3706cd7ab9c07fb45b116b0debac0411519dc500bbd63ff843dbf31f6f25d531ce9d3'
+            '9a93aa7e07ae7da26977224819d8afd23b8822f24608c6ea7330d6f8ed7e1765bfc6afaedacc99e8629e321b86c7381206492ddb058eb1626ba3d56a87ab579f'
+            '74c726a5c55d76f4e4313121934f9e52557920e0bd7bebf4fffbe1532c9fdcd4b71cda98384630d339050e51511eb4f6ba91ad1cf9c40f2d54066148bd5f93b4'
             '988a99fec5fa38fa8e3370d870098774e345497eecad978ec89bb23cd491ff1686ea8197d82e03a7b52a6847d966d3371f017ebc01969441cfe14d0564bfdecc'
             'f1578e12fa0af8820373a60cc919d367673f82470d5978a1119f4b08a9d297eb82471eb7ff43626c49dc67547d78da6f3e49abe4186c5685fda881e7ab66c2ba'
             '12c08e0593f702d12a06fd2370f15b25ee03f1ede4b909bb4a96133237a1630523a6f285a45cc3c226b2b535ead3562c7f0a24b5d8d06e60b54548587fb102ce'
             '42b90976224b392d2980ce7e84d58a00b8b26b888adc6af8d9df89395f37080a22b4cce304f4e6927be03cda27105f267b5be46c2ff0d38ad83b624df5d913bb'
             '7667958a876f6c75827968b8556f6c960999c84994a84fc57de597a99d0b41073ce1181b084e39980d7d8cd1e07ddbd5841cb6dbf30621c302b897f6d9075c22'
+            'a02e6ab6cd02de41e0251984aee5371bf8396860788858b8459c9dad73864f3ddb4f5666399899033a25586b724ed71da9536b217f118882411cdbeaf4105d86'
+            '714df6f1169eb75fa87b6b2ffe8df7e8d62da9e7bb5985ed2feea7567b1157ab3a84608dd8bf03e357ef05dd57ced5d456497fc031a3a5f0b3527363ffc4615e'
+            '5dd589c6bc1305430ac6e1f587d1700cf6ec2c92513a9f274f7066dd290a52f624f3a5e5fda6b170b228fb32bdc213cf3c12be780d6df7d3e846e63ca3c2a872'
             '0ff17160713e260b768207062c74fc7348b485d8fd1021348e62a4d7fbb9c8fd0cd8bf35d5121a66ac0f4827e5ec9bd83ea05b9e0bf9b1632f90b11a5604cf4c'
             '6508dd64d91fd3e4054081a0020df2d20421a0811c86d7d4d65ec0a50d73ee8513adb7ed711635f15a1e5cb2d773259acf85d4ad53ffb790bff0fb6a0376400f'
+            '96f3ae8798632b4552116c2e629953cc1d3de1d26542a42e33bedaa740e9455e79c68e437c9f38452c1aa0a8bf2de4a1926b6088adbbeaeb2def867c82e95156'
+            'f036fa75948cb588d44dbe728f50dc8bfff344a991d5fe9c4c229ea7aa84fe656022cec96c56c2629286d9f506e1eeaf089ecc3448460bc108292bdfb02079a5'
+            'ec10d58c60450aebaa7d73ca9ab6ab11d5c9001c685b8939c603005d361defa1eec1f6e97ec352b8f8026879ad198cc08f164668897fba7bf6bf25df836560a5'
+            'bc3cdd662b0dbe5d467000ed8880fc2a19a03cc537ed82d41676468c14d5e0f7e73f9e8810ebc7fc845960af13639d2027ebd970ff809e521ca3f0c73cbae7f4'
+            'c89620cee8f5a6946527e18d1e76a899ac2b21d78bbcd51a5703229d8bd23d73a731a32b755568ea2aa2efc1bb8cb9a79b769d712431d68ef59cc9e556f5a54d'
+            '36c253a867d8ad24ec64ee61a0181e6228550cbe3701ccccdf0d5e05d448997c7de21c1e177b9a4bcbd205f603bd56d5c818a65f99e0754c0eba4e7c63430b83'
+            'c03a2f4e553ba9b9f00ad3661136cad85a41ebf75ffa6cf43f6d3a47be8e27eabaef827ff528d5d2cc4fd31de0e0a1dc1a435842cf913b53d99c3734040ff998'
+            'aaee9150262ed81944836cf3dd41447bf5e15baeca21567dca3b7cef2ce2973ea76c4db8d16d73a8e1ac320f4bfc71c118b2a8ac51a83314f9043e661614812d'
+            '191572ab7710e598115f340bc4d5ca013878f43df26db756aabb3222c4ff3ab8dbad2630a5b2d44fba6ee5acf3898520b526060ce5cfe3b6eed7cdb9d0821f41'
+            'cda9b1bf0c298a854a6fea239bf07e123985fd65100bd1f03917f0e3f79ef0458c33414e7ca46d167e6dbae73d48da5ef1b055103db93f3b11c4a24cec905f40'
+            '105ba53d2963406a687140ad5f95921e8f8f34faddb56de6a50da923c5bf8c0801e7b9ec7dbe47fa9671de624816f9242b3a7cf8b5b4e1f0036fea4167695ef9'
+            '349e085bc56934dfe3d3c70a67ae21a4f45a590573260243fc8c1f4ddd450f8b738d668ea807ad2459bf971bf0afa0eedc9d364577fed7e3c4e9dd9c51f49f95'
+            'a5e9d42b177982a1d245559a2811f81636e64e7b160ea64965c4f4ea33aa52e851b63b9d49b4391ad2037b5e2fc7cc74eb183882e48de87c4e492de45b131baa'
+            'a3f7856a301bf334a0a7eff0d72a92775321249bc91a31645063d934390025b56a5c87aace6bc09b3b288312cbb565062d95ea2320ae3684dd0f3e6b8a68f4cc'
+            '12cde4e66044fc5230e53d028f0b5a2a5118b52fa85e0d69690998c99230e695e9c27fc0a642acc18d52ba260955fde0428e11b21284b58c222f99f50ac6bbd6'
+            'b909627c8817b7f5ad8ef850f65a2a5600b5f233472221387a71cb149cb8f20899904ce8ab6b7df79277a5a0f353aed10ccd7d14ce5a6ee5f52305ce93dfaae5'
+            '10a86094d38db8933aa1038c2b05bfbf309c0e0a027d74cdd39d47493e56d950d3238e331dc1f480f348ab4e959572d1a338da2d9bdae29794978ec7f82a8501'
+            '04ff1d1a6c28c8b2b45bed2cd8778f6831cde1dd5a8abb7e9004768a7124ba68281742187bd4c22211b33c99c92547d1c9ef6137e3a96d3689dbcebaa1e2eb38'
+            '6aecfe2a2d31b5f0c741c6988c22094e90dea9c52a351154735cdfabb7887e85e4db2dbb846dc0c2b46e172b493bcf9321c1add83b4489794022ea5fcefa9fb0'
+            '9c242b911305f5fe4a35a10ba2e902ce1e4ec4e4f520858a4668321c6a13d5d8a5cae3ac1324df2f48e81e432abcbc5127d1aacaadef2c5cb3105abc2b8bfaf6'
+            'c3c1651920bb0823927fe845b03b4f3c269e1b858a7d46af5ae7f924330106cb1511fae8c0864510d155a81466f79834c5293e2212323f2e9f8c507e795de9af'
+            '048b88a1ed1e6509298f3ce2e99e5252e25a9b1e0c5c0a309e2cbf7ae0fe475a24b2c2f1face6f1ce1c11b6c535e2f50eafb4cb2d498023bb7863989d966431d'
             '2f127bec35a561d02f22c09811d7f4b65e53fadfc482d6385d7c8a207062c8d4baebec9387c44c8ab3aed0b6cfd7997f5e77209ae84f74a72e9560cad44fe7cf'
             'cbd659f33bf550de0d0114c96ee3b4ceb9726211baaaebbbfebcf2f2bf4c5e14fe9a9301439684dc79a2a0e577c1a12a793b0c823b80d206a23d95c10a0b93ac'
             '626c344d643c61007cb9d8b93fea16b221898bf40d4ced3d35ab518f373d5cad102770599729af295b5e91a95a145c5c058d5423352441c5b047367103a70016'
@@ -256,11 +299,11 @@ sha512sums=('0de689b1c8a1529a4f261ecca456dd99d88537d63e13bd42f6a122bbf27d0d355b2
             '85c53e25ac0e5faf89b310e19e289a2dc1bedbf400816a092919376400385a3f20a1a2d3533e6afe12b7e68e9b2d24993a87a0467602de07131585f0f4b2bee4'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             '5e8121660bcc7778f41d2d856b140b05d239fac8056aefd7288075b6fb41a118187a924d0910ccdbf8405d072bb37cea54ee66572135fd25644c416aa1582a66'
+            '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
             'f55ee2f6c4f65a90fe3f59ce3afd5f48b330a3e4b7a3f94a2f61afc39f8c979f4ab398d1fe48bb621ea0a7aaf2f23762f97ff4d424165d8e3d39f43b72a0eefc'
             '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
-            '905f97cdff3e096552159a229d069d1b1418f4142b2927134110f504bfe0883309b3f29c2aeeb94c528b63e0eec7d0d69b44c3d498211c610811969cc4d07a56'
             'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
-            'e4200d38e744b1319cc425b39957dcce69bd6a84c6c8ccbdfcc06939370729b1d33428c0ee2a77a7a724c14f538076491ba7cfa269d654da3911cbb0871cd115')
+            '0aa6eca5aa28f600100c0ee21154ab638a9d96cbb39a6ae2f4abdc080320480fb9a6df488bcb9d9a79fe295eb095fe6773230a6583f89786d7132c232ca30628')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -334,6 +377,44 @@ prepare() {
     ### Setting config
         echo "Setting config..."
         cp ../config .config
+        scripts/config --module CONFIG_SND_VIRTIO
+
+    ### AUFS
+        scripts/config --module CONFIG_AUFS_FS
+        scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_127
+        scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_511
+        scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_1023
+        scripts/config --enable CONFIG_AUFS_BRANCH_MAX_32767
+        scripts/config --enable CONFIG_AUFS_HNOTIFY
+        scripts/config --enable CONFIG_AUFS_EXPORT
+        scripts/config --enable CONFIG_AUFS_XATTR
+        scripts/config --undefine CONFIG_AUFS_FHSM
+        scripts/config --enable CONFIG_AUFS_RDU
+        scripts/config --enable CONFIG_AUFS_DIRREN
+        scripts/config --enable CONFIG_AUFS_SHWH
+        scripts/config --enable CONFIG_AUFS_BR_RAMFS
+        scripts/config --enable CONFIG_AUFS_BR_FUSE
+        scripts/config --enable CONFIG_AUFS_BR_HFSPLUS
+        scripts/config --undefine CONFIG_AUFS_DEBUG
+
+    ### CPU optimization
+        # I want to be able to slap an HDD with this kernel on it in just about any machine
+        # I'm very, very unlikely to encounter any CPUs older than AMD K8
+        scripts/config --enable CONFIG_MK8SSE3
+        scripts/config --undefine CONFIG_GENERIC_CPU
+        # I'd add an -mtune=znver1 if I could
+
+    ### NTFS3
+        scripts/config --module CONFIG_NTFS3_FS
+        scripts/config --disable NTFS3_64BIT_CLUSTER
+        scripts/config --enable NTFS3_LZX_XPRESS
+        scripts/config --disable NTFS3_FS_POSIX_ACL
+
+    ### le9-patch values
+        scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 131072
+        scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 262144
+
+    ## Fill in remaining defaults
         make olddefconfig
 
     ### Prepared version

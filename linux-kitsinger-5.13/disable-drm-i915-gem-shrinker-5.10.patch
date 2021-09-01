@@ -1,0 +1,24 @@
+From 1c4542b68aa3b411bd62b16856da383eaee08609 Mon Sep 17 00:00:00 2001
+From: Alexey Avramov <hakavlad@gmail.com>
+Date: Sun, 31 Jan 2021 19:04:51 +0900
+Subject: [PATCH] Disable DRM/i915 GEM shrinker
+
+---
+ drivers/gpu/drm/i915/gem/i915_gem_shrinker.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c b/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c
+index dc8f052a0..f175a8684 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c
+@@ -98,6 +98,7 @@ i915_gem_shrink(struct drm_i915_private *i915,
+ 		unsigned long *nr_scanned,
+ 		unsigned int shrink)
+ {
++	return 0;
+ 	const struct {
+ 		struct list_head *list;
+ 		unsigned int bit;
+-- 
+2.11.0
+
