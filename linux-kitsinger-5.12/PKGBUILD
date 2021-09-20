@@ -46,14 +46,14 @@ _1k_HZ_ticks=y
 
 ### Do not edit below this line unless you know what you're doing
 
-pkgbase=linux-kitsinger-512
-# pkgname=('linux-kitsinger-512' 'linux-kitsinger-512-headers' 'linux-kitsinger-512-docs')
+pkgbase=linux-kitsinger-5.12
+# pkgname=('linux-kitsinger-5.12' 'linux-kitsinger-5.12-headers' 'linux-kitsinger-5.12-docs')
 _major=5.12
 _minor=19
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
-pkgrel=2
+pkgrel=3
 pkgdesc='Linux with AUFS, pcie-reset, and futex patches'
 arch=('x86_64')
 url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
@@ -66,9 +66,8 @@ _lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
 
 _aufs_repo_name="aufs5-standalone"
 _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
-#_aufs_fragment="#commit=e263b32357d312b7bfc3d7b0bfc09c44d25b8d1c"
-#_aufs_fragment="#commit=f6866937f66eb6ceacfed9b4fe534611030cc813"
-_aufs_fragment="#commit=dbe98caa11c0a3694f7833216b06a792127ff024"
+_aufs_fragment="#commit=de37efd85da35f0df51707adbeed399b24026406"
+
 _gcc_path="cpu-patches-v6-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
 _arch_path="arch-patches-v7-sep"
@@ -85,10 +84,13 @@ _dtor_input_path="${_kernel_git_path}/dtor/input.git/patch/"
 _hid_path="${_kernel_git_path}/hid/hid.git/patch/"
 _tiwai_sound_path="${_kernel_git_path}/tiwai/sound.git/patch/"
 _iommu_path="${_kernel_git_path}/joro/iommu.git/patch/"
+_torvalds_path="${_kernel_git_path}/torvalds/linux.git/patch/"
 
 _lkml_path="https://lore.kernel.org/lkml"
 _amd_psf_t="${_lkml_path}/20210713094151.652597"
 _amd_psf_s="namit@vmware.com"
+
+_hakavlad_gh="https://raw.githubusercontent.com/hakavlad"
 
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.sign"
@@ -190,16 +192,23 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "4075-iommu-amd-Sync-once-for-scatter-gather-operations.patch::${_amd_psf_t}-7-${_amd_psf_s}/raw"
         "4076-iommu-amd-Use-only-natural-aligned-flushes-in-a-VM.patch::${_amd_psf_t}-8-${_amd_psf_s}/raw"
 
+        # https://lore.kernel.org/lkml/20210819004305.20203-1-deepak.sharma@amd.com/
+        "0000-x86-ACPI-cstate-Optimize-C3-entry-on-AMD-CPUs.patch::https://lore.kernel.org/lkml/20210819004305.20203-1-deepak.sharma@amd.com/raw"
+        # https://www.phoronix.com/scan.php?page=news_item&px=Linux-Broke-Android-Apps-Pipe
+        "0000-pipe-make-pipe-writes-always-wake-up-readers.patch::${_torvalds_path}?id=3a34b13a88caeb2800ab44a4918f230041b37dd9"
+        # https://www.phoronix.com/scan.php?page=news_item&px=Floppy-Disk-Linux-5.15-Fix
+        "0000-revert-floppy-reintroduce-O_NDELAY-fix.patch::https://github.com/evdenis/linux-floppy/commit/c7e9d0020361f4308a70cdfd6d5335e273eb8717.patch"
+
+        # le9 stuff
+        # pretty confident these git repos aren't going anywhere
+        "${_hakavlad_gh}/le9-patch/9bde939dc9952f2a2b8df46e8cc19e2f6710caef/le9ec_patches/le9ec-5.10.patch"
+        "${_hakavlad_gh}/disable-i915-gem-shrinker/4e6da2a9b0602d3f80b418026d0a8bf188fc0de6/disable-drm-i915-gem-shrinker-5.10.patch"
+
+        # https://clbin.com/VCiYJ
         "0001-pcie-reset-kludge.patch"
 
         # The rest of the patches came from random git repositories. In my experience, random git repositories tend to
         # vanish, so instead of pulling the files from the repositories, they will be included in this one.
-
-        # https://github.com/hakavlad/le9-patch
-        "le9ec-5.10.patch"
-
-        # https://github.com/hakavlad/disable-i915-gem-shrinker
-        "disable-drm-i915-gem-shrinker-5.10.patch"
 
         # https://github.com/Frogging-Family/linux-tkg/pull/206
         # https://github.com/kevall474/kernel-patches/tree/main/5.12/misc-patches
@@ -290,16 +299,19 @@ sha512sums=('2d010d6d75052083300b1a629dbec25a39f6314a1871ed355133bb59946453915a2
             '0ff5670a4dcc30898d605977681f08d49355853effc193746117feb37eea9b10390d7de837ec91b306bee73a071b7c52f9ec0eef08631e42e76008d61a7ef70e'
             '83e5f62804fb358cf6000d154f3da7c1a70fd00536f7f6221a8bf2bf247602008daca7ffbadb63e2c088afc41362a1369da873fc8d6bdbab8e6a5bb9150d3589'
             '6fbdddb450423b600cce4d758d25582401a1bbf12af4c3177790ffa3692446c1080dbb83f6340a446822702bd5bdeff321530deb57f4adf74fabf0b8249fc294'
-            'c7eb616e101287d1793b2df090421cb4c11586b99cd526aefc989ff6e51b6b0fde50c3906c8c173cc18e202690ddd0410dfe52a4a2708295e9964bc014ebb629'
-            '0170a0c9cadc6f47d331174064cae6f7dbe0a19fbdbd42b97ec1b646bcfb2d66c5df175d13b03bbc135a5c29cfcd04811d6be88e578a273441c1405d422d49b8'
-            'c4b847fab1d536372e2eef5756547cab301e02636c6bc383b0a4db58fc040d93d1f75a0fb7d043af9314f7fc3f88ae707ad8c0d0c5c790a6fab92478e20b8266'
-            '115aae5cb6facfb3e2a74f7742d7825428665ed39de6d24c835e7da841931591937502556763894f12d8b1190fb089518d888a5648375211c2c27b958a2e9523'
-            '396867bc5f0447863db66d5a88cb789df85488776732a526794d125e5e8edb864ff4a553fc46f008ba132b4ced0f7ad252582e21e484dea192406872ab5c5774'
-            '9347b8913751e7efdf0a354fb6b0719e56635aeed7bffed3b8257eec2216380d72016296e176d1833bbc3210515f56184461d5982af57b1fe076388e4f5015a2'
-            '85c53e25ac0e5faf89b310e19e289a2dc1bedbf400816a092919376400385a3f20a1a2d3533e6afe12b7e68e9b2d24993a87a0467602de07131585f0f4b2bee4'
-            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
-            '5e8121660bcc7778f41d2d856b140b05d239fac8056aefd7288075b6fb41a118187a924d0910ccdbf8405d072bb37cea54ee66572135fd25644c416aa1582a66'
+            'e9cb59f365fe451a71c389b6af0e27276953ebce35da4cec20c644190cd88e1827750e7ce4d6acc7c7f1eaf1fd36f21b8d069fe5b30415610966a3d8c27e3802'
+            '4de64d387ccfef1a99cd6888174482046fde22068dbfc01e5f668a3e15f165f0288b8dbac617e6c048de1e8190d45216a109be503101c04b2bb73d013134af01'
+            '07d56aba64ce2e38ff5d401f2412231bf0aeffbb50efceb1895298370a95b054d949ecdea41edb4f3830135d877f1deb2a297906ad708bfac0fe8b49d8cc31ce'
+            'f50783a598af073af4e1bf10dfff219f2bc75a35f1dc761872252e64a51c773c98acf79e67d7064b2e0e5be59765e749970be8120ce35a11553f26f16e6bc211'
+            '5a1c8db1f4be34d03183d472ca89789fef40c642758493d2e1c5281630fcbf3d9641134f5478faf73e9b0d4a73784f834b154a51979fe3d274456251c422f966'
+            'c198734271a5532358399e22c69689b5e8ca82a4da5a91132d846caf495cd9730a6f75ba0f30406e1fd4298ad587a15c53965daa5f11851d7a44c53d6199b526'
+            'e71828794e4f5dfb83765d4d511c60975fcab2f0b3f2fcf17c07845e5a408d1fbdff20020ddc78c4754b36d5771dfed596e2f25bc36d2ca083bc8ddb70816885'
+            'd61eb2985239e2b37a73203071a495465c12aee0a7177bba2ebc901f93758c109bbb708f7b1f20ec204dc3f198941ee9e4a7278fbf2bbf45ad6de1684643e80c'
+            '2ee63c8e82db5d7e0119875ae93a63b9ab23e070db34358b5b3f41c2a0a6a293b4914cbe2bd001262834d16a9bf8aad952f3809c9c32cd9d454d770a115131b6'
+            'ceced0b0c7ffb3d4b157bc9fbd4f6d1dcba63a328f459edfd4800458b21bb07d617d87faa2e26e01330336a77a486ff1b46fdc99a4271c3792d4a56c8bcbf347'
+            '9f7899d2ad0192688494da33a9ec5aa60dae6aa22ce78f47331b49fd8bb012e9e9f15d47af944ef93e91566b20c4ea788b1359effed6f8c6dfbf5a91a4fe0efb'
             '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
+            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             'f55ee2f6c4f65a90fe3f59ce3afd5f48b330a3e4b7a3f94a2f61afc39f8c979f4ab398d1fe48bb621ea0a7aaf2f23762f97ff4d424165d8e3d39f43b72a0eefc'
             '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
             'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
@@ -310,122 +322,160 @@ export KBUILD_BUILD_USER=$pkgbase
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
 _aufs_patches=(
-  ######################
-  ## Required patches ##
-  ######################
+	######################
+	## Required patches ##
+	######################
 
-  "aufs5-kbuild.patch"
-  "aufs5-base.patch"
-  "aufs5-mmap.patch"
-  "aufs5-standalone.patch"
+	"aufs5-kbuild.patch"
+	"aufs5-base.patch"
+	"aufs5-mmap.patch"
+	"aufs5-standalone.patch"
 
-  ######################
-  ## Optional patches ##
-  ######################
+	######################
+	## Optional patches ##
+	######################
 
-  ## Add support for nested loopback mounts in branch-fs
-  #"aufs5-loopback.patch"
+	## Add support for nested loopback mounts in branch-fs
+	#"aufs5-loopback.patch"
 
-  ## Make /proc/mounts show all mountpoints
-  ## Does not exist in the current tree?
-  #"proc_mounts.patch"
+	## Make /proc/mounts show all mountpoints
+	## Does not exist in the current tree?
+	#"proc_mounts.patch"
 
-  ## Prevents assignment of 0 as inode number
-  "vfs-ino.patch"
+	## Prevents assignment of 0 as inode number
+	"vfs-ino.patch"
 
-  ## Keeps tmpfs inode number low
-  #"tmpfs-idr.patch"
+	## Keeps tmpfs inode number low
+	#"tmpfs-idr.patch"
 
-  ## required for LOCKDEP
-  #"lockdep-debug.patch"
+	## required for LOCKDEP
+	#"lockdep-debug.patch"
 )
 
+_aug_colorize() {
+	# prefer terminal safe colored and bold text when tput is supported
+	if tput setaf 0 &>/dev/null; then
+		_MAGENTA="${BOLD}$(tput setaf 5)"
+		_CYAN="${BOLD}$(tput setaf 6)"
+	else
+		_MAGENTA="${BOLD}\e[35m"
+		_CYAN="${BOLD}\e[36m"
+	fi
+}
+
+_msg3() {
+	(( QUIET )) && return
+	local mesg=$1; shift
+	printf "${_MAGENTA}   +-${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@"
+}
+
 prepare() {
-    cd $_srcname
+	_aug_colorize
 
-    ### Setting version
-        echo "Setting version..."
-        sed -e "/^EXTRAVERSION =/s/=.*/=/" -i Makefile
-        scripts/setlocalversion --save-scmversion
-        echo "-$pkgrel" > localversion.10-pkgrel
-        echo "${pkgbase#linux}" > localversion.20-pkgname
+	cd $_srcname
 
-    ### AUFS
-        echo "Copying AUFS build files and applying AUFS patches..."
-        local aufs_srcdir="${srcdir}/${_aufs_repo_name}"
-        local kern_srcdir="${srcdir}/${_srcname}"
-        pushd "${aufs_srcdir}"
-        cp -r {Documentation,fs} "${kern_srcdir}"
-        cp include/uapi/linux/aufs_type.h "${kern_srcdir}/include/uapi/linux"
-        popd
-        local aufs_patch_fname
-        for aufs_patch_fname in "${_aufs_patches[@]}"; do
-          echo "Applying AUFS patch $aufs_patch_fname..."
-          patch -Np1 < "${aufs_srcdir}/${aufs_patch_fname}"
-        done
+	### Setting version
+		msg2 "Setting version..."
+		sed -e "/^EXTRAVERSION =/s/=.*/=/" -i Makefile
+		scripts/setlocalversion --save-scmversion
+		echo "-$pkgrel" > localversion.10-pkgrel
+		echo "${pkgbase#linux}" > localversion.20-pkgname
 
-    ### Patching sources
-        local src
-        for src in "${source[@]}"; do
-            src="${src%%::*}"
-            src="${src##*/}"
-            [[ $src = *.patch ]] || continue
-        echo "Applying patch $src..."
-        patch -Np1 < "../$src"
-        done
+	### AUFS
+		msg2 "Copying AUFS build files and applying AUFS patches..."
+		local aufs_srcdir="${srcdir}/${_aufs_repo_name}"
+		local kern_srcdir="${srcdir}/${_srcname}"
+		pushd "${aufs_srcdir}" > /dev/null
+		cp -r {Documentation,fs} "${kern_srcdir}"
+		cp include/uapi/linux/aufs_type.h "${kern_srcdir}/include/uapi/linux"
+		popd > /dev/null
+		local aufs_patch_fname
+		for aufs_patch_fname in "${_aufs_patches[@]}"; do
+			_msg3 "Applying AUFS patch $aufs_patch_fname..."
+			patch -Np1 < "${aufs_srcdir}/${aufs_patch_fname}"
+		done
 
-    ### Setting config
-        echo "Setting config..."
-        cp ../config .config
-        scripts/config --module CONFIG_SND_VIRTIO
+	### Patching sources
+		local src
+		for src in "${source[@]}"; do
+			src="${src%%::*}"
+			src="${src##*/}"
+			[[ $src = *.patch ]] || continue
+		msg2 "Applying patch $src..."
+		patch -Np1 < "../$src"
+		done
 
-    ### AUFS
-        scripts/config --module CONFIG_AUFS_FS
-        scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_127
-        scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_511
-        scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_1023
-        scripts/config --enable CONFIG_AUFS_BRANCH_MAX_32767
-        scripts/config --enable CONFIG_AUFS_HNOTIFY
-        scripts/config --enable CONFIG_AUFS_EXPORT
-        scripts/config --enable CONFIG_AUFS_XATTR
-        scripts/config --undefine CONFIG_AUFS_FHSM
-        scripts/config --enable CONFIG_AUFS_RDU
-        scripts/config --enable CONFIG_AUFS_DIRREN
-        scripts/config --enable CONFIG_AUFS_SHWH
-        scripts/config --enable CONFIG_AUFS_BR_RAMFS
-        scripts/config --enable CONFIG_AUFS_BR_FUSE
-        scripts/config --enable CONFIG_AUFS_BR_HFSPLUS
-        scripts/config --undefine CONFIG_AUFS_DEBUG
+	### Setting config
+		msg2 "Setting config..."
+		cp ../config .config
 
-    ### CPU optimization
-        # I want to be able to slap an HDD with this kernel on it in just about any machine
-        # I'm very, very unlikely to encounter any CPUs older than AMD K8
-        scripts/config --enable CONFIG_MK8SSE3
-        scripts/config --undefine CONFIG_GENERIC_CPU
-        # I'd add an -mtune=znver1 if I could
+	### some initial configuration
+		# (we start with the arch config as a base so I can keep track of stuff easier)
+		scripts/config --undefine CONFIG_LOCALVERSION_AUTO
+		scripts/config --enable CONFIG_LZ4HC_COMPRESS
+		# from patches
+		scripts/config --enable CONFIG_FUTEX2
+		scripts/config --enable CONFIG_VHBA
+		scripts/config --module CONFIG_SND_VIRTIO
+		# kdump
+		scripts/config --enable CONFIG_DEBUG_INFO
+		scripts/config --enable CONFIG_CRASH_DUMP
+		scripts/config --enable CONFIG_PROC_VMCORE
 
-    ### NTFS3
-        scripts/config --module CONFIG_NTFS3_FS
-        scripts/config --disable NTFS3_64BIT_CLUSTER
-        scripts/config --enable NTFS3_LZX_XPRESS
-        scripts/config --disable NTFS3_FS_POSIX_ACL
+	### AUFS
+		scripts/config --module CONFIG_AUFS_FS
+		scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_127
+		scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_511
+		scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_1023
+		scripts/config --enable CONFIG_AUFS_BRANCH_MAX_32767
+		scripts/config --enable CONFIG_AUFS_HNOTIFY
+		scripts/config --enable CONFIG_AUFS_EXPORT
+		scripts/config --enable CONFIG_AUFS_XATTR
+		scripts/config --undefine CONFIG_AUFS_FHSM
+		scripts/config --enable CONFIG_AUFS_RDU
+		scripts/config --enable CONFIG_AUFS_DIRREN
+		scripts/config --enable CONFIG_AUFS_SHWH
+		scripts/config --enable CONFIG_AUFS_BR_RAMFS
+		scripts/config --enable CONFIG_AUFS_BR_FUSE
+		scripts/config --enable CONFIG_AUFS_BR_HFSPLUS
+		scripts/config --undefine CONFIG_AUFS_DEBUG
 
-    ### le9-patch values
-        scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 131072
-        scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 262144
+	### CPU optimization
+		# I want to be able to slap an HDD with this kernel on it in just about any machine
+		# I'm very, very unlikely to encounter any CPUs older than AMD K8
+		scripts/config --enable CONFIG_MK8SSE3
+		scripts/config --undefine CONFIG_GENERIC_CPU
+		# I'd add an -mtune=znver1 if I could
 
-    ## Fill in remaining defaults
-        make olddefconfig
+	### NTFS3
+		scripts/config --module CONFIG_NTFS3_FS
+		scripts/config --disable NTFS3_64BIT_CLUSTER
+		scripts/config --enable NTFS3_LZX_XPRESS
+		scripts/config --disable NTFS3_FS_POSIX_ACL
 
-    ### Prepared version
-        make -s kernelrelease > version
-        echo "Prepared $pkgbase version $(<version)"
+	### Android stuff
+		scripts/config --enable CONFIG_ASHMEM
+		scripts/config --enable CONFIG_ANDROID
+		scripts/config --enable CONFIG_ANDROID_BINDER_IPC
+		scripts/config --enable CONFIG_ANDROID_BINDERFS
+		scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
 
-    ### Optionally use running kernel's config
+	### le9-patch values
+		scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 131072
+		scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 262144
+
+	## Fill in remaining defaults
+		make olddefconfig
+
+	### Prepared version
+		make -s kernelrelease > version
+		echo "Prepared $pkgbase version $(<version)"
+
+	### Optionally use running kernel's config
 	# code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
 	if [ -n "$_use_current" ]; then
 		if [[ -s /proc/config.gz ]]; then
-			echo "Extracting config from /proc/config.gz..."
+			_msg3 "Extracting config from /proc/config.gz..."
 			# modprobe configs
 			zcat /proc/config.gz > ./.config
 		else
@@ -436,192 +486,200 @@ prepare() {
 		fi
 	fi
 
-    ### Optionally set tickrate to 1000
+	### Optionally set tickrate to 1000
 	if [ -n "$_1k_HZ_ticks" ]; then
-		echo "Setting tick rate to 1k..."
-                scripts/config --disable CONFIG_HZ_300
-                scripts/config --enable CONFIG_HZ_1000
-                scripts/config --set-val CONFIG_HZ 1000
+		_msg3 "Setting tick rate to 1k..."
+			scripts/config --disable CONFIG_HZ_300
+			scripts/config --enable CONFIG_HZ_1000
+			scripts/config --set-val CONFIG_HZ 1000
 	fi
 
-    ### Optionally disable NUMA for 64-bit kernels only
-        # (x86 kernels do not support NUMA)
-        if [ -n "$_NUMAdisable" ]; then
-            echo "Disabling NUMA from kernel config..."
-            scripts/config --disable CONFIG_NUMA
-        fi
+	### Optionally disable NUMA for 64-bit kernels only
+		# (x86 kernels do not support NUMA)
+		if [ -n "$_NUMAdisable" ]; then
+			_msg3 "Disabling NUMA from kernel config..."
+			scripts/config --disable CONFIG_NUMA
+		fi
 
-    ### Optionally load needed modules for the make localmodconfig
-        # See https://aur.archlinux.org/packages/modprobed-db
-        if [ -n "$_localmodcfg" ]; then
-            if [ -f $HOME/.config/modprobed.db ]; then
-            echo "Running Steven Rostedt's make localmodconfig now"
-            make LSMOD=$HOME/.config/modprobed.db localmodconfig
-        else
-            echo "No modprobed.db data found"
-            exit
-            fi
-        fi
+	### Optionally load needed modules for the make localmodconfig
+		# See https://aur.archlinux.org/packages/modprobed-db
+		if [ -n "$_localmodcfg" ]; then
+			if [ -f $HOME/.config/modprobed.db ]; then
+			_msg3 "Running Steven Rostedt's make localmodconfig now"
+			make LSMOD=$HOME/.config/modprobed.db localmodconfig
+		else
+			error "No modprobed.db data found"
+			exit
+			fi
+		fi
 
 
-    ### Running make nconfig
-	[[ -z "$_makenconfig" ]] ||  make nconfig
 
-    ### Running make menuconfig
+	### Running make nconfig
+	[[ -z "$_makenconfig" ]] || make nconfig
+
+	### Running make menuconfig
 	[[ -z "$_makemenuconfig" ]] || make menuconfig
 
-    ### Running make xconfig
+	### Running make xconfig
 	[[ -z "$_makexconfig" ]] || make xconfig
 
-    ### Running make gconfig
+	### Running make gconfig
 	[[ -z "$_makegconfig" ]] || make gconfig
 
-    ### Save configuration for later reuse
+	### Save configuration for later reuse
 	cat .config > "${startdir}/config.last"
 }
 
 build() {
-  cd $_srcname
+	cd $_srcname
 
-  make all
-  make htmldocs
+	make all
+	make htmldocs
 }
 
 _package() {
-    pkgdesc="The $pkgdesc kernel and modules"
-    depends=('coreutils' 'kmod' 'initramfs')
-    optdepends=('crda: to set the correct wireless channels of your country'
-                'linux-firmware: firmware images needed for some devices'
-                'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
-    provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
+	pkgdesc="The $pkgdesc kernel and modules"
+	depends=('coreutils' 'kmod' 'initramfs')
+	optdepends=('crda: to set the correct wireless channels of your country'
+	            'linux-firmware: firmware images needed for some devices'
+	            'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
+	provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
 
-  cd $_srcname
-  local kernver="$(<version)"
-  local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+	cd $_srcname
+	local kernver="$(<version)"
+	local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
-  echo "Installing boot image..."
-  # systemd expects to find the kernel here to allow hibernation
-  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-  install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+	msg2 "Installing boot image..."
+	# systemd expects to find the kernel here to allow hibernation
+	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+	install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
 
-  # Used by mkinitcpio to name the kernel
-  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+	# Used by mkinitcpio to name the kernel
+	echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
-  echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+	msg2 "Installing modules..."
+	make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
-  # remove build and source links
-  rm "$modulesdir"/{source,build}
+	# remove build and source links
+	rm "$modulesdir"/{source,build}
 }
 
 _package-headers() {
-   pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-   depends=('linux-kitsinger-512' 'pahole')
+	_aug_colorize
 
-  cd $_srcname
-  local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
+	pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+	depends=('linux-kitsinger-5.12' 'pahole')
 
-  echo "Installing build files..."
-  install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-    localversion.* version vmlinux
-  install -Dt "$builddir/kernel" -m644 kernel/Makefile
-  install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
-  cp -t "$builddir" -a scripts
+	cd $_srcname
+	local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  # add objtool for external module building and enabled VALIDATION_STACK option
-  install -Dt "$builddir/tools/objtool" tools/objtool/objtool
+	msg2 "Installing build files..."
+	install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
+		localversion.* version vmlinux
+	install -Dt "$builddir/kernel" -m644 kernel/Makefile
+	install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
+	cp -t "$builddir" -a scripts
 
-  # add xfs and shmem for aufs building
-  mkdir -p "$builddir"/{fs/xfs,mm}
+	# add objtool for external module building and enabled VALIDATION_STACK option
+	install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
-  echo "Installing headers..."
-  cp -t "$builddir" -a include
-  cp -t "$builddir/arch/x86" -a arch/x86/include
-  install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+	# add xfs and shmem for aufs building
+	mkdir -p "$builddir"/{fs/xfs,mm}
 
-  install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
-  install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
+	msg2 "Installing headers..."
+	cp -t "$builddir" -a include
+	cp -t "$builddir/arch/x86" -a arch/x86/include
+	install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
 
-  # http://bugs.archlinux.org/task/13146
-  install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
+	install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
+	install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
 
-  # http://bugs.archlinux.org/task/20402
-  install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
-  install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
-  install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
+	# https://bugs.archlinux.org/task/13146
+	install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
-  echo "Installing KConfig files..."
-  find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
+	# https://bugs.archlinux.org/task/20402
+	install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
+	install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
+	install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
 
-  echo "Removing unneeded architectures..."
-  local arch
-  for arch in "$builddir"/arch/*/; do
-    [[ $arch = */x86/ ]] && continue
-    echo "Removing $(basename "$arch")"
-    rm -r "$arch"
-  done
+	# https://bugs.archlinux.org/task/71392
+	install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
 
-  echo "Removing documentation..."
-  rm -r "$builddir/Documentation"
+	msg2 "Installing KConfig files..."
+	find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
 
-  echo "Removing broken symlinks..."
-  find -L "$builddir" -type l -printf 'Removing %P\n' -delete
+	msg2 "Removing unneeded architectures..."
+	local arch
+	for arch in "$builddir"/arch/*/; do
+		[[ $arch = */x86/ ]] && continue
+		_msg3 "Removing $(basename "$arch")"
+		rm -r "$arch"
+	done
 
-  echo "Removing loose objects..."
-  find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
+	msg2 "Removing documentation..."
+	rm -r "$builddir/Documentation"
 
-  echo "Stripping build tools..."
-  local file
-  while read -rd '' file; do
-    case "$(file -bi "$file")" in
-      application/x-sharedlib\;*)      # Libraries (.so)
-        strip -v $STRIP_SHARED "$file" ;;
-      application/x-archive\;*)        # Libraries (.a)
-        strip -v $STRIP_STATIC "$file" ;;
-      application/x-executable\;*)     # Binaries
-        strip -v $STRIP_BINARIES "$file" ;;
-      application/x-pie-executable\;*) # Relocatable binaries
-        strip -v $STRIP_SHARED "$file" ;;
-    esac
-  done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
+	msg2 "Removing broken symlinks..."
+	find -L "$builddir" -type l -printf 'Removing %P\n' -delete
 
-  echo "Stripping vmlinux..."
-  strip -v $STRIP_STATIC "$builddir/vmlinux"
+	msg2 "Removing loose objects..."
+	find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
 
-  echo "Adding symlink..."
-  mkdir -p "$pkgdir/usr/src"
-  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+	msg2 "Stripping build tools..."
+	local file
+	while read -rd '' file; do
+		case "$(file -bi "$file")" in
+			application/x-sharedlib\;*)      # Libraries (.so)
+				strip -v $STRIP_SHARED "$file" ;;
+			application/x-archive\;*)        # Libraries (.a)
+				strip -v $STRIP_STATIC "$file" ;;
+			application/x-executable\;*)     # Binaries
+				strip -v $STRIP_BINARIES "$file" ;;
+			application/x-pie-executable\;*) # Relocatable binaries
+				strip -v $STRIP_SHARED "$file" ;;
+		esac
+	done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
+
+	msg2 "Stripping vmlinux..."
+	strip -v $STRIP_STATIC "$builddir/vmlinux"
+
+	msg2 "Adding symlink..."
+	mkdir -p "$pkgdir/usr/src"
+	ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
 _package-docs() {
-    pkgdesc="Documentation for the $pkgdesc kernel"
-    depends=('linux-kitsinger-512')
+	pkgdesc="Documentation for the $pkgdesc kernel"
+	depends=('linux-kitsinger-5.13')
 
-  cd $_srcname
-  local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
+	cd $_srcname
+	local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  echo "Installing documentation..."
-  local src dst
-  while read -rd '' src; do
-    dst="${src#Documentation/}"
-    dst="$builddir/Documentation/${dst#output/}"
-    install -Dm644 "$src" "$dst"
-  done < <(find Documentation -name '.*' -prune -o ! -type d -print0)
+	msg2 "Installing documentation..."
+	local src dst
+	while read -rd '' src; do
+		dst="${src#Documentation/}"
+		dst="$builddir/Documentation/${dst#output/}"
+		install -Dm644 "$src" "$dst"
+	done < <(find Documentation -name '.*' -prune -o ! -type d -print0)
 
-  echo "Adding symlink..."
-  mkdir -p "$pkgdir/usr/share/doc"
-  ln -sr "$builddir/Documentation" "$pkgdir/usr/share/doc/$pkgbase"
+	msg2 "Adding symlink..."
+	mkdir -p "$pkgdir/usr/share/doc"
+	ln -sr "$builddir/Documentation" "$pkgdir/usr/share/doc/$pkgbase"
 }
 
 pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-docs")
 for _p in "${pkgname[@]}"; do
-  eval "package_$_p() {
-    $(declare -f "_package${_p#$pkgbase}")
-    _package${_p#$pkgbase}
-  }"
+	eval "package_$_p() {
+		$(declare -f "_package${_p#$pkgbase}")
+		_package${_p#$pkgbase}
+	}"
 done
 
 validpgpkeys=(
-              'ABAF11C65A2970B130ABE3C479BE3E4300411886' # Linus Torvalds
-              '647F28654894E3BD457199BE38DBBDC86092693E' # Greg Kroah-Hartman
-             )
+	'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
+	'647F28654894E3BD457199BE38DBBDC86092693E'  # Greg Kroah-Hartman
+	'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
+	'C7E7849466FE2358343588377258734B41C31549'  # David Runge <dvzrv@archlinux.org>
+)

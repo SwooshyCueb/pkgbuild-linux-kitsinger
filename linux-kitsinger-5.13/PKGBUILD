@@ -49,7 +49,7 @@ _1k_HZ_ticks=y
 pkgbase=linux-kitsinger-5.13
 # pkgname=('linux-kitsinger-5.13' 'linux-kitsinger-5.13-headers' 'linux-kitsinger-5.13-docs')
 _major=5.13
-_minor=13
+_minor=19
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -66,10 +66,11 @@ _lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
 
 _aufs_repo_name="aufs5-standalone"
 _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
-_aufs_fragment="#commit=6944bcbb5361558f4ec97194c6f9a1686f93a16d"
+_aufs_fragment="#commit=3056a3932db782c00ceb7f03f0adfd58cda1e222"
+
 _gcc_path="cpu-patches-v2-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
-_arch_path="arch-patches-v5-sep"
+_arch_path="arch-patches-v6"
 _swap_path="swap-patches-sep"
 _futex_path="futex-patches"
 _futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
@@ -92,12 +93,13 @@ _blockseq_s="mcroce@linux.microsoft.com"
 _amd_psf_t="${_lkml_path}/20210723093209.714328"
 _amd_psf_s="namit@vmware.com"
 
+_hakavlad_gh="https://raw.githubusercontent.com/hakavlad"
+
 source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.sign"
         "${_aufs_repo_name}::git+${_aufs_repo}${_aufs_fragment}"
         "${_lucjanpath}/${_gcc_path}/${_gcc_patch}"
         "${_lucjanpath}/${_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-        "${_lucjanpath}/${_arch_path}/0002-Bluetooth-btusb-check-conditions-before-enabling-USB.patch"
         "${_lucjanpath}/${_swap_path}/0001-mm-swapfile-use-percpu_ref-to-serialize-against-conc.patch"
         "${_lucjanpath}/${_swap_path}/0002-mm-swap-remove-confusing-checking-for-non_swap_entry.patch"
         "${_lucjanpath}/${_futex_path}/${_futex_patch}"
@@ -216,19 +218,18 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # https://www.phoronix.com/scan.php?page=news_item&px=Linux-Broke-Android-Apps-Pipe
         #"0000-pipe-make-pipe-writes-always-wake-up-readers.patch::${_torvalds_path}?id=3a34b13a88caeb2800ab44a4918f230041b37dd9"
         # https://www.phoronix.com/scan.php?page=news_item&px=Floppy-Disk-Linux-5.15-Fix
-        "0000-revert-floppy-reintroduce-O_NDELAY-fix.patch::https://github.com/evdenis/linux-floppy/commit/c7e9d0020361f4308a70cdfd6d5335e273eb8717.patch"
+        #"0000-revert-floppy-reintroduce-O_NDELAY-fix.patch::https://github.com/evdenis/linux-floppy/commit/c7e9d0020361f4308a70cdfd6d5335e273eb8717.patch"
 
+        # le9 stuff
+        # pretty confident these git repos aren't going anywhere
+        "${_hakavlad_gh}/le9-patch/9bde939dc9952f2a2b8df46e8cc19e2f6710caef/le9ec_patches/le9ec-5.10.patch"
+        "${_hakavlad_gh}/disable-i915-gem-shrinker/4e6da2a9b0602d3f80b418026d0a8bf188fc0de6/disable-drm-i915-gem-shrinker-5.10.patch"
 
+        # https://clbin.com/VCiYJ
         "0001-pcie-reset-kludge.patch"
 
         # The rest of the patches came from random git repositories. In my experience, random git repositories tend to
         # vanish, so instead of pulling the files from the repositories, they will be included in this one.
-
-        # https://github.com/hakavlad/le9-patch 9bde939dc9952f2a2b8df46e8cc19e2f6710caef
-        "le9ec-5.10.patch"
-
-        # https://github.com/hakavlad/disable-i915-gem-shrinker
-        "disable-drm-i915-gem-shrinker-5.10.patch"
 
         # https://github.com/kevall474/kernel-patches/tree/main/5.13/misc-patches
         "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
@@ -238,12 +239,11 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # the main kernel config files
         'config')
 
-sha512sums=('67c3d0ef8fc378616a318a0d6796acf839dcda4accee3dc815c0f0697694cf178474fe15d98fa9bb7871dfa353aee416212430be5af85bf74647e3968b5c1b71'
+sha512sums=('77f6279fe7de3c0dd35946b991fa190aa70f5e806fa6188a0a676dad0939e2a20136b3dfc659dcac7870b387ead328fcdc287c8a25b63120bea1ac960117990e'
             'SKIP'
             'SKIP'
             'c70ed7f971548c32080bf610f0e0d99c5489bea5262945a486df9b4f0c9bde915078a1b4acd15aed0dc6d2ecee511b5a76f5d47ea88977de17e0c6ceb3cde21c'
-            '7e224b2cc546f965625e5de38ac8158d2107e2ea78130843f3c0ef3b28e5342d57e6cd44062ce2db1c322708d847bb38ef11d19ce8f45cc3bb82d078b3a3fa19'
-            'f29f44e363f663244e3713481ec1386a12f91ffc3988d82c7f206f7782611410333a55af2d9efa9db33d5a45a0fe29a92e6310032efe90cc11d55a037a368747'
+            '00969ec0b3478544a4d013c15c719f6109bf217dafb581e56fb54772fa7f974088eba0574a98d8eec449281f01414d179642651a2ff65556f3cd65b9abd1b7a6'
             '1c9ff6cb6e10ba241d827b3e6e9d7ad73533c0eb89a2565bfea23a02326b2bed7020401241d7ae357cd44a65dc4c5a353b67fcbd39a163c9036d2b138fe34def'
             'c006be1e51973f81816a73c3e0d4505f55c2467518ce3b3ef9418a55094865e457c73484138e4b652898195328ed897b5c36b44992b79ffba456d248d3bf7b3a'
             '20869ecdc57cfb74915a1ebbb010f01c952fb1635130ef00847bc765f93b61da6364a10176327f93bb264c71ae65613aeacb44c3da505b7649a695e88ee5c69c'
@@ -331,18 +331,17 @@ sha512sums=('67c3d0ef8fc378616a318a0d6796acf839dcda4accee3dc815c0f0697694cf17847
             'ce7d93509961e3fa33aef32527e8e98cbb1362e204ea724c8d54450c614e969452dfc43320dd8d0462b647a0c1b5d7057ad7e30a05ade68bb9a82ca7bda8b2c8'
             'bcacd24c2830cbd4aaf438d747f15f041d0ce880818584b49f831eb12371fe5e2345ea3847a63023b4ab6c2be24a91039cd7e90ae33b259a397b88a3b1eee330'
             '6a53a2bb62f76fb1bb86ed21202c44d833c5565566f65993490aeb9a6e2f5afdc0839a916c61f799861556f1fd09bb801ffbac671357e9acaf8e43d51c0371d7'
-            '86c6c436f6ed9760ca136847058ee64740220642b7e739061ed2f3a420356bca766f2e03273ea847004f04df0920162999d24b7f56319adc55e25c612ee39ace'
-            '253b525391df4cc2e0b44669bf508cc0218614062dd8b7e36565180a03cb1c5a714f83762032876be58c0ce4c52a0b87a57a7bee779ca28c9ae03f0df0bf59b6'
-            '20d3688102fd5475429416ad01c5cb3ee1e738df50b9491d38333fdcaa5e9bb7f3755810da1ac2a3004a41506d2cc7153fac99f38ce11c61a075842b9b1d1050'
-            'd602a2ad4c04f7136998cc84180d9c33a21407583eacd9df44488e12a4a5594ee07833524a9266ea66ed8daccfee4864580032a6c10222a2de11740d302e19ac'
-            '681fee57ef2cf6646cf6662be68b4ab1cfbec5029c00f3c23cbd02a7a07c6f5ea58fff737f621e5d4f34dd8c38a93ac46623fce854617149e87d5c6b22057e5c'
-            '6dfcd65266f08a1e1c2b203cf91b49e16bfd52e65dd03be2d760c1e5041d3b21252145f64a6bcf8713d0eec479e38e3132322a0134fcc1cfebfae6eac2298cc3'
-            '04a50789ab224a989afeeac83558460abead6b0adb7bf90452b24e164e2a859f9875b5ea1210bec3e0b96a1e45d94a7221aaa7c98fce83cd67d7586079c099c3'
-            'f23b2f2f9bb2b6bfd49d98179117c8964a9d2a6e17e58fc54e353a707bb647093ac6663993816ffc052835c261da3366b637716a4f1951d46c3ccbcc776c8494'
-            'ceced0b0c7ffb3d4b157bc9fbd4f6d1dcba63a328f459edfd4800458b21bb07d617d87faa2e26e01330336a77a486ff1b46fdc99a4271c3792d4a56c8bcbf347'
-            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
+            'd86a50edb5f19e1a8962746c6283d7a3697329ad741b0f95cbda2e392fe449befd19e6f1287561930c1ea465bd24f87b0187ffc98f6844a0b6d18c0d7b9d6521'
+            '58053a5c887bfdc141d04c15fd2865aa9f33dd2221eb5cd13fedfd93b85596f93d8f9cd011cd89f0356541bc3e28b831f4185cd7165d6eaece793618121891f5'
+            'b90889ada1509200b6ce59d5d6498a1640a01402b4ea908540d55bcbd7d773d24949fdd6de54febc064b70f5846a103ce304bb7ff3310847c371489cb9a02544'
+            'd7a5ab241d701f61b8e9ecde1959b77cc11268b32255d0ba5aa9a5905bb9ee76d26319ddc817052db1d53b3c622a7695af06ca59697e7f516ebb9557399dc68d'
+            '081b4fb95965c298edaa5bd3b40b3d366f8a287de666910d028c2a060ea71b47b9dcc93798f48081f88c0ae02669c4ebd24df6d4eb907a2a77dc86c5601c3ee1'
+            '5aa2d959c30e16de97829a075aad75e7b100388ce67dd32cb6d8a80398f11d0b79124dd694e726d9b563a4875aabc248064d5be6971cd3788eb3cb1d2c8c396d'
+            'e636e11a6d1af5676288bbbcad3a1a100a6107f8a23127df20469ec1eab1d97c0cdf96ff3273eaa17a1dbd860fd8d24dfb819a11312b3ecbec561cfee5dde0b1'
+            'd61eb2985239e2b37a73203071a495465c12aee0a7177bba2ebc901f93758c109bbb708f7b1f20ec204dc3f198941ee9e4a7278fbf2bbf45ad6de1684643e80c'
             '9f7899d2ad0192688494da33a9ec5aa60dae6aa22ce78f47331b49fd8bb012e9e9f15d47af944ef93e91566b20c4ea788b1359effed6f8c6dfbf5a91a4fe0efb'
             '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
+            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             'f55ee2f6c4f65a90fe3f59ce3afd5f48b330a3e4b7a3f94a2f61afc39f8c979f4ab398d1fe48bb621ea0a7aaf2f23762f97ff4d424165d8e3d39f43b72a0eefc'
             '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
             'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
@@ -447,6 +446,10 @@ prepare() {
 		# from patches
 		scripts/config --enable CONFIG_FUTEX2
 		scripts/config --enable CONFIG_VHBA
+		# kdump
+		scripts/config --enable CONFIG_DEBUG_INFO
+		scripts/config --enable CONFIG_CRASH_DUMP
+		scripts/config --enable CONFIG_PROC_VMCORE
 
 	### AUFS
 		scripts/config --module CONFIG_AUFS_FS
@@ -620,13 +623,16 @@ _package-headers() {
 	install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
 	install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
 
-	# http://bugs.archlinux.org/task/13146
+	# https://bugs.archlinux.org/task/13146
 	install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
-	# http://bugs.archlinux.org/task/20402
+	# https://bugs.archlinux.org/task/20402
 	install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
 	install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
 	install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
+
+	# https://bugs.archlinux.org/task/71392
+	install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
 
 	msg2 "Installing KConfig files..."
 	find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
@@ -699,7 +705,9 @@ for _p in "${pkgname[@]}"; do
 	}"
 done
 
-validpgpkeys=(# Linus Torvalds
-              'ABAF11C65A2970B130ABE3C479BE3E4300411886'
-              # Greg Kroah-Hartman
-              '647F28654894E3BD457199BE38DBBDC86092693E')
+validpgpkeys=(
+	'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
+	'647F28654894E3BD457199BE38DBBDC86092693E'  # Greg Kroah-Hartman
+	'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
+	'C7E7849466FE2358343588377258734B41C31549'  # David Runge <dvzrv@archlinux.org>
+)

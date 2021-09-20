@@ -4,6 +4,4 @@
 !/0001-pcie-reset-kludge.patch
 !/0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch
 !/0002-mm-Support-soft-dirty-flag-read-with-reset.patch
-!/le9ce-5.10.patch
-!/disable-drm-i915-gem-shrinker-5.10.patch
 !/vm.max_map_count.patch
