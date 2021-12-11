@@ -49,7 +49,7 @@ _1k_HZ_ticks=y
 pkgbase=linux-kitsinger-5.14
 # pkgname=('linux-kitsinger-5.14' 'linux-kitsinger-5.14-headers' 'linux-kitsinger-5.14-docs')
 _major=5.14
-_minor=14
+_minor=21
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -70,27 +70,34 @@ _aufs_fragment="#commit=05607e3cb465c625e40d03871dac369ecd5a8b0e"
 
 _gcc_path="cpu-patches-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
-_arch_path="arch-patches-v10-sep"
-_futex_path="futex-zen-patches"
+_arch_path="arch-patches-v11-sep"
+_futex_path="futex-zen-patches-v2"
 _futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
 _futex2_path="futex2-zen-patches"
 _futex2_patch="0001-futex2-resync-from-gitlab.collabora.com.patch"
 _fixes_path="fixes-miscellaneous-v8-sep"
 _ntfs_path="ntfs3-patches-v14-sep"
 _writeback_path="writeback-patches-sep"
-_zen_path="zen-patches-v3-sep"
+_zen_path="zen-patches-v4-sep"
 
 _kernel_git_path="https://git.kernel.org/pub/scm/linux/kernel/git"
 _dtor_input_path="${_kernel_git_path}/dtor/input.git/patch/"
 _hid_path="${_kernel_git_path}/hid/hid.git/patch/"
 _pci_reset_path="${_kernel_git_path}/helgaas/pci.git/patch/"
 _torvalds_path="${_kernel_git_path}/torvalds/linux.git/patch/"
+_tip_path="${_kernel_git_path}/tip/tip.git/patch/"
+
+_tonyk_path="https://gitlab.collabora.com/tonyk/linux/-/commit"
 
 _lkml_path="https://lore.kernel.org/lkml"
 _blockseq_t="${_lkml_path}/20210712230530.29323"
 _blockseq_s="mcroce@linux.microsoft.com"
 _amd_psf_t="${_lkml_path}/20210723093209.714328"
 _amd_psf_s="namit@vmware.com"
+
+_amdgfx_path="https://lore.kernel.org/amd-gfx"
+_amd_dcc_t="${_amdgfx_path}/20210914235948.893422"
+_joshie_s="joshua@froggi.es"
 
 _hakavlad_gh="https://raw.githubusercontent.com/hakavlad"
 
@@ -101,11 +108,9 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/${_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
         "${_lucjanpath}/${_arch_path}/0002-Bluetooth-btusb-Add-support-for-IMC-Networks-Mediate.patch"
         "${_lucjanpath}/${_arch_path}/0003-Bluetooth-btusb-Add-support-for-Foxconn-Mediatek-Chi.patch"
-        "${_lucjanpath}/${_arch_path}/0004-ALSA-pcm-Check-mmap-capability-of-runtime-dma-buffer.patch"
-        "${_lucjanpath}/${_arch_path}/0005-ALSA-pci-rme-Set-up-buffer-type-properly.patch"
-        "${_lucjanpath}/${_arch_path}/0006-ALSA-pci-cs46xx-Fix-set-up-buffer-type-properly.patch"
-        "${_lucjanpath}/${_futex_path}/${_futex_patch}"
-        "${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
+        "${_lucjanpath}/${_arch_path}/0004-ALSA-pci-rme-Set-up-buffer-type-properly.patch"
+        #"${_lucjanpath}/${_futex_path}/${_futex_patch}"
+        #"${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
         "${_lucjanpath}/${_fixes_path}/0001-net-sched-allow-configuring-cake-qdisc-as-default.patch"
         "${_lucjanpath}/${_fixes_path}/0002-infiniband-Fix-__read_overflow2-error-with-O3-inlini.patch"
         "${_lucjanpath}/${_fixes_path}/0003-kbuild-add-fcf-protection-none-to-retpoline-flags.patch"
@@ -236,11 +241,49 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/${_writeback_path}/0005-writeback-Use-READ_ONCE-for-unlocked-reads-of-writeb.patch"
         "${_lucjanpath}/${_zen_path}/0001-ZEN-Add-VHBA-driver.patch"
         #"${_lucjanpath}/${_zen_path}/0002-ZEN-intel-pstate-Implement-enable-parameter.patch"
+        "${_lucjanpath}/${_zen_path}/0003-ZEN-Update-VHBA-driver.patch"
         "${_lucjanpath}/clearlinux-patches-sep/0017-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
         "${_lucjanpath}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
-        "${_lucjanpath}/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
+        "${_lucjanpath}/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
         "${_lucjanpath}/lqx-patches-sep/0001-zen-Allow-MSR-writes-by-default.patch"
         "${_lucjanpath}/lqx-patches-sep/0002-PCI-Add-Intel-remapped-NVMe-device-support.patch"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=locking/core
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=bc67f1c454fbc79b148f0b47227929da82f4b026
+        #"1001-futex-Move-to-kernel-futex.patch::${_tip_path}?id=77e52ae35463521041906c510fe580d15663bb93"
+        #"1002-futex-Split-out-syscalls.patch::${_tip_path}?id=af8cc9600bbf2251b04c56139f7c83f87c3f878a"
+        #"1003-futex-Rename-unqueue_me.patch::${_tip_path}?id=bce760d34bc2adcfd97e859a91407df51913f7b0"
+        #"1004-futex-Rename-futex_wait_queue_me.patch::${_tip_path}?id=5622eb20520d284a52668e9f911a7f37e7b3f12c"
+        #"1005-futex-Rename-queue_unlock.patch::${_tip_path}?id=e7ba9c8fed298fef5aa614685df61db6e6551fa0"
+        #"1006-futex-Rename-unqueue_futex.patch::${_tip_path}?id=af92dcea186ed7bcd5cc013163ec47a8a135ee97"
+        #"1007-futex-Rename-hash_futex.patch::${_tip_path}?id=eee5a7bc96becd7cdb8e4fabd327ca5e49136704"
+        #"1008-futex-Rename-futex_value_locked.patch::${_tip_path}?id=966cb75f86fb15e2659c8105d20d4889e18dda24"
+        #"1009-futex-Split-out-PI-futex.patch::${_tip_path}?id=85dc28fa4ec058645c29bda952d901b29dfaa0b0"
+        #"1010-futex-Rename-hb_waiter.patch::${_tip_path}?id=832c0542c0f71f7d2ba10e987a1ab520813e6bd7"
+        #"1011-futex-Rename-match_futex.patch::${_tip_path}?id=f56a76fde353dd274eef0ea9d371379950079951"
+        #"1012-futex-Rename-mark_wake_futex.patch::${_tip_path}?id=95c336a7d8f0c1c34ee99e0162dc64d283da7618"
+        #"1013-futex-Split-out-requeue.patch::${_tip_path}?id=e5c6828493b5fa6a3c4606b43e80ab6c5ec1111f"
+        #"1014-futex-Split-out-waitwake.patch::${_tip_path}?id=a046f1a0d3e320cfee6bdac336416a537f49e7c6"
+        #"1015-futex-Simplify-double_lock_hb.patch::${_tip_path}?id=bff7c57c2f50dca7b5e320f499e0898c3fb8a9ff"
+        #"1016-futex-Implement-sys_futex_waitv.patch::${_tip_path}?id=bf69bad38cf63d980e8a603f8d1bd1f85b5ed3d9"
+        #"1017-futex-x86-Wire-up-sys_futex_waitv.patch::${_tip_path}?id=039c0ec9bb77446d7ada7f55f90af9299b28ca49"
+        #"1018-futex-arm-Wire-up-sys_futex_waitv.patch::${_tip_path}?id=ea7c45fde5aa3e761aaddb7902a31a95cb120e7b"
+        #"1019-selftests-futex-add-sys_futex_waitv-test.patch::${_tip_path}?id=5e59c1d1c78c9cdd8834f3242db4a76f617fa4ad"
+        #"1020-selftests-futex-test-sys_futex_waitv-timeout.patch::${_tip_path}?id=02e56ccbaefcb1a78bd089a7b5beca754aca4db9"
+        #"1021-selftests-futex-test-sys_futex_waitv-wouldblock.patch::${_tip_path}?id=9d57f7c79748920636f8293d2f01192d702fe390"
+        #"1022-futex2-Documentat-sys_futex_waitv-uAPI.patch::${_tip_path}?id=dd0aa2cd2e9e3e49b8c3b43924dc1a1d4e22b4d1"
+        #"1023-futex-Fix-PREEMPT_RT-build.patch::${_tip_path}?id=4d38167330910ddb15b1add5b5cef835677a29fd"
+        #"1024-docs-futex-Fix-kernel-doc-references.patch::${_tip_path}?id=bc67f1c454fbc79b148f0b47227929da82f4b026"
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=9d417cbe36eee7afdd85c2e871685f8dab7c2dba
+        #"1025-ARM-9122-1-select-HAVE_FUTEX_CMPXCHG.patch::${_tip_path}?id=9d417cbe36eee7afdd85c2e871685f8dab7c2dba"
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=4e0d84634445ed550498d613a49ea8f6cfa5e66c
+        #"1026-futex-ensure-futex_atomic_cmpxchg_inatomic-is-presen.patch::${_tip_path}?id=3f2bedabb62c6210df63b604dc988d2f7f56f947"
+        #"1027-futex-remove-futex_cmpxchg-detection.patch::${_tip_path}?id=3297481d688a5cc2973ea58bd78e66b8639748b1"
+        #"1028-futex-fix-sparc32-m68k-nds32-build-regression.patch::${_tip_path}?id=4e0d84634445ed550498d613a49ea8f6cfa5e66c"
+        # https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev/
+        #"1029-futex2-Add-sysfs-entry-for-syscall-numbers.patch::${_tonyk_path}/d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b"
+        # https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv/
+        #"1030-futex-Add-entry-point-for-FUTEX_WAIT_MULTIPLE.patch::${_tonyk_path}/b70e738f08403950aa3053c36b98c6b0eeb0eb90"
 
         # https://lore.kernel.org/linux-pci/20210818224603.GA3142002@bjorn-Precision-5520/
         # https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/refs/?h=pci/reset
@@ -273,7 +316,15 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "4076-iommu-amd-Use-only-natural-aligned-flushes-in-a-VM.patch::${_amd_psf_t}-8-${_amd_psf_s}/raw"
 
         # https://lore.kernel.org/lkml/20210924061205.5523-1-deepak.sharma@amd.com/
-        "0000-x86-ACPI-cstate-Optimize-C3-entry-on-AMD-CPUs.patch::https://lore.kernel.org/lkml/20210924061205.5523-1-deepak.sharma@amd.com/raw"
+        "0000-x86-ACPI-cstate-Optimize-C3-entry-on-AMD-CPUs.patch::${_lkml_path}/20210924061205.5523-1-deepak.sharma@amd.com/raw"
+
+        # https://lore.kernel.org/amd-gfx/20210105220359.1392555-1-joshua@froggi.es/
+        "0000-drm-amdgpu-dont-limit-gtt-size-on-apus.patch::${_amdgfx_path}/20210105220359.1392555-1-${_joshie_s}/raw"
+
+        # https://lore.kernel.org/amd-gfx/20210914235948.893422-1-joshua@froggi.es/T/
+        "5001-drm-amd-display-Use-dcc_ind_blk-value-to-set-registe.patch::${_amd_dcc_t}-1-${_joshie_s}/raw"
+        "5002-drm-amd-display-Handle-GFX10_RBPLUS-modifiers-for-dc.patch::${_amd_dcc_t}-2-${_joshie_s}/raw"
+        "5003-drm-amd-display-Add-modifiers-capable-of-DCC-image-s.patch::${_amd_dcc_t}-3-${_joshie_s}/raw"
 
         # le9 stuff
         # pretty confident these git repos aren't going anywhere
@@ -296,18 +347,15 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # the main kernel config files
         'config')
 
-sha512sums=('bd21aee0d84e213c4ed387a9da825594d2d576690d0b82ad6aaf123a1d8340b9804d4e99f909ba39f927c524409e35d26ed175c50d5236a8f3f66c7f5837e4a1'
+==> Generating checksums for source files...
+sha512sums=('0f428cb7273de5b440b610b1a3709563e4ed955afb4df084750a8b43c45e5b000a5906780ff7079a8324fac0a8b7ecace778ab8bbf0511fba92d4dad160d7f87'
             'SKIP'
             'SKIP'
             'b1aef4f4e7350ce8132e019f76a2ac68bee8a46eb981598fbda11402e62a8bcdfd2f49e5b2cc5dcf2e96c88ad047af12d53abb9fda05c9f7acec37879e5240db'
-            '2687c4b94c7756470c3fa9c4a8b0ec7214357a8f5915d2c322334193ac587a716602956c72c53732ee1276b20800906bff5dfbcc4e0efe8d621db402bfe2cc7b'
-            'dae6502ae31ece3976f70fee93b734236d545fb0fe004870c7a98f9d6245004c762185af6a50bbb3bf445562e2decab868137742e7800e460c5443ff26b05d26'
-            '6ea54d7010b110e1a95baac262e9487783f7f35a2109a56e846ec7bebcb204616fc7437d4a871e974f73329b1107d710c88f85c1c53ef00f0343f8e65b7a2aa5'
-            '5621749441cc38040fe103c02459193118822deb550b82a8ae8ab1a22a7cec9d238eb530d0a56f1a11110ff475f3f5ea7f30d567d12728f4c2a2ffff1d73d5ea'
-            '954e2144ac5883024eb096e3e64f1517cd6e8ba846ea43719f2fcca583d2e56263dc4c6ac68fcebceb914e30b16ef71bf056d31d0201c4db74ff477d2e86bbf2'
-            '97097ce096483ea9f04e3013317e7d63d6d0a013239e667b0d30b8657db12bab3b2f68beb18134b169807507fba27d2bf5ee22258a90d26bb96d48b3184053aa'
-            'd1bc35682cf99fed522471c65626902b30a14cec6ef38addeb1d9c0ded9adde29aec2c3226f753a2c7f5e4a9e69d7382811c59547147d27da2a7385a830b2fe2'
-            'fac5456474702a2fb73695afd2101af27111702d573b2476efb6e14f6d4f2e6d0920e360dc8269ea337d6b9cd3ee105ad3e540bd55a44c925eeba52ddc3cc098'
+            'ba40d02c5ed6e1b6509aa9607dd4594dc168ee2aaf92647cbd2efa4e5921b9165633c7013467b14e5934080b7c656dcaeda225fce6089bcf8fe8a336404038e1'
+            'd566e5660ec5b2fabb10baacafb84ae925ddf2ba05db29f5f4225f68b49bf2ba8ccf10dfdc820b88e196265bf5aa70d8d8319acfbe813914916479b1097df7a9'
+            '322106526f6a8110af558b363ec9377427f1b548ab62a0ab07f5557728aeff0ec7adb8d6f5d30585290cdb460427bbd91e7a5674b60c6049a65f469da18830d2'
+            '787ea00ae9d98cac1d2bbc6d4ee17c2419cd708aef902875bc803f4be5fec8392c6c743bd80e0c9a99624b5b074ed899f7412d2ad9f41add6ee038dda2a6d0f4'
             '20f597c9c15dce539b2c207568e272ae6ccd0aa226f16a527534196d1e84db14980cd53d6dcc7bb35726a39ca5a5ff0dcd9fe9f2d0cc65825654892826ec7fc7'
             'e03b4ea903c164b8f306e13bbf02088f1178798724ab8478d253759ade9ad2d43172a1b0959038e01724e23eba2557151a7ea7b19cbd6ff2d5e4f7c213a46bb1'
             'dea7c15ea838fc21b2da6aad002631005e983874427b1e70629f6764c20c25a47385de4c379c187d67c48e1dd78f2c5a8ff99f1aea99fb8fb66db190ceff3626'
@@ -436,10 +484,11 @@ sha512sums=('bd21aee0d84e213c4ed387a9da825594d2d576690d0b82ad6aaf123a1d8340b9804
             '536fe4ae4e79854b87697700e3c410b536922d662676343741ed907497edcf6382ad4032be367428743d92246a94b72f7418ec1f01a903c1be406fa14b03948f'
             '01acecd4b29659ef386f1fdac18a777106b467ee36adae675d940ad23e7f7c80cf2c2fec4dcc390d0299171393930527fe7fb8ed9a97e30716f2cbd002c32322'
             'a5c0a22763bc47493bea9f1a0309358c7b41b80fda8981bf35be493a04d697d497453ddea96285e44d36df7ac9200ed622752540dfa468f88c502f186781bf50'
-            '44d1de08c01ae0c4cccbcedadddd5b8568ba8579230ed9a3b76fbd8843afaf19290c6dac6d85f8d64a8c8d3202a35a40e622a0d3b14f9ff9bf445c551d4d1c92'
+            '88cdbc58830f6ffa5530f647401acf890b123fb7ee808e591116d93cbf9ac2027373decf05b46e18101892af91285de5eb09152c213210c540276887d2e316f1'
+            '7ac460268ca8cad75f810249ae792da1e06266dc54cbfd6ef7ac396ab5a23bbdde91bd6d89c80bb5a4a3eb6b5a58bd2314ec28478d86115f4124e92363ccc3f7'
             '6aacddeed79c8dc74bb6447e3f7c378bfbf897b83b06e5acc6262a98f83036d982d337fb54339fb86e3decc6ea7b1f562a054a816d24d94c33821f8f86818c51'
             '15ef23a6c39d6397018d554a83b5fbc0e741caad5cccda0f9ee975d76be3511ca2c17db1cd812f8f5dcd501d6bb9a0d79e3305063ae059e35031dc92e1443356'
-            '96d6cd8a96e11b0dd3385b6f8bff3c030e5cdc7e657b573dd899d1623eb9d7e9ad376ee0c98e9f503f1ed2a4b31281c9e79a529168cf2d87c043143b2ae010cf'
+            '49f5bcb3acb3debb1680862ea14e90144a4bc09551e6bfe8c6137fcb5ae48c02bd43f79898efa4e59907d483c87e678ebf2b23baa8f045cd560a1d6366aee361'
             '7b03b892f4368450861f2850f441d478488a3c2e68cf4cff778a730a2a5ba9751739e08a800e9d3724b12d29dfa41e6d1c7e2094972dd213fbac94e6f98a6c7b'
             '28c5b74878e7831a81a0bbcd86d607f34fd68561037d4a05e28d2ede1a13a1099d14af1c3950914e843b0c42ba1832fdcce67665d8e7967135fa8c1fa711f9ab'
             '16ee0313b66146e6cb4eb6d5fd5e214b6f37ec0efdaec9646aee23899895ff669a4615c23343c209cdc14e029fe69df543e6502ea3e3547a2d2123b0ec201d75'
@@ -466,6 +515,10 @@ sha512sums=('bd21aee0d84e213c4ed387a9da825594d2d576690d0b82ad6aaf123a1d8340b9804
             '5aa2d959c30e16de97829a075aad75e7b100388ce67dd32cb6d8a80398f11d0b79124dd694e726d9b563a4875aabc248064d5be6971cd3788eb3cb1d2c8c396d'
             'e636e11a6d1af5676288bbbcad3a1a100a6107f8a23127df20469ec1eab1d97c0cdf96ff3273eaa17a1dbd860fd8d24dfb819a11312b3ecbec561cfee5dde0b1'
             'ba7b7a053c78bf1e403c2fae293a128cd2b5dd24142fd362c40296c8c8fbdee28a5100498226f27f713457c1953ee846b3a02ad2738f1d697977f443e780fc2a'
+            'c99b280a2546b95f254850cbc306e0f0345068fc03df19dbc23258dacd91b7b01fc84167b0030e52ea9dc650ff541dc27591514f0828bb923e92b0c7c5f40674'
+            '14dbf64d40a20057ad59bf5084d6849bd5a7bf38c9e9b5bb7ad8d49863b9afca555255a56218c0ed001f62b453ef331fee5273c6982f3af6baeb960f52ffd70b'
+            'c08e64fe610983a5b9b3be561b257897e0bbf41d2b58e7da0590a232805156af59ee989b87e56ddb6a71081e06d86d5a144e5b42e1ad34d19bfbe49fd6fa3a43'
+            '72aca34f9bd57e853329d2a085f930db24f26e2f6fe98256d7f9d0f083dbb90623174311aeda965d75a3d1bed00c5bfbb057882bcfa2796c6e1acd868d8338f5'
             '56112d4cfafcbc62604fd9ca02f89f68d88f0fe8abc1cb951d82295138dc6eee26f9251c82c01ed58a54a3e80ccf69e7408aae63f63f21e05c0c6381f9cc2790'
             '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
