@@ -1,0 +1,707 @@
+# Maintainer: Markus Kitsinger (SwooshyCueb) <root@swooshalicio.us>
+# Contributor: Piotr Gorski <lucjan.lucjanov@gmail.com>
+# Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
+# Contributor: Tobias Powalowski <tpowa@archlinux.org>
+# Contributor: Thomas Baechler <thomas@archlinux.org>
+
+### BUILD OPTIONS
+# Set these variables to ANYTHING that is not null to enable them
+
+### Tweak kernel options prior to a build via nconfig
+_makenconfig=
+
+### Tweak kernel options prior to a build via menuconfig
+_makemenuconfig=
+
+### Tweak kernel options prior to a build via xconfig
+_makexconfig=
+
+### Tweak kernel options prior to a build via gconfig
+_makegconfig=
+
+# NUMA is optimized for multi-socket motherboards.
+# A single multi-core CPU actually runs slower with NUMA enabled.
+# See, https://bugs.archlinux.org/task/31187
+_NUMAdisable=
+
+# Compile ONLY used modules to VASTLYreduce the number of modules built
+# and the build time.
+#
+# To keep track of which modules are needed for your specific system/hardware,
+# give module_db script a try: https://aur.archlinux.org/packages/modprobed-db
+# This PKGBUILD read the database kept if it exists
+#
+# More at this wiki page ---> https://wiki.archlinux.org/index.php/Modprobed-db
+_localmodcfg=
+
+# Use the current kernel's .config file
+# Enabling this option will use the .config of the RUNNING kernel rather than
+# the ARCH defaults. Useful when the package gets updated and you already went
+# through the trouble of customizing your config options.  NOT recommended when
+# a new kernel is released, but again, convenient for package bumps.
+_use_current=
+
+### Running with a 1000 HZ tick rate
+_1k_HZ_ticks=y
+
+### Do not edit below this line unless you know what you're doing
+
+pkgbase=linux-kitsinger-5.15
+# pkgname=('linux-kitsinger-5.15' 'linux-kitsinger-5.15-headers' 'linux-kitsinger-5.15-docs')
+_major=5.15
+_minor=11
+pkgver=${_major}.${_minor}
+_srcname=linux-${pkgver}
+#_srcname=linux-${_major}
+pkgrel=1
+pkgdesc='Linux with AUFS, pcie-reset, futex2, etc'
+arch=('x86_64')
+url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
+license=('GPL2')
+options=('!strip' '!debug')
+makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
+             'graphviz' 'imagemagick' 'pahole' 'cpio' 'perl' 'tar' 'xz')
+#_lucjanpath="https://raw.githubusercontent.com/sirlucjan/kernel-patches/master/${_major}"
+_lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
+
+_aufs_repo_name="aufs5-standalone"
+_aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
+_aufs_fragment="#commit=fcc56866b84d43fd03d9e1d91d52f40e8a9d5335"
+
+_gcc_path="cpu-patches-v2-sep"
+_gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
+_arch_path="arch-patches-v10-sep"
+_futex_path="futex-zen-patches-v2"
+_futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
+_futex2_path="futex2-zen-patches"
+_futex2_patch="0001-futex2-resync-from-gitlab.collabora.com.patch"
+_fixes_path="fixes-miscellaneous-v9-sep"
+_v4l2loop_path="v4l2loopback-patches-v2-sep"
+_ntfs_path="ntfs3-patches-v2-sep"
+_zen_path="zen-patches-sep"
+_lru_le9_path="lru-patches-le9-v4-sep"
+
+_kernel_git_path="https://git.kernel.org/pub/scm/linux/kernel/git"
+_dtor_input_path="${_kernel_git_path}/dtor/input.git/patch/"
+_hid_path="${_kernel_git_path}/hid/hid.git/patch/"
+_pci_reset_path="${_kernel_git_path}/helgaas/pci.git/patch/"
+_torvalds_path="${_kernel_git_path}/torvalds/linux.git/patch/"
+_tip_path="${_kernel_git_path}/tip/tip.git/patch/"
+
+_tonyk_path="https://gitlab.collabora.com/tonyk/linux/-/commit"
+
+_lkml_path="https://lore.kernel.org/lkml"
+_blockseq_t="${_lkml_path}/20210712230530.29323"
+_blockseq_s="mcroce@linux.microsoft.com"
+_amd_psf_t="${_lkml_path}/20210723093209.714328"
+_amd_psf_s="namit@vmware.com"
+
+_amdgfx_path="https://lore.kernel.org/amd-gfx"
+_amd_dcc_t="${_amdgfx_path}/20210914235948.893422"
+_joshie_s="joshua@froggi.es"
+
+_hakavlad_gh="https://raw.githubusercontent.com/hakavlad"
+
+source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
+        "https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.sign"
+        "${_aufs_repo_name}::git+${_aufs_repo}${_aufs_fragment}"
+        "${_lucjanpath}/${_gcc_path}/${_gcc_patch}"
+        "${_lucjanpath}/${_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+        "${_lucjanpath}/${_arch_path}/0002-PCI-Add-more-NVIDIA-controllers-to-the-MSI-masking-q.patch"
+        "${_lucjanpath}/${_arch_path}/0003-iommu-intel-do-deep-dma-unmapping-to-avoid-kernel-fl.patch"
+        "${_lucjanpath}/${_arch_path}/0004-cpufreq-intel_pstate-ITMT-support-for-overclocked-sy.patch"
+        "${_lucjanpath}/${_arch_path}/0005-Bluetooth-btintel-Fix-bdaddress-comparison-with-garb.patch"
+        "${_lucjanpath}/${_arch_path}/0006-lg-laptop-Recognize-more-models.patch"
+        "${_lucjanpath}/${_arch_path}/0007-HID-holtek-fix-mouse-probing.patch"
+        #"${_lucjanpath}/${_futex_path}/${_futex_patch}"
+        #"${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
+        "${_lucjanpath}/${_fixes_path}/0001-net-sched-allow-configuring-cake-qdisc-as-default.patch"
+        "${_lucjanpath}/${_fixes_path}/0002-infiniband-Fix-__read_overflow2-error-with-O3-inlini.patch"
+        "${_lucjanpath}/${_fixes_path}/0003-pci-Enable-overrides-for-missing-ACS-capabilities.patch"
+        "${_lucjanpath}/${_fixes_path}/0004-scsi-sd-Optimal-I-O-size-should-be-a-multiple-of-rep.patch"
+        "${_lucjanpath}/${_fixes_path}/0005-iomap-avoid-deadlock-if-memory-reclaim-is-triggered-.patch"
+        "${_lucjanpath}/${_fixes_path}/0006-tty-Allow-setting-the-number-of-available-virtual-TT.patch"
+        "${_lucjanpath}/${_fixes_path}/0007-i2c-busses-Add-SMBus-capability-to-work-with-OpenRGB.patch"
+        "${_lucjanpath}/${_fixes_path}/0008-nvme-don-t-memset-the-normal-read-write-command.patch"
+        "${_lucjanpath}/${_fixes_path}/0009-mm-Stop-kswapd-early-when-nothing-s-waiting-for-it-t.patch"
+        "${_lucjanpath}/${_fixes_path}/0010-mm-Fully-disable-watermark-boosting-when-it-isn-t-us.patch"
+        "${_lucjanpath}/${_fixes_path}/0011-mm-Don-t-stop-kswapd-on-a-per-node-basis-when-there-.patch"
+        "${_lucjanpath}/${_fixes_path}/0012-mm-Disable-watermark-boosting-by-default.patch"
+        "${_lucjanpath}/${_fixes_path}/0013-Disable-stack-conservation-for-GCC.patch"
+        "${_lucjanpath}/${_fixes_path}/0014-vfs-keep-inodes-with-page-cache-off-the-inode-shrink.patch"
+        "${_lucjanpath}/${_fixes_path}/0015-x86-csum-rewrite-csum_partial.patch"
+        "${_lucjanpath}/${_fixes_path}/0016-x86-csum-Fix-compilation-error-for-UM.patch"
+        "${_lucjanpath}/${_fixes_path}/0017-x86-csum-Fix-initial-seed-for-odd-buffers.patch"
+        "${_lucjanpath}/${_fixes_path}/0018-xfs-check-sb_meta_uuid-for-dabuf-buffer-recovery.patch"
+        "${_lucjanpath}/${_v4l2loop_path}/0001-v4l2loopback-5.15-merge-v0.12.5.patch"
+        "${_lucjanpath}/${_v4l2loop_path}/0002-Add-module_version-macro.patch"
+        "${_lucjanpath}/${_ntfs_path}/0001-fs-ntfs3-Fix-some-memory-leaks-in-an-error-handling-.patch"
+        "${_lucjanpath}/${_ntfs_path}/0002-fs-ntfs3-Keep-preallocated-only-if-option-prealloc-e.patch"
+        "${_lucjanpath}/${_ntfs_path}/0003-fs-ntfs3-Restore-ntfs_xattr_get_acl-and-ntfs_xattr_s.patch"
+        "${_lucjanpath}/${_ntfs_path}/0004-fs-ntfs3-Update-i_ctime-when-xattr-is-added.patch"
+        "${_lucjanpath}/${_ntfs_path}/0005-fs-ntfs3-Optimize-locking-in-ntfs_save_wsl_perm.patch"
+        "${_lucjanpath}/${_ntfs_path}/0006-fs-ntfs3-In-function-ntfs_set_acl_ex-do-not-change-i.patch"
+        "${_lucjanpath}/${_ntfs_path}/0007-fs-ntfs3-Fix-fiemap-fix-shrink-file-size-to-remove-p.patch"
+        "${_lucjanpath}/${_ntfs_path}/0008-fs-ntfs3-Check-new-size-for-limits.patch"
+        "${_lucjanpath}/${_ntfs_path}/0009-fs-ntfs3-Update-valid-size-if-EIOCBQUEUED.patch"
+        "${_lucjanpath}/${_zen_path}/0001-ZEN-Add-VHBA-driver.patch"
+        "${_lucjanpath}/${_zen_path}/0002-ZEN-intel-pstate-Implement-enable-parameter.patch"
+        "${_lucjanpath}/${_zen_path}/0003-ZEN-Update-VHBA-driver.patch"
+        "${_lucjanpath}/clearlinux-patches-v2-sep/0017-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
+        "${_lucjanpath}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
+        "${_lucjanpath}/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
+        "${_lucjanpath}/lqx-patches-v4-sep/0001-zen-Allow-MSR-writes-by-default.patch"
+        "${_lucjanpath}/lqx-patches-v4-sep/0002-PCI-Add-Intel-remapped-NVMe-device-support.patch"
+        #"${_lucjanpath}/lqx-patches-v4-sep/0003-scsi-sd-Fix-sd_do_mode_sense-buffer-length-handling.patch"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=locking/core
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=bc67f1c454fbc79b148f0b47227929da82f4b026
+        "1001-futex-Move-to-kernel-futex.patch::${_tip_path}?id=77e52ae35463521041906c510fe580d15663bb93"
+        "1002-futex-Split-out-syscalls.patch::${_tip_path}?id=af8cc9600bbf2251b04c56139f7c83f87c3f878a"
+        "1003-futex-Rename-unqueue_me.patch::${_tip_path}?id=bce760d34bc2adcfd97e859a91407df51913f7b0"
+        "1004-futex-Rename-futex_wait_queue_me.patch::${_tip_path}?id=5622eb20520d284a52668e9f911a7f37e7b3f12c"
+        "1005-futex-Rename-queue_unlock.patch::${_tip_path}?id=e7ba9c8fed298fef5aa614685df61db6e6551fa0"
+        "1006-futex-Rename-unqueue_futex.patch::${_tip_path}?id=af92dcea186ed7bcd5cc013163ec47a8a135ee97"
+        "1007-futex-Rename-hash_futex.patch::${_tip_path}?id=eee5a7bc96becd7cdb8e4fabd327ca5e49136704"
+        "1008-futex-Rename-futex_value_locked.patch::${_tip_path}?id=966cb75f86fb15e2659c8105d20d4889e18dda24"
+        "1009-futex-Split-out-PI-futex.patch::${_tip_path}?id=85dc28fa4ec058645c29bda952d901b29dfaa0b0"
+        "1010-futex-Rename-hb_waiter.patch::${_tip_path}?id=832c0542c0f71f7d2ba10e987a1ab520813e6bd7"
+        "1011-futex-Rename-match_futex.patch::${_tip_path}?id=f56a76fde353dd274eef0ea9d371379950079951"
+        "1012-futex-Rename-mark_wake_futex.patch::${_tip_path}?id=95c336a7d8f0c1c34ee99e0162dc64d283da7618"
+        "1013-futex-Split-out-requeue.patch::${_tip_path}?id=e5c6828493b5fa6a3c4606b43e80ab6c5ec1111f"
+        "1014-futex-Split-out-waitwake.patch::${_tip_path}?id=a046f1a0d3e320cfee6bdac336416a537f49e7c6"
+        "1015-futex-Simplify-double_lock_hb.patch::${_tip_path}?id=bff7c57c2f50dca7b5e320f499e0898c3fb8a9ff"
+        "1016-futex-Implement-sys_futex_waitv.patch::${_tip_path}?id=bf69bad38cf63d980e8a603f8d1bd1f85b5ed3d9"
+        "1017-futex-x86-Wire-up-sys_futex_waitv.patch::${_tip_path}?id=039c0ec9bb77446d7ada7f55f90af9299b28ca49"
+        "1018-futex-arm-Wire-up-sys_futex_waitv.patch::${_tip_path}?id=ea7c45fde5aa3e761aaddb7902a31a95cb120e7b"
+        "1019-selftests-futex-add-sys_futex_waitv-test.patch::${_tip_path}?id=5e59c1d1c78c9cdd8834f3242db4a76f617fa4ad"
+        "1020-selftests-futex-test-sys_futex_waitv-timeout.patch::${_tip_path}?id=02e56ccbaefcb1a78bd089a7b5beca754aca4db9"
+        "1021-selftests-futex-test-sys_futex_waitv-wouldblock.patch::${_tip_path}?id=9d57f7c79748920636f8293d2f01192d702fe390"
+        "1022-futex2-Documentat-sys_futex_waitv-uAPI.patch::${_tip_path}?id=dd0aa2cd2e9e3e49b8c3b43924dc1a1d4e22b4d1"
+        "1023-futex-Fix-PREEMPT_RT-build.patch::${_tip_path}?id=4d38167330910ddb15b1add5b5cef835677a29fd"
+        "1024-docs-futex-Fix-kernel-doc-references.patch::${_tip_path}?id=bc67f1c454fbc79b148f0b47227929da82f4b026"
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=9d417cbe36eee7afdd85c2e871685f8dab7c2dba
+        #"1025-ARM-9122-1-select-HAVE_FUTEX_CMPXCHG.patch::${_tip_path}?id=9d417cbe36eee7afdd85c2e871685f8dab7c2dba"
+        # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=4e0d84634445ed550498d613a49ea8f6cfa5e66c
+        #"1026-futex-ensure-futex_atomic_cmpxchg_inatomic-is-presen.patch::${_tip_path}?id=3f2bedabb62c6210df63b604dc988d2f7f56f947"
+        #"1027-futex-remove-futex_cmpxchg-detection.patch::${_tip_path}?id=3297481d688a5cc2973ea58bd78e66b8639748b1"
+        #"1028-futex-fix-sparc32-m68k-nds32-build-regression.patch::${_tip_path}?id=4e0d84634445ed550498d613a49ea8f6cfa5e66c"
+        # https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev/
+        # https://gitlab.collabora.com/tonyk/linux/-/commit/d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b\
+        "1051-futex2-Add-sysfs-entry-for-syscall-numbers.patch"
+        # https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv/
+        # https://gitlab.collabora.com/tonyk/linux/-/commit/b70e738f08403950aa3053c36b98c6b0eeb0eb90
+        "1052-futex-Add-entry-point-for-FUTEX_WAIT_MULTIPLE.patch"
+
+        # https://lore.kernel.org/lkml/20210924061205.5523-1-deepak.sharma@amd.com/
+        "0000-x86-ACPI-cstate-Optimize-C3-entry-on-AMD-CPUs.patch::${_lkml_path}/20210924061205.5523-1-deepak.sharma@amd.com/raw"
+
+        # https://lore.kernel.org/amd-gfx/20210105220359.1392555-1-joshua@froggi.es/
+        "0000-drm-amdgpu-dont-limit-gtt-size-on-apus.patch::${_amdgfx_path}/20210105220359.1392555-1-${_joshie_s}/raw"
+
+        # https://lore.kernel.org/amd-gfx/20210914235948.893422-1-joshua@froggi.es/T/
+        "5001-drm-amd-display-Use-dcc_ind_blk-value-to-set-registe.patch::${_amd_dcc_t}-1-${_joshie_s}/raw"
+        "5002-drm-amd-display-Handle-GFX10_RBPLUS-modifiers-for-dc.patch::${_amd_dcc_t}-2-${_joshie_s}/raw"
+        "5003-drm-amd-display-Add-modifiers-capable-of-DCC-image-s.patch::${_amd_dcc_t}-3-${_joshie_s}/raw"
+
+        # le9 + mgLRU stuff
+        # pretty confident these git repos aren't going anywhere
+        #"${_hakavlad_gh}/le9-patch/f64c95f700c05ecbd8cde7e008ebfd404cb8832a/le9ec_patches/le9ec-5.15.patch"
+        #"${_hakavlad_gh}/le9-patch/f64c95f700c05ecbd8cde7e008ebfd404cb8832a/le9ga_patches/le9ga-5.15.patch"
+        #"${_hakavlad_gh}/le9-patch/f64c95f700c05ecbd8cde7e008ebfd404cb8832a/le9ha_patches/le9ha-5.15.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0001-mm-x86-arm64-add-arch_has_hw_pte_young.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0002-mm-x86-add-CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0003-mm-vmscan.c-refactor-shrink_node.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0004-mm-multigenerational-lru-groundwork.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0005-mm-multigenerational-lru-mm_struct-list.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0006-mm-multigenerational-lru-aging.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0007-mm-multigenerational-lru-eviction.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0008-mm-multigenerational-lru-user-interface.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0009-mm-multigenerational-lru-Kconfig.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0010-mm-multigenerational-lru-documentation.patch"
+        "${_lucjanpath}/${_lru_le9_path}/0011-mm-vmscan-add-sysctl-knobs-for-protecting-the-workin.patch"
+        "${_hakavlad_gh}/disable-i915-gem-shrinker/4e6da2a9b0602d3f80b418026d0a8bf188fc0de6/disable-drm-i915-gem-shrinker-5.10.patch"
+
+        # https://clbin.com/VCiYJ
+        "0001-pcie-reset-kludge.patch"
+
+        # The rest of the patches came from random git repositories. In my experience, random git repositories tend to
+        # vanish, so instead of pulling the files from the repositories, they will be included in this one.
+
+        # https://github.com/Frogging-Family/linux-tkg/tree/master/linux-tkg-patches/5.15
+        "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
+        "0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
+
+        # https://github.com/kevall474/kernel-patches/tree/main/5.13/misc-patches
+        "vm.max_map_count.patch"
+
+        # the main kernel config files
+        'config')
+
+sha512sums=('5abe52981a9f493174afb908bc1c1a4901bc522c38c2da7ba15d5b907f06f9c4a684a47436697d79df8f598e166064d46add5661632a48275e0268411563f6b2'
+            'SKIP'
+            'SKIP'
+            '53fa9b8a6fa451a7d57846d261f9af2de24e6442d2f318dfef899580d85e9cc54fa17267803a4f064eecab8ba3739062bfdf185de0afe119a1c86fe71cf3c711'
+            '8bf46624ed55e37337fefdfbeefbf74dd550bd1862ad8670058e2609f8d1a9d11f38cc5b332c70583ef99af64b6aed1b001b13f03d3275d569e7f9745ffaebdc'
+            '8a06eeac9b7d8f6012c17a25ac7e6a1e8c18f385530352685b3dd34ef9bbdf5de339ed38006514e04d67532a60845915db29ab972820ff98595b2e13ebfc902f'
+            '9d3c6a075acf35bb656e6689d99aea6d643858fac9ea73e603af6a66531ac0329e3966940d54f2e0609f91f1243de63d056f610c7094f8697fb2235e6243359f'
+            '609ba540c4998ae52f8cb7e2b3d3d5e32960ef3a882d2e99ee1e216580de913d5732caeca36aacee2583989c3af94e3e4769b0698f96c0e555c631ccb1634796'
+            '1392ea51f1955fd76ce2f012251266b5b5a53d234b21e580a078dcb6cc405750e563c0c6962ccfa0872d28e2efe9b1c1b902fc02e4477fd489c40fd8d2723d5e'
+            '6890b27de152044061942fc40580c24c66ca8d78bb34a87b2d6effbd762a59f89d059155388d980c3b5a2d3b54497def157567af0154aaa51e99559b64436c9f'
+            '7c094d6ee142a0f04a3b298ffdbe6a5531e4f7cb1a1b1824b6433e3e5bbaeee7987d58b7b95c66a2c90810a65b68572f69d5e23d031594045060c3d5ac273c03'
+            '3db4222d58653da8fe4d9f8bb5306778811cb5113c662aab93c567a6e27c05f9ded82b9a36ce0a86ce6b561030267de73345da66f12968f246ee09ec179106c4'
+            '8cb77c738cffe8ceb20ea2d121ed6c7162b9cfeae3b79ba8053028952041feb2cd48c64f4d317f6e6fbd772fa1036ea81eba0cf9f73e598fe008719068290970'
+            '62d4736d4fc0f5fbe9008cc5401e1d166af0c2e02ebb2c2a56f951943e5a8befc067c41885b70a7a6ff8ada5d977b78902046de9e4144bfe4573ce9427da053c'
+            '5a542feb9bd1ed268e7079556465a2cc03d390b16fd9f9252d0c35585355c26a6c86d1355dcc8b3b29d2138d339848a76f0ef88d65de31141e96bdecf4873b87'
+            'afc25998372614843f7a624a0cd83941a6a479b1654bad6d1379dfc050f0cf7d42fa1017f652235c0e72904e0d90147258b1b22d76eb9e9541fa6e58ff630a3d'
+            'b6ae5b461109a9631bcf00b29a243df986cc35bf3e8224120916977620472085eca63fd558514b7d54bef07894afbf88e539ae9d2f0c59fb7ebea5c38dd74492'
+            'b149f0ec8077b65b14d21b0816d15161b22fcf6c274ac13b08d98c4e8ef1d3d7d81cc6871856933412c342d2c55b500c5f076d835169f2e901aba006ada3b69f'
+            '60a833407669a6e41cdf998389dd42b76b89d578b556ff426d5d03699685946fa2f619bfaf62823734cd25349b163efc8fc4d81d6ced918882c949360ac02acf'
+            'd68dfcc1033c0416fb9a8ca973c8cdd6290f61c9743d25af657109078ead2d4551319572ba25d1c2f3406b66224fe8c098fbe2ad14c44fc906f86a0dba52623c'
+            '1e8964738c95fbd5b3f9c36a84d1a3d78c3d2c7165af593bac486f1537abaf8de4dc35666c94afb6a8fc71f713cfd1dd9afe7014984fc79ec73d9063877212a3'
+            'fb017315279804c6515349c481b68794331db71a2bf332f78dfe53b8ee17d7a4f13a0daff1b0114dc4b13643f41f8dd014e4a9a74cab13587fbfa5984d81c536'
+            '84f65bd86deb780e8caf227fb0191e87cd8150b19dd3b9c9aad5a7ed043568eba1d345106a08e1346daa518998b8c0e62c8478650b2ef16762d0f9087c0e80cd'
+            '33e9cadae78ad935feb1b11eadda56c12f40ae527a555645bcebbd5a7dc6339b0a8ada895d9693122d9f7b61934eaa6dec97e34c0f75fbd6642329f80e9c734a'
+            '099923d9401f110f9a13a08414f46882d1019dc3804b85550c5306cb08fac7d44539f72329034092dcddff48f3540afe566f6be74b290c01cf78e11a79c12bc8'
+            '3ac403ce3a5a0beae42f436af50acc79621d214104edaf8ccd7f5d666209fb4dc607c70f847ea07a12431e091b540f2cab3a87ffed37415973e20e924f37ebe6'
+            '5d0b2adbaa52d914e61fc3ddd58ce64a442a2dee783e4d082f67103780533adcecfd7b730793a41946ff11395d72fa79162da85b75f639b6ea4e1cfd7960f8ed'
+            'acbe47a9179c57ae5b1a484ceca3610df60e824a20c4a89e819d3999744718d969e6b0cae3c0c1d0e5df5823e44916eb02d61615f5013b211c765938778e7679'
+            '3a1ade3a4c40bd20cc3c48f835df74f9ceaff9f356628d750da6c1b8af215f6ea9716388e3446a6cc36d8a5c1a937a45e4555b6a7bc7d16fd3dc5409d204e7eb'
+            '1e981ee0130fd7e0ebf6b8b2cb92e07b8a7e4cb5cd5646a7dcf57793cff5dd1fe5085cfa6fae2d9e23bc6775449b854fc247dc4e51ba3543fce2e88a6328831d'
+            'd0cb9da729a743b677e45ea105908dc1cbb903c288f8f6de96518bedc0c3a51fc5c8a7a235890be5a8c8e931e3b8dd9a1624d808fe94ad99cfa21bacda7c4a36'
+            '4aa7bfe7eb5eabbdf3ffd06b207bb56c47f27108145ae739c1507e2d4f963864580f27103d511aba78d22f08f6d88f96745f7323989e140c81802ec2e37dc0d6'
+            '951933c7d61536d8695af4f71d5ca16e218c15b01e21543e33203108dc6c72a1b43c5dac14f91fe1356880f32cd07649dbd862a38fab894a6ed7c094d2464be0'
+            'b7b00893fa707fc6d3587f96077cddca030641c2fd4cc9b93ea0b2b329e7c7ee387180ef6a5cd40f46d2036e9af52054b2d6def29c33f5ddbf6f488c43f52318'
+            'e19eb6cde07f2ea6e7f7861d45bdc6558985668638f3729a09e71073f8411c69a33d8ccd9a7e864c3fff91f97a1bdb4cf035bf060bcea65aa37d19e6a309a161'
+            'a19e5b1f3fd9fdb409459412a7f76c415b02c92c0cda2ce97007e892de4f9609e807176b261153f511fff2400b557cd4e11c1d9b8fbe64c15be4df4fb412dd92'
+            'a56d83579eb2750951f4aaf839e000e8bd13090e2127ff2501129befdece9c7b3fdcc9627e67d41b313fb169e2b97dc775663a4d51f66551d3477a0e2c88861a'
+            '33ce04a133fe94f5407e0e14b49319d05038970260434538a6bbf1407e260e2f68d5f117093c31b92300a2714d0426490a75f08186a936bfcca9d7993b725acd'
+            '3cb766816ecb6e76addf5c50ea08fac65f078a0a84a52fc91fa403743f3be22d2d0085cda81c2667dc320896cf7dad956a6948491162c7f47d56b1af4f45b518'
+            'a1bea78764fa960443f80b226b54f0b0fbffe6c3e30bedfc0598a4e6f1108f4e863b61ff9710282a8331068254f129915cf921687fe3c2cefc7eb1e51a04bd8b'
+            'f8c52558274ec287bb880343676bf926533e4aacdbc37f52acbf4aa5d6e6979f2ae52502d9303d153630067b154b6b768106d8e66e2a40ef1d9df2172c51ed3e'
+            'd0472a697999f8f5984f41ed9c11c8389753cae2cce34194898a9eec90a3b68a807459e6a4b86fd1d04004d31ef08dec4564509f817382a291172b390e366463'
+            'e2fd03f22f09aeb20a6954f2693b4a96cf111a75bb048b2e5e4d29d96f3bf1119b1eb243dc7d9b29f058d395f99c7c2ba0be29e58c63360bf37c617a8b1c6ce5'
+            'b3a5862e83a4b0df964395d9f43461b8d9e389885605cd396570f73cd1ba70449ac0c2f08285f295ea172a42b949f28d1b6061761c454ff2fd0f615039be983e'
+            'f16432423739408fa70ba987bbc881190fe2e653480a9a9c3547d9df54fb95667aa4df177d5c610bd03ec34099a37d84c975b17f3118caa597e1a91eb95830db'
+            'd75dd4a086f947f63786147d5965fee87b65096b7669b90a4cf719e31df1e8f6b67d42d40f3453b1e1da59e4bc27f32aa76a92b997423118d4efd07b34f30853'
+            'f2690fae00f138972487c347d67f6449cb1bb16412166628473721fb4ac2a23e71c50f2ef41660d18464e9d9d5196eab794ccec1012f5faaea8a0df462bd70e8'
+            '99dc27640f8c5a5e05b0a2b94389596dc44508c8cb69fd98d7d081a0ad752ba7e6caeabba862d5a952fc19a794b090e1d655919a2a7ede46944883ffd30e92ff'
+            '7ba19dce716298931f133fe5d4672aab61acede0396830cbda45fdd5ba03a7cef15d59180ac3a4ec8932835dcda6b40985c65ffdb178065e18b1e9f25944b9c2'
+            '79450014ed115629e52daf676c84282bc39afe9ed22d4b5c8110f7f84efb7045b143f473acdcea8529e2e3bc7e9b2ba685f72c842e3875233aa5f664a2e1af2e'
+            '2e3630f7b032fb2ca13b731d67306ac41b1734f4087dab8d2b4446caf5632330b8205b0b884e0c412be2feb2380fbbccb226ac3851bb78b467b3bb7f9f972a8f'
+            '9af1d5615c126fa513770a7004229c8f6ff8ccc1ed3797922b9d5a6df8cd6d4e6d435abb0d7d855e5da44425e5c4209a7272a2ffb819c93f4567f63ed630bc73'
+            '633645f57cb047bdff0d5b20cf96608d575cf6fcabecf11d6186a3287513b41b3e60d2f979ee25dff9d48a2f1df34b9fbf7bac969bc3266949a552c8f868c954'
+            '30571d2f8d269ca5b7bda32bdc69c93029645133a07b8b5f646290c459f9c15b0ba9c5aa3abd62858e23030467cba5645a26dcefa6e27d6a860ea3326872e692'
+            '4c0910bdb0e7fc307d4236f7d4928285c7f134a71a9a794f2dc1a2275fe8004ab9f52c6770663e74f2df280d6c10b97747d51c4961b61241a4b60e1728de57a0'
+            '05914e78e32a8766454c8cf01c96558b3ebf30a6085da1054437492b583377e32839601c3fc2e3e3c8cc93991e199e6d575f4b99d5ad4d116159f2791e7332f8'
+            '57e26c1bfb60e7f58dfd04f7e450dd22ebde1a1de6c88308ac0ca9316472f5d126ad35308a94dba76506c11928d3ef12edda0fcdbdd9de567189491f425cd5d9'
+            'b822d5c0981aca753f088537cecfa1488fac9d00d1c29d1efc6a4910fb1e5755529be6577cf2fd96a93b59ad532af42d693a273df350d3a0efbcb2c71f49ac3b'
+            'a69d6168ae05c75b9bcfeeb8ddcaad9744b87332aad88dbedc4dd935f4539fbf794f569222855439af90b42ebedcd3127500c6f59002ffd25011f677b43b77bd'
+            '6c6538c5e0fff3558b2efaf340696ba113537ec4e56d37810f8484313d7c48bcc10c6d59670d63533d01096cb67061ce768a037cb384985ff2ad58093ac53f15'
+            'dfd4bcfda1a714217aafc3727b4eeab4cab68144e4815f82553ae1df6e7553ab28875318c60ac209c44c93576fbe5bc60c40d0fa07c27b6496779ea260a1b65d'
+            'c8d848a7202a9c120dfc4b4770af4af58492e61570fc573dd6e0cf5c110848f999e57fa0fd453719f807c4c42d9272d5dca5518b38382b3c9e7521d1a9e0f3f6'
+            'c153eb200db8c1ba5a8241b9f3eddf13a48f022d6dd3b12e107f8be6da177829087db8d803d4652223ac3b9685fe9c22510d20ad680fff3f42eb1d5b655e5cfd'
+            'e6519d486c8ba6087d5cebed1c2c5cd36256be856b82f1e27088fd6b1a5c4271bcde51707a7642f9ecc3a5bcd44c16abc879d227c4535300a115e090dfd716a6'
+            '7a7cbb938bda442687118d7cec8180fc254882cc8723aa0abbda8590aaeed47638aa79840f919d0080c671f62b32b77d379f6535b9a73fd4a095b0c788903e03'
+            'c49e04695e328eb37b136e24eb4b48adc1a17a16b29c247dfec423543c44969e14ed2d1e6e5ad47decb87613a91969f4c76de1e2d221a079c3bca5ce518ea1d2'
+            'b696606374ab6bfa47153d02270a89e6e40f1a6f17da70362182a770fb70ae0a5bc4dfae0c04b6d73f8c75fe2e22c80030c8b1c5e6d1102cdd1384e6c62702be'
+            '35db2513c6bc9645dbaa7f007a4176b812ad0c9608dbc6dd0aa2b1034e5b6ec5fd84c77074ac99c2f720655bd229a70f38a319a093b9bb8b4aeb3982ef899388'
+            '49068960ea37b1c0394f4ca03b8d9ab71291e968fb1a74a2a28609b5eaffe30f393be8baa99274edc7e9270be8f6d35ba4726c2260528724200229d586e05967'
+            'ed82a0eeb25066180623d5f7e65714903c91520663be8e58c4218560d1e44eab7c27e4d605d55610db11a3fafaf204df187337c5f2182e292c3f4eeee9d26a7d'
+            '6dff24ff37c960198f0083ea586e07f2b8994f5f207ed2bb62f3aea8ba0577f22a0e5ce4d724b7dfaa86f8c4027b447ac967dc6d479feffa4fcb1e62e6c6908a'
+            '49e3de6750609ba7561a0ac3fc21686b45383e81fd1ce86c3e36c6558e395fd16d411805d37578ba61ecdf0a8984e060a10024b68b3a951a240fa6f1f3667294'
+            'a0b9194442e9bd9255b6eb9e61e8fca61481077c754c319687322a6a94051daaf6fd9e7b64d9c4bbf540d10d7e3b54a47828807736d1204f089bb23aa63d8962'
+            '3ab038e4ea23fca85402fcf4508099d6b5829ab9e56e9ff0549360d5a86c36434d1fd730602dc46b6a51c26c4f9e642750ad4b472392f522744ef9fd0b7e6f07'
+            'ba7b7a053c78bf1e403c2fae293a128cd2b5dd24142fd362c40296c8c8fbdee28a5100498226f27f713457c1953ee846b3a02ad2738f1d697977f443e780fc2a'
+            'c99b280a2546b95f254850cbc306e0f0345068fc03df19dbc23258dacd91b7b01fc84167b0030e52ea9dc650ff541dc27591514f0828bb923e92b0c7c5f40674'
+            '14dbf64d40a20057ad59bf5084d6849bd5a7bf38c9e9b5bb7ad8d49863b9afca555255a56218c0ed001f62b453ef331fee5273c6982f3af6baeb960f52ffd70b'
+            'c08e64fe610983a5b9b3be561b257897e0bbf41d2b58e7da0590a232805156af59ee989b87e56ddb6a71081e06d86d5a144e5b42e1ad34d19bfbe49fd6fa3a43'
+            '72aca34f9bd57e853329d2a085f930db24f26e2f6fe98256d7f9d0f083dbb90623174311aeda965d75a3d1bed00c5bfbb057882bcfa2796c6e1acd868d8338f5'
+            'f1aea39447d329b2739585d661ebe94a1724ce5059b50a97c909bfc967c50889d47b6a1d688b4b98ae127507ff688c0ca0e5a81104dcbb39957b339a8213e321'
+            '34845d4f3b59c21eef93e60f823ce07c0ebcb8674eb59740cb365c8b19d408d9b301c1188c876121e0af40c1592a77742939c45dbcb0e0854674a5452b81c017'
+            'b10f98bcb73225b2ee709ec20c271653f86e212f3b944498a3beddba1a3af6fe7d958036bcb5f40d892908974ff075b6f9a9d704e54b333446485ca9acc256a9'
+            '4bf8fd46f07251777d198c24f9e353dac19f7b8c419393242774949d544ceb4af65eb994db714f533cb6e73c0104ac08e2baa87bf911b3953c519b1cd10abc99'
+            '4be8417239be2599ee72dadbe5a2c5505e50b7e1e1f4f4fd3402bc7a60511c742a950cd83a2d66806d0d899226a5c696e83b4a49808978d74d3a5d94158aac7b'
+            '7230dd9f2d588d210fba7cccbb31b1906a7f25b98a10978e18591c4c5384ad4680c427ac7a4d27a7881108dfa4d2c8c62bfe2e23f090196636e2d533b0ac8cea'
+            '916ebfccc36e22a3c47959a8a4bf3e16f416e308eebdc4d52e55711d11f428826a956ef5acbd543600c6ee26aafa4bf3f61b13b485beceda1656f7d6322878df'
+            '9a0509d0fb4b7ce1cc788a726c2f9364bcb88af385363fcd1a8e8a2cff33800b9fb9aab375f9bf236f4e0ba84f995b1305f1ffd91e226938bd485c2a2418c501'
+            '76187d8576dafdf37c2ff629400f2f797da38b642f53ce6d73361632e08a4656e2ad451691b1a81fc374b3aa298340c669e98f2b28050a1848466e8053f095c8'
+            '73836975579410cd0f3fd170200276387badc7e99f8aefeab960aa17b6beac792e05d6ca70e960ababe27eb86e459defa75c2ef39cac9f4829abe27ad3b57801'
+            'd2dca3deec77bff5663d2052dfc2151d1cfcb1ff6b60fc53037c3be99365738b8db4b4134a339cae49057e3c78d09ac2606c28a8757870279659d5c0b351ef7f'
+            '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
+            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
+            '389f51ba3943815f7cce13f6029cb5b196edbc9c27245f7d96ccb3231b61f76522d50e9010e9ead73d968266edace559c8f783738ee0e9ab8290fb324a230bc6'
+            '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
+            'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
+            '5ca603bd098595fb990ba81af89954ec9ac7326a36b565826918e773cc894f8159b620c3b04d1a847bf09804204781271f6ad8ffd2f9d7690b7464851d25a53c')
+
+export KBUILD_BUILD_HOST=archlinux
+export KBUILD_BUILD_USER=$pkgbase
+export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
+
+_aufs_patches=(
+	######################
+	## Required patches ##
+	######################
+
+	"aufs5-kbuild.patch"
+	"aufs5-base.patch"
+	"aufs5-mmap.patch"
+	"aufs5-standalone.patch"
+
+	######################
+	## Optional patches ##
+	######################
+
+	## Add support for nested loopback mounts in branch-fs
+	#"aufs5-loopback.patch"
+
+	## Make /proc/mounts show all mountpoints
+	## Does not exist in the current tree?
+	#"proc_mounts.patch"
+
+	## Prevents assignment of 0 as inode number
+	"vfs-ino.patch"
+
+	## Keeps tmpfs inode number low
+	#"tmpfs-idr.patch"
+
+	## required for LOCKDEP
+	#"lockdep-debug.patch"
+)
+
+_aug_colorize() {
+	# prefer terminal safe colored and bold text when tput is supported
+	if tput setaf 0 &>/dev/null; then
+		_MAGENTA="${BOLD}$(tput setaf 5)"
+		_CYAN="${BOLD}$(tput setaf 6)"
+	else
+		_MAGENTA="${BOLD}\e[35m"
+		_CYAN="${BOLD}\e[36m"
+	fi
+}
+
+_msg3() {
+	(( QUIET )) && return
+	local mesg=$1; shift
+	printf "${_MAGENTA}   +-${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@"
+}
+
+prepare() {
+	_aug_colorize
+
+	cd $_srcname
+
+	### Setting version
+		msg2 "Setting version..."
+		sed -e "/^EXTRAVERSION =/s/=.*/=/" -i Makefile
+		scripts/setlocalversion --save-scmversion
+		echo "-$pkgrel" > localversion.10-pkgrel
+		echo "${pkgbase#linux}" > localversion.20-pkgname
+
+	### AUFS
+		msg2 "Copying AUFS build files and applying AUFS patches..."
+		local aufs_srcdir="${srcdir}/${_aufs_repo_name}"
+		local kern_srcdir="${srcdir}/${_srcname}"
+		pushd "${aufs_srcdir}" > /dev/null
+		cp -r {Documentation,fs} "${kern_srcdir}"
+		cp include/uapi/linux/aufs_type.h "${kern_srcdir}/include/uapi/linux"
+		popd > /dev/null
+		local aufs_patch_fname
+		for aufs_patch_fname in "${_aufs_patches[@]}"; do
+			_msg3 "Applying AUFS patch $aufs_patch_fname..."
+			patch -Np1 < "${aufs_srcdir}/${aufs_patch_fname}"
+		done
+
+	### Patching sources
+		local src
+		for src in "${source[@]}"; do
+			src="${src%%::*}"
+			src="${src##*/}"
+			[[ $src = *.patch ]] || continue
+		msg2 "Applying patch $src..."
+		patch -Np1 < "../$src"
+		done
+
+	### Setting config
+		msg2 "Setting config..."
+		cp ../config .config
+
+	### some initial configuration
+		# (we start with the arch config as a base so I can keep track of stuff easier)
+		scripts/config --undefine CONFIG_LOCALVERSION_AUTO
+		scripts/config --enable CONFIG_LZ4HC_COMPRESS
+		# from patches
+		scripts/config --enable CONFIG_FUTEX2
+		scripts/config --enable CONFIG_VHBA
+		# kdump
+		scripts/config --enable CONFIG_DEBUG_INFO
+		scripts/config --enable CONFIG_CRASH_DUMP
+		scripts/config --enable CONFIG_PROC_VMCORE
+
+	### AUFS
+		scripts/config --module CONFIG_AUFS_FS
+		scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_127
+		scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_511
+		scripts/config --undefine CONFIG_AUFS_BRANCH_MAX_1023
+		scripts/config --enable CONFIG_AUFS_BRANCH_MAX_32767
+		scripts/config --enable CONFIG_AUFS_HNOTIFY
+		scripts/config --enable CONFIG_AUFS_EXPORT
+		scripts/config --enable CONFIG_AUFS_XATTR
+		scripts/config --undefine CONFIG_AUFS_FHSM
+		scripts/config --enable CONFIG_AUFS_RDU
+		scripts/config --enable CONFIG_AUFS_DIRREN
+		scripts/config --enable CONFIG_AUFS_SHWH
+		scripts/config --enable CONFIG_AUFS_BR_RAMFS
+		scripts/config --enable CONFIG_AUFS_BR_FUSE
+		scripts/config --enable CONFIG_AUFS_BR_HFSPLUS
+		scripts/config --undefine CONFIG_AUFS_DEBUG
+
+	### CPU optimization
+		# I want to be able to slap an HDD with this kernel on it in just about any machine
+		# I'm very, very unlikely to encounter any CPUs older than AMD K8
+		scripts/config --enable CONFIG_MK8SSE3
+		scripts/config --undefine CONFIG_GENERIC_CPU
+		# I'd add an -mtune=znver1 if I could
+
+	### NTFS3
+		scripts/config --module CONFIG_NTFS3_FS
+		scripts/config --disable NTFS3_64BIT_CLUSTER
+		scripts/config --enable NTFS3_LZX_XPRESS
+		scripts/config --disable NTFS3_FS_POSIX_ACL
+
+	### Android stuff
+		scripts/config --enable CONFIG_ASHMEM
+		scripts/config --enable CONFIG_ANDROID
+		scripts/config --enable CONFIG_ANDROID_BINDER_IPC
+		scripts/config --enable CONFIG_ANDROID_BINDERFS
+		scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
+
+	### mgLRU stuff
+		scripts/config --enable CONFIG_LRU_GEN
+		scripts/config --enable CONFIG_LRU_GEN_ENABLED
+
+	### le9-patch values
+		scripts/config --set-val CONFIG_ANON_MIN_KBYTES 0
+		scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 262144
+		scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 0
+
+	## Fill in remaining defaults
+		make olddefconfig
+		diff -u ../config .config || :
+
+	### Prepared version
+		make -s kernelrelease > version
+		echo "Prepared $pkgbase version $(<version)"
+
+	### Optionally use running kernel's config
+	# code originally by nous; http://aur.archlinux.org/packages.php?ID=40191
+	if [ -n "$_use_current" ]; then
+		if [[ -s /proc/config.gz ]]; then
+			_msg3 "Extracting config from /proc/config.gz..."
+			# modprobe configs
+			zcat /proc/config.gz > ./.config
+		else
+			warning "Your kernel was not compiled with IKCONFIG_PROC!"
+			warning "You cannot read the current config!"
+			warning "Aborting!"
+			exit
+		fi
+	fi
+
+	### Optionally set tickrate to 1000
+	if [ -n "$_1k_HZ_ticks" ]; then
+		_msg3 "Setting tick rate to 1k..."
+			scripts/config --disable CONFIG_HZ_300
+			scripts/config --enable CONFIG_HZ_1000
+			scripts/config --set-val CONFIG_HZ 1000
+	fi
+
+	### Optionally disable NUMA for 64-bit kernels only
+		# (x86 kernels do not support NUMA)
+		if [ -n "$_NUMAdisable" ]; then
+			_msg3 "Disabling NUMA from kernel config..."
+			scripts/config --disable CONFIG_NUMA
+		fi
+
+	### Optionally load needed modules for the make localmodconfig
+		# See https://aur.archlinux.org/packages/modprobed-db
+		if [ -n "$_localmodcfg" ]; then
+			if [ -f $HOME/.config/modprobed.db ]; then
+			_msg3 "Running Steven Rostedt's make localmodconfig now"
+			make LSMOD=$HOME/.config/modprobed.db localmodconfig
+		else
+			error "No modprobed.db data found"
+			exit
+			fi
+		fi
+
+
+	### Running make nconfig
+	[[ -z "$_makenconfig" ]] || make nconfig
+
+	### Running make menuconfig
+	[[ -z "$_makemenuconfig" ]] || make menuconfig
+
+	### Running make xconfig
+	[[ -z "$_makexconfig" ]] || make xconfig
+
+	### Running make gconfig
+	[[ -z "$_makegconfig" ]] || make gconfig
+
+	### Save configuration for later reuse
+	cat .config > "${startdir}/config.last"
+}
+
+build() {
+	cd $_srcname
+
+	make all
+	make htmldocs
+}
+
+_package() {
+	pkgdesc="The $pkgdesc kernel and modules"
+	depends=('coreutils' 'kmod' 'initramfs')
+	optdepends=('crda: to set the correct wireless channels of your country'
+	            'linux-firmware: firmware images needed for some devices'
+	            'modprobed-db: Keeps track of EVERY kernel module that has ever been probed - useful for those of us who make localmodconfig')
+	provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
+
+	cd $_srcname
+	local kernver="$(<version)"
+	local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+
+	msg2 "Installing boot image..."
+	# systemd expects to find the kernel here to allow hibernation
+	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+	install -Dm644 "$(make -s image_name)" "$modulesdir/vmlinuz"
+
+	# Used by mkinitcpio to name the kernel
+	echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+
+	msg2 "Installing modules..."
+	make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+
+	# remove build and source links
+	rm "$modulesdir"/{source,build}
+}
+
+_package-headers() {
+	_aug_colorize
+
+	pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+	depends=('linux-kitsinger-5.15' 'pahole')
+
+	cd $_srcname
+	local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
+
+	msg2 "Installing build files..."
+	install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
+		localversion.* version vmlinux
+	install -Dt "$builddir/kernel" -m644 kernel/Makefile
+	install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
+	cp -t "$builddir" -a scripts
+
+	# add objtool for external module building and enabled VALIDATION_STACK option
+	install -Dt "$builddir/tools/objtool" tools/objtool/objtool
+
+	# add xfs and shmem for aufs building
+	mkdir -p "$builddir"/{fs/xfs,mm}
+
+	msg2 "Installing headers..."
+	cp -t "$builddir" -a include
+	cp -t "$builddir/arch/x86" -a arch/x86/include
+	install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+
+	install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
+	install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
+
+	# https://bugs.archlinux.org/task/13146
+	install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
+
+	# https://bugs.archlinux.org/task/20402
+	install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
+	install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
+	install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
+
+        # https://bugs.archlinux.org/task/71392
+        install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
+
+	msg2 "Installing KConfig files..."
+	find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
+
+	msg2 "Removing unneeded architectures..."
+	local arch
+	for arch in "$builddir"/arch/*/; do
+		[[ $arch = */x86/ ]] && continue
+		_msg3 "Removing $(basename "$arch")"
+		rm -r "$arch"
+	done
+
+	msg2 "Removing documentation..."
+	rm -r "$builddir/Documentation"
+
+	msg2 "Removing broken symlinks..."
+	find -L "$builddir" -type l -printf 'Removing %P\n' -delete
+
+	msg2 "Removing loose objects..."
+	find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
+
+	msg2 "Stripping build tools..."
+	local file
+	while read -rd '' file; do
+		case "$(file -bi "$file")" in
+			application/x-sharedlib\;*)      # Libraries (.so)
+				strip -v $STRIP_SHARED "$file" ;;
+			application/x-archive\;*)        # Libraries (.a)
+				strip -v $STRIP_STATIC "$file" ;;
+			application/x-executable\;*)     # Binaries
+				strip -v $STRIP_BINARIES "$file" ;;
+			application/x-pie-executable\;*) # Relocatable binaries
+				strip -v $STRIP_SHARED "$file" ;;
+		esac
+	done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
+
+	msg2 "Stripping vmlinux..."
+	strip -v $STRIP_STATIC "$builddir/vmlinux"
+
+	msg2 "Adding symlink..."
+	mkdir -p "$pkgdir/usr/src"
+	ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+}
+
+_package-docs() {
+	pkgdesc="Documentation for the $pkgdesc kernel"
+	depends=('linux-kitsinger-5.15')
+
+	cd $_srcname
+	local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
+
+	msg2 "Installing documentation..."
+	local src dst
+	while read -rd '' src; do
+		dst="${src#Documentation/}"
+		dst="$builddir/Documentation/${dst#output/}"
+		install -Dm644 "$src" "$dst"
+	done < <(find Documentation -name '.*' -prune -o ! -type d -print0)
+
+	msg2 "Adding symlink..."
+	mkdir -p "$pkgdir/usr/share/doc"
+	ln -sr "$builddir/Documentation" "$pkgdir/usr/share/doc/$pkgbase"
+}
+
+pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-docs")
+for _p in "${pkgname[@]}"; do
+	eval "package_$_p() {
+		$(declare -f "_package${_p#$pkgbase}")
+		_package${_p#$pkgbase}
+	}"
+done
+
+validpgpkeys=(
+	'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
+	'647F28654894E3BD457199BE38DBBDC86092693E'  # Greg Kroah-Hartman
+	'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
+	'C7E7849466FE2358343588377258734B41C31549'  # David Runge <dvzrv@archlinux.org>
+)

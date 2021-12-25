@@ -1,0 +1,53 @@
+From: Markus Kitsinger (SwooshyCueb) <root@swooshalicio.us>
+Date: Fri, 24 Dec 2021 19:07:17 -0500
+Subject: [PATCH] futex2: Add sysfs entry for syscall numbers
+
+This is a rebase of the following commit:
+https://gitlab.collabora.com/tonyk/linux/-/commit/d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b
+
+Original commit message:
+> In the course of futex2 development, it will be rebased on top of
+> different kernel releases, and the syscall number can change in this
+> process. Expose futex2 syscall number via sysfs so tools that are
+> experimenting with futex2 (like Proton/Wine) can test it and set the
+> syscall number at runtime, rather than setting it at compilation time.
+
+Co-authored-by: André Almeida <andrealmeid@collabora.com>
+---
+ kernel/futex/syscalls.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff -Naurp a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
+--- a/kernel/futex/syscalls.c
++++ b/kernel/futex/syscalls.c
+@@ -318,6 +318,30 @@ SYSCALL_DEFINE5(futex_waitv, struct fute
+ 	return ret;
+ }
+ 
++static ssize_t waitv_show(struct kobject *kobj, struct kobj_attribute *attr,
++			     char *buf)
++{
++	return sprintf(buf, "%u\n", __NR_futex_waitv);
++
++}
++static struct kobj_attribute futex2_waitv_attr = __ATTR_RO(waitv);
++
++static struct attribute *futex2_sysfs_attrs[] = {
++	&futex2_waitv_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group futex2_sysfs_attr_group = {
++	.attrs = futex2_sysfs_attrs,
++	.name = "futex2",
++};
++
++static int __init futex2_sysfs_init(void)
++{
++	return sysfs_create_group(kernel_kobj, &futex2_sysfs_attr_group);
++}
++subsys_initcall(futex2_sysfs_init);
++
+ #ifdef CONFIG_COMPAT
+ COMPAT_SYSCALL_DEFINE2(set_robust_list,
+ 		struct compat_robust_list_head __user *, head,

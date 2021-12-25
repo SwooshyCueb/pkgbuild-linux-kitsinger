@@ -1,0 +1,9 @@
+/aufs5-standalone
+
+/*.patch
+!/0001-pcie-reset-kludge.patch
+!/0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch
+!/0002-mm-Support-soft-dirty-flag-read-with-reset.patch
+!/1051-futex2-Add-sysfs-entry-for-syscall-numbers.patch
+!/1052-futex-Add-entry-point-for-FUTEX_WAIT_MULTIPLE.patch
+!/vm.max_map_count.patch
