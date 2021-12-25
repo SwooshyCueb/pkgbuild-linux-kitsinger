@@ -53,7 +53,7 @@ _minor=21
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux with AUFS, pcie-reset, futex2, etc'
 arch=('x86_64')
 url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
@@ -71,7 +71,7 @@ _aufs_fragment="#commit=05607e3cb465c625e40d03871dac369ecd5a8b0e"
 _gcc_path="cpu-patches-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
 _arch_path="arch-patches-v11-sep"
-_futex_path="futex-zen-patches-v2"
+_futex_path="futex-zen-patches"
 _futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
 _futex2_path="futex2-zen-patches"
 _futex2_patch="0001-futex2-resync-from-gitlab.collabora.com.patch"
@@ -109,8 +109,8 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/${_arch_path}/0002-Bluetooth-btusb-Add-support-for-IMC-Networks-Mediate.patch"
         "${_lucjanpath}/${_arch_path}/0003-Bluetooth-btusb-Add-support-for-Foxconn-Mediatek-Chi.patch"
         "${_lucjanpath}/${_arch_path}/0004-ALSA-pci-rme-Set-up-buffer-type-properly.patch"
-        #"${_lucjanpath}/${_futex_path}/${_futex_patch}"
-        #"${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
+        "${_lucjanpath}/${_futex_path}/${_futex_patch}"
+        "${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
         "${_lucjanpath}/${_fixes_path}/0001-net-sched-allow-configuring-cake-qdisc-as-default.patch"
         "${_lucjanpath}/${_fixes_path}/0002-infiniband-Fix-__read_overflow2-error-with-O3-inlini.patch"
         "${_lucjanpath}/${_fixes_path}/0003-kbuild-add-fcf-protection-none-to-retpoline-flags.patch"
@@ -319,12 +319,12 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "0000-x86-ACPI-cstate-Optimize-C3-entry-on-AMD-CPUs.patch::${_lkml_path}/20210924061205.5523-1-deepak.sharma@amd.com/raw"
 
         # https://lore.kernel.org/amd-gfx/20210105220359.1392555-1-joshua@froggi.es/
-        "0000-drm-amdgpu-dont-limit-gtt-size-on-apus.patch::${_amdgfx_path}/20210105220359.1392555-1-${_joshie_s}/raw"
+        #"0000-drm-amdgpu-dont-limit-gtt-size-on-apus.patch::${_amdgfx_path}/20210105220359.1392555-1-${_joshie_s}/raw"
 
         # https://lore.kernel.org/amd-gfx/20210914235948.893422-1-joshua@froggi.es/T/
-        "5001-drm-amd-display-Use-dcc_ind_blk-value-to-set-registe.patch::${_amd_dcc_t}-1-${_joshie_s}/raw"
-        "5002-drm-amd-display-Handle-GFX10_RBPLUS-modifiers-for-dc.patch::${_amd_dcc_t}-2-${_joshie_s}/raw"
-        "5003-drm-amd-display-Add-modifiers-capable-of-DCC-image-s.patch::${_amd_dcc_t}-3-${_joshie_s}/raw"
+        #"5001-drm-amd-display-Use-dcc_ind_blk-value-to-set-registe.patch::${_amd_dcc_t}-1-${_joshie_s}/raw"
+        #"5002-drm-amd-display-Handle-GFX10_RBPLUS-modifiers-for-dc.patch::${_amd_dcc_t}-2-${_joshie_s}/raw"
+        #"5003-drm-amd-display-Add-modifiers-capable-of-DCC-image-s.patch::${_amd_dcc_t}-3-${_joshie_s}/raw"
 
         # le9 stuff
         # pretty confident these git repos aren't going anywhere
@@ -347,7 +347,6 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # the main kernel config files
         'config')
 
-==> Generating checksums for source files...
 sha512sums=('0f428cb7273de5b440b610b1a3709563e4ed955afb4df084750a8b43c45e5b000a5906780ff7079a8324fac0a8b7ecace778ab8bbf0511fba92d4dad160d7f87'
             'SKIP'
             'SKIP'
@@ -356,6 +355,8 @@ sha512sums=('0f428cb7273de5b440b610b1a3709563e4ed955afb4df084750a8b43c45e5b000a5
             'd566e5660ec5b2fabb10baacafb84ae925ddf2ba05db29f5f4225f68b49bf2ba8ccf10dfdc820b88e196265bf5aa70d8d8319acfbe813914916479b1097df7a9'
             '322106526f6a8110af558b363ec9377427f1b548ab62a0ab07f5557728aeff0ec7adb8d6f5d30585290cdb460427bbd91e7a5674b60c6049a65f469da18830d2'
             '787ea00ae9d98cac1d2bbc6d4ee17c2419cd708aef902875bc803f4be5fec8392c6c743bd80e0c9a99624b5b074ed899f7412d2ad9f41add6ee038dda2a6d0f4'
+            'd1bc35682cf99fed522471c65626902b30a14cec6ef38addeb1d9c0ded9adde29aec2c3226f753a2c7f5e4a9e69d7382811c59547147d27da2a7385a830b2fe2'
+            'fac5456474702a2fb73695afd2101af27111702d573b2476efb6e14f6d4f2e6d0920e360dc8269ea337d6b9cd3ee105ad3e540bd55a44c925eeba52ddc3cc098'
             '20f597c9c15dce539b2c207568e272ae6ccd0aa226f16a527534196d1e84db14980cd53d6dcc7bb35726a39ca5a5ff0dcd9fe9f2d0cc65825654892826ec7fc7'
             'e03b4ea903c164b8f306e13bbf02088f1178798724ab8478d253759ade9ad2d43172a1b0959038e01724e23eba2557151a7ea7b19cbd6ff2d5e4f7c213a46bb1'
             'dea7c15ea838fc21b2da6aad002631005e983874427b1e70629f6764c20c25a47385de4c379c187d67c48e1dd78f2c5a8ff99f1aea99fb8fb66db190ceff3626'
@@ -515,10 +516,6 @@ sha512sums=('0f428cb7273de5b440b610b1a3709563e4ed955afb4df084750a8b43c45e5b000a5
             '5aa2d959c30e16de97829a075aad75e7b100388ce67dd32cb6d8a80398f11d0b79124dd694e726d9b563a4875aabc248064d5be6971cd3788eb3cb1d2c8c396d'
             'e636e11a6d1af5676288bbbcad3a1a100a6107f8a23127df20469ec1eab1d97c0cdf96ff3273eaa17a1dbd860fd8d24dfb819a11312b3ecbec561cfee5dde0b1'
             'ba7b7a053c78bf1e403c2fae293a128cd2b5dd24142fd362c40296c8c8fbdee28a5100498226f27f713457c1953ee846b3a02ad2738f1d697977f443e780fc2a'
-            'c99b280a2546b95f254850cbc306e0f0345068fc03df19dbc23258dacd91b7b01fc84167b0030e52ea9dc650ff541dc27591514f0828bb923e92b0c7c5f40674'
-            '14dbf64d40a20057ad59bf5084d6849bd5a7bf38c9e9b5bb7ad8d49863b9afca555255a56218c0ed001f62b453ef331fee5273c6982f3af6baeb960f52ffd70b'
-            'c08e64fe610983a5b9b3be561b257897e0bbf41d2b58e7da0590a232805156af59ee989b87e56ddb6a71081e06d86d5a144e5b42e1ad34d19bfbe49fd6fa3a43'
-            '72aca34f9bd57e853329d2a085f930db24f26e2f6fe98256d7f9d0f083dbb90623174311aeda965d75a3d1bed00c5bfbb057882bcfa2796c6e1acd868d8338f5'
             '56112d4cfafcbc62604fd9ca02f89f68d88f0fe8abc1cb951d82295138dc6eee26f9251c82c01ed58a54a3e80ccf69e7408aae63f63f21e05c0c6381f9cc2790'
             '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
@@ -670,8 +667,9 @@ prepare() {
 		scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
 
 	### le9-patch values
-		scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 131072
-		scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 262144
+		scripts/config --set-val CONFIG_ANON_MIN_KBYTES 0
+		scripts/config --set-val CONFIG_CLEAN_LOW_KBYTES 262144
+		scripts/config --set-val CONFIG_CLEAN_MIN_KBYTES 0
 
 	## Fill in remaining defaults
 		make olddefconfig
