@@ -49,7 +49,7 @@ _1k_HZ_ticks=y
 pkgbase=linux-kitsinger-5.15
 # pkgname=('linux-kitsinger-5.15' 'linux-kitsinger-5.15-headers' 'linux-kitsinger-5.15-docs')
 _major=5.15
-_minor=11
+_minor=15
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -61,16 +61,17 @@ license=('GPL2')
 options=('!strip' '!debug')
 makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
              'graphviz' 'imagemagick' 'pahole' 'cpio' 'perl' 'tar' 'xz')
-#_lucjanpath="https://raw.githubusercontent.com/sirlucjan/kernel-patches/master/${_major}"
-_lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
 
 _aufs_repo_name="aufs5-standalone"
 _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
-_aufs_fragment="#commit=fcc56866b84d43fd03d9e1d91d52f40e8a9d5335"
+_aufs_fragment="#commit=17dd5444ac51cc6f10ff4af464bf3392a8a52b79"
+
+#_lucjanpath="https://raw.githubusercontent.com/sirlucjan/kernel-patches/master/${_major}"
+_lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
 
 _gcc_path="cpu-patches-v2-sep"
 _gcc_patch="0001-cpu-${_major}-merge-graysky-s-patchset.patch"
-_arch_path="arch-patches-v10-sep"
+_arch_path="arch-patches-v11-sep"
 _futex_path="futex-zen-patches-v2"
 _futex_patch="0001-futex-resync-from-gitlab.collabora.com.patch"
 _futex2_path="futex2-zen-patches"
@@ -79,6 +80,7 @@ _fixes_path="fixes-miscellaneous-v9-sep"
 _v4l2loop_path="v4l2loopback-patches-v2-sep"
 _ntfs_path="ntfs3-patches-v2-sep"
 _zen_path="zen-patches-sep"
+_lqx_path="lqx-patches-v5-sep"
 _lru_le9_path="lru-patches-le9-v4-sep"
 
 _kernel_git_path="https://git.kernel.org/pub/scm/linux/kernel/git"
@@ -112,7 +114,6 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/${_arch_path}/0004-cpufreq-intel_pstate-ITMT-support-for-overclocked-sy.patch"
         "${_lucjanpath}/${_arch_path}/0005-Bluetooth-btintel-Fix-bdaddress-comparison-with-garb.patch"
         "${_lucjanpath}/${_arch_path}/0006-lg-laptop-Recognize-more-models.patch"
-        "${_lucjanpath}/${_arch_path}/0007-HID-holtek-fix-mouse-probing.patch"
         #"${_lucjanpath}/${_futex_path}/${_futex_patch}"
         #"${_lucjanpath}/${_futex2_path}/${_futex2_patch}"
         "${_lucjanpath}/${_fixes_path}/0001-net-sched-allow-configuring-cake-qdisc-as-default.patch"
@@ -147,12 +148,13 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/${_zen_path}/0001-ZEN-Add-VHBA-driver.patch"
         "${_lucjanpath}/${_zen_path}/0002-ZEN-intel-pstate-Implement-enable-parameter.patch"
         "${_lucjanpath}/${_zen_path}/0003-ZEN-Update-VHBA-driver.patch"
+        "${_lucjanpath}/${_lqx_path}/0001-zen-Allow-MSR-writes-by-default.patch"
+        "${_lucjanpath}/${_lqx_path}/0002-PCI-Add-Intel-remapped-NVMe-device-support.patch"
+        "${_lucjanpath}/${_lqx_path}/0003-Input-evdev-use-call_rcu-when-detaching-client.patch"
         "${_lucjanpath}/clearlinux-patches-v2-sep/0017-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
-        "${_lucjanpath}/ll-patches/0004-mm-set-8-megabytes-for-address_space-level-file-read.patch"
         "${_lucjanpath}/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch"
-        "${_lucjanpath}/lqx-patches-v4-sep/0001-zen-Allow-MSR-writes-by-default.patch"
-        "${_lucjanpath}/lqx-patches-v4-sep/0002-PCI-Add-Intel-remapped-NVMe-device-support.patch"
-        #"${_lucjanpath}/lqx-patches-v4-sep/0003-scsi-sd-Fix-sd_do_mode_sense-buffer-length-handling.patch"
+        # TODO: This patch was moved at some point. Consider keeping the ll patches we use in our own repo.
+        "${_lucjanpath}/ll-patches/0005-mm-set-8-megabytes-for-address_space-level-file-read.patch"
 
         # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=locking/core
         # https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=bc67f1c454fbc79b148f0b47227929da82f4b026
@@ -191,7 +193,34 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "1051-futex2-Add-sysfs-entry-for-syscall-numbers.patch"
         # https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv/
         # https://gitlab.collabora.com/tonyk/linux/-/commit/b70e738f08403950aa3053c36b98c6b0eeb0eb90
+        # Consider replacing: https://github.com/Frogging-Family/linux-tkg/blob/master/linux-tkg-patches/5.16/0007-v5.16-fsync1_via_futex_waitv.patch
         "1052-futex-Add-entry-point-for-FUTEX_WAIT_MULTIPLE.patch"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-5.16/playstation
+        "2001-HID-playstation-expose-DualSense-lightbar-through-a-.patch::${_hid_path}?id=fc97b4d6a1a6d418fd4053fd7716eca746fdd163"
+        "2002-leds-add-new-LED_FUNCTION_PLAYER-for-player-LEDs-for.patch::${_hid_path}?id=61177c088a57bed259122f3c7bc6d61984936a12"
+        "2003-HID-playstation-expose-DualSense-player-LEDs-through.patch::${_hid_path}?id=8c0ab553b072025530308f74b2c0223ec50dffe5"
+        "2004-HID-playstation-fix-return-from-dualsense_player_led.patch::${_hid_path}?id=3c92cb4cb60c71b574e47108ead8b6f0470850db"
+        "2005-HID-playstation-require-multicolor-LED-functionality.patch::${_hid_path}?id=d7f1f9fec09adc1d77092cb2db0e56e2a4efd262"
+
+        # https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-5.16/nintendo
+        "3001-HID-nintendo-add-nintendo-switch-controller-driver.patch::${_hid_path}?id=2af16c1f846bd60240745bbd3afa13d5f040c61a"
+        "3002-HID-nintendo-add-player-led-support.patch::${_hid_path}?id=c5e6267695638b34d4029db32ae335a860f31ed5"
+        "3003-HID-nintendo-add-power-supply-support.patch::${_hid_path}?id=08ebba5c27035094a4b8d3078f94d2aaac5de1fd"
+        "3004-HID-nintendo-add-home-led-support.patch::${_hid_path}?id=697e5c7a34b0f69e1e438385cf85a9220069e079"
+        "3005-HID-nintendo-add-rumble-support.patch::${_hid_path}?id=c4eae84feff3e68c2f385aa10faea4a96791e7ad"
+        "3006-HID-nintendo-improve-subcommand-reliability.patch::${_hid_path}?id=6b5dca2dea4eb797543c99541e97324f69db812a"
+        "3007-HID-nintendo-send-subcommands-after-receiving-input-.patch::${_hid_path}?id=479da173c43322411d8a81f77fae50414299d7d2"
+        "3008-HID-nintendo-patch-hw-version-for-userspace-HID-mapp.patch::${_hid_path}?id=c7d0d636171fe9ece7a05ed88bf6a1d2af844ddd"
+        "3009-HID-nintendo-reduce-device-removal-subcommand-errors.patch::${_hid_path}?id=012bd52c699d6197223b2e7cdce6dc2ec1858343"
+        "3010-HID-nintendo-set-controller-uniq-to-MAC.patch::${_hid_path}?id=1425247383c5620d908de61a7d82a3fb07afb83f"
+        "3011-HID-nintendo-add-support-for-charging-grip.patch::${_hid_path}?id=294a828759d0411de33c91e87af4ed17c8ec7486"
+        "3012-HID-nintendo-add support-for-reading-user-calibratio.patch::${_hid_path}?id=83d640c4f8f8b9b8c58ad31c1fff3de4d0c8ce07"
+        "3013-HID-nintendo-add-IMU-support.patch::${_hid_path}?id=4ff5b10840a88eb3d7609f08adfd663cac151152"
+        "3014-HID-nintendo-improve-rumble-performance-and-stabilit.patch::${_hid_path}?id=4c048f6b2c25ff0fc0a7bdedc285ab8fe97df2fc"
+        "3015-HID-nintendo-ratelimit-subcommands-and-rumble.patch::${_hid_path}?id=e93363f716a23e61b46adfefbc3d01e99c240b5d"
+        "3016-HID-nintendo-prevent-needless-queueing-of-the-rumble.patch::${_hid_path}?id=dad74e18f72a852ae40ad7b4246841a1b7e196b5"
+        "3017-HID-nintendo-fix-Werror-build.patch::${_hid_path}?id=daf11ca2b9f45a1ac6f90af5a61ee4db915110b1"
 
         # https://lore.kernel.org/lkml/20210924061205.5523-1-deepak.sharma@amd.com/
         "0000-x86-ACPI-cstate-Optimize-C3-entry-on-AMD-CPUs.patch::${_lkml_path}/20210924061205.5523-1-deepak.sharma@amd.com/raw"
@@ -238,17 +267,23 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # the main kernel config files
         'config')
 
-sha512sums=('5abe52981a9f493174afb908bc1c1a4901bc522c38c2da7ba15d5b907f06f9c4a684a47436697d79df8f598e166064d46add5661632a48275e0268411563f6b2'
+## For consideration:
+# folios/large folios: https://www.phoronix.com/scan.php?page=news_item&px=Linux-5.17-Folios
+# pvUSB: https://www.phoronix.com/scan.php?page=news_item&px=Xen-pvUSB-For-Linux-5.17
+# Updated mgLRU: https://www.phoronix.com/scan.php?page=news_item&px=Linux-MGLRU-v6-Linux
+# spec NUMA fault support: https://www.phoronix.com/scan.php?page=news_item&px=Speculative-NUMA-Fault
+# sched NUMA perf improvement: https://www.phoronix.com/scan.php?page=news_item&px=Linux-Sched-NUMA-Imbalance-Zen
+
+sha512sums=('e993b269777f494c729f55380d4b628310fd0cd9cabf3b967eb5b6471fb37d1581dd92dd3e23f7b476620d65a23ca6e409fd9e512683ffc84d33774e4c485fd7'
             'SKIP'
             'SKIP'
             '53fa9b8a6fa451a7d57846d261f9af2de24e6442d2f318dfef899580d85e9cc54fa17267803a4f064eecab8ba3739062bfdf185de0afe119a1c86fe71cf3c711'
-            '8bf46624ed55e37337fefdfbeefbf74dd550bd1862ad8670058e2609f8d1a9d11f38cc5b332c70583ef99af64b6aed1b001b13f03d3275d569e7f9745ffaebdc'
-            '8a06eeac9b7d8f6012c17a25ac7e6a1e8c18f385530352685b3dd34ef9bbdf5de339ed38006514e04d67532a60845915db29ab972820ff98595b2e13ebfc902f'
-            '9d3c6a075acf35bb656e6689d99aea6d643858fac9ea73e603af6a66531ac0329e3966940d54f2e0609f91f1243de63d056f610c7094f8697fb2235e6243359f'
-            '609ba540c4998ae52f8cb7e2b3d3d5e32960ef3a882d2e99ee1e216580de913d5732caeca36aacee2583989c3af94e3e4769b0698f96c0e555c631ccb1634796'
-            '1392ea51f1955fd76ce2f012251266b5b5a53d234b21e580a078dcb6cc405750e563c0c6962ccfa0872d28e2efe9b1c1b902fc02e4477fd489c40fd8d2723d5e'
-            '6890b27de152044061942fc40580c24c66ca8d78bb34a87b2d6effbd762a59f89d059155388d980c3b5a2d3b54497def157567af0154aaa51e99559b64436c9f'
-            '7c094d6ee142a0f04a3b298ffdbe6a5531e4f7cb1a1b1824b6433e3e5bbaeee7987d58b7b95c66a2c90810a65b68572f69d5e23d031594045060c3d5ac273c03'
+            '0ef9de1a78ef703a08d079f517e60fb399f5f32703a70a209b06fafa1398a5aa04c45375569db0006d4168abe2a85497fc85c6faa42f9dbef44dfd2e9797bcf7'
+            '46ced42b6a0f73b06db3d8ff7e19ee11fad25a83f76f60e72374ae91e5d41b604cd45c5cb21359c1f8c9e185eaa62cba3f7b76000793a94e762e6ec1a8a2a903'
+            '469b0cafdacc16917ff49b59fd227b0c6a28c171857b2bac2cfa93f97bde75f26bba6b82e6c56c920fb1d5bf992b7f975b3128da2a546b969b0cc1d0c6336f88'
+            'cad9cf6b2ee00ba80ff164b4f4a26c02b009de524d2e4188e6d3cb7aa026bb2aee387d87d9bc04b237b132e390f3dd0a61bc6c19f33c4c2f5da89f693d20dab8'
+            '0ac500cc0dddaa1f6ed889e74b23279918e822c61f7e18786b9c99461e9754aab72c2f9c0e0d559c284dfc57fd6c85e3af83b07000432a5a5594231612daa956'
+            'daeb8dae170a0bee9ac57d237fb8e5824b07a7a9f5e043ead4559178ede658de6019342be2958ecba049a927c2419069851e0c6c9f3ed1ab8373ee9cd7eae16f'
             '3db4222d58653da8fe4d9f8bb5306778811cb5113c662aab93c567a6e27c05f9ded82b9a36ce0a86ce6b561030267de73345da66f12968f246ee09ec179106c4'
             '8cb77c738cffe8ceb20ea2d121ed6c7162b9cfeae3b79ba8053028952041feb2cd48c64f4d317f6e6fbd772fa1036ea81eba0cf9f73e598fe008719068290970'
             '62d4736d4fc0f5fbe9008cc5401e1d166af0c2e02ebb2c2a56f951943e5a8befc067c41885b70a7a6ff8ada5d977b78902046de9e4144bfe4573ce9427da053c'
@@ -281,11 +316,12 @@ sha512sums=('5abe52981a9f493174afb908bc1c1a4901bc522c38c2da7ba15d5b907f06f9c4a68
             'f8c52558274ec287bb880343676bf926533e4aacdbc37f52acbf4aa5d6e6979f2ae52502d9303d153630067b154b6b768106d8e66e2a40ef1d9df2172c51ed3e'
             'd0472a697999f8f5984f41ed9c11c8389753cae2cce34194898a9eec90a3b68a807459e6a4b86fd1d04004d31ef08dec4564509f817382a291172b390e366463'
             'e2fd03f22f09aeb20a6954f2693b4a96cf111a75bb048b2e5e4d29d96f3bf1119b1eb243dc7d9b29f058d395f99c7c2ba0be29e58c63360bf37c617a8b1c6ce5'
+            '979592f4123a597173948934452105b2f925a1acf2aaafdbe3b694112e7dba6239e26012b165e681372d60bb2db36129130ca35341cab4bb94dc5a1c0bfc8a60'
+            'a988234ab04e30c0c2a8e6c53489d49b0d9014812d0d691bcfcc09485bd3c94d962d6db1cd8e65fb7c176223c3b9a4275ea2aaaff894325797b0b7b14ce4f529'
+            '68803a455797a34ed1815f5a5404360e9fe34ed456f9516ac24d80a97d2c66af1e11e732fa33a0f301f7333905f869aeaa72cce471e17f3f16e42e5dc6c76952'
             'b3a5862e83a4b0df964395d9f43461b8d9e389885605cd396570f73cd1ba70449ac0c2f08285f295ea172a42b949f28d1b6061761c454ff2fd0f615039be983e'
-            'f16432423739408fa70ba987bbc881190fe2e653480a9a9c3547d9df54fb95667aa4df177d5c610bd03ec34099a37d84c975b17f3118caa597e1a91eb95830db'
             'd75dd4a086f947f63786147d5965fee87b65096b7669b90a4cf719e31df1e8f6b67d42d40f3453b1e1da59e4bc27f32aa76a92b997423118d4efd07b34f30853'
-            'f2690fae00f138972487c347d67f6449cb1bb16412166628473721fb4ac2a23e71c50f2ef41660d18464e9d9d5196eab794ccec1012f5faaea8a0df462bd70e8'
-            '99dc27640f8c5a5e05b0a2b94389596dc44508c8cb69fd98d7d081a0ad752ba7e6caeabba862d5a952fc19a794b090e1d655919a2a7ede46944883ffd30e92ff'
+            '3048a84fc8e6e39cd208bc4bccbe676deb44ec968fc986164129b6dfb93a5fd6243823b6d896c1d75d88692f60ee61d7948e9e15da0215a166fb975eb412349e'
             '7ba19dce716298931f133fe5d4672aab61acede0396830cbda45fdd5ba03a7cef15d59180ac3a4ec8932835dcda6b40985c65ffdb178065e18b1e9f25944b9c2'
             '79450014ed115629e52daf676c84282bc39afe9ed22d4b5c8110f7f84efb7045b143f473acdcea8529e2e3bc7e9b2ba685f72c842e3875233aa5f664a2e1af2e'
             '2e3630f7b032fb2ca13b731d67306ac41b1734f4087dab8d2b4446caf5632330b8205b0b884e0c412be2feb2380fbbccb226ac3851bb78b467b3bb7f9f972a8f'
@@ -312,6 +348,28 @@ sha512sums=('5abe52981a9f493174afb908bc1c1a4901bc522c38c2da7ba15d5b907f06f9c4a68
             '49e3de6750609ba7561a0ac3fc21686b45383e81fd1ce86c3e36c6558e395fd16d411805d37578ba61ecdf0a8984e060a10024b68b3a951a240fa6f1f3667294'
             'a0b9194442e9bd9255b6eb9e61e8fca61481077c754c319687322a6a94051daaf6fd9e7b64d9c4bbf540d10d7e3b54a47828807736d1204f089bb23aa63d8962'
             '3ab038e4ea23fca85402fcf4508099d6b5829ab9e56e9ff0549360d5a86c36434d1fd730602dc46b6a51c26c4f9e642750ad4b472392f522744ef9fd0b7e6f07'
+            '2c53a5701fb73c2b437d84161f55d6737c60993562556e07cc4bd8697fd0d5e7363f17770f8c234388005ed3ab23515040d90e9d7937ba9f03aaa58df383eb21'
+            '5010341ccaa37d8e28dd08ad5e1dedc9528542c991cb0ba7f0377b56962f66e7c0f8dcd947fdf1dc3a98584a4e78c5002f316548ff7ae2fbbd137ab07730e554'
+            '87e4c4d4760b9be134db18080e7d0926698e2bf8e7f9a567d8ccfaf39c8f1d26d0f298f8907dd1ff32310bcca9e525b0f866505779ca3e46fa7e5c279bcb77d0'
+            '1214aff692503c7f7fa907617933b667c0f30bed8c850a9e27e6fbaaf453069a3b528a1de95c3583f3400133a1e7bcf06ce02c4f118a9327a5e6597005d7b4f3'
+            'e174eacc35071ffdfd186072c851d873b16b091dae20b5fd80303784c0cf5a5fc524a9c90197520faa206fd2083f1e6be0ca83912ba96249df64c66c6df5a640'
+            '78d2c64d6adf541d71dd1e452d6fff585e8c7d78600387e2daf7d563e1212854e82a6fb24de38e08ec59890160388dae40928488a45507f15f11ebf58e28b7df'
+            '69d02174fba6bb2423826105e16815778af32b6a7bd456d2337b948c603e6d23e0fa5b521633d3052bf254018e3f1bb64d2b5e363c3cfd5e56f1eaa804400253'
+            'e2c31013d2b1378d034a1800f3233b66d23faa28bf822c7e336c7b0e7e76118c2e8c71f4eecb52f41a1de4b888fdc79975265d6c692b7ea608c38d71260fbc16'
+            '3c5ab76a91d36c21a02178221e9f97b2fd2753a59d7e0fe7210f5b30ed2632fc9a2d6f1d35253c708495a146e7fb2f7801a41a64f0bdc752de0e76bc9d65e70b'
+            '0ec73aaf31cd3e18a5cbbd425bf591036117320080c0964efe40806683a3c48edc441d1de7e3040ab6d2eb5af7ab59086b02fc8f85b820340a0dd741f8487c71'
+            '6302ad0fafa6362e9888a0d703490af2b2e3b9aa08cc0ae385a9c4079c579bc58666194f5b369f251b33c21dce5894c87861e34307a1d7bf8d5dff6db2da6060'
+            '87f35a9d2e0e74ae53a74b93f78602cc008a3a54fc4a9bfef3812350578f5aabb78fd5e5147fabacfff5e2bd843c7435078448f1c88883a91f23fc057041b6a9'
+            '9fde3aa5970d03fd91f3ac072410a6f8f2931f7edd4a50494108aadda1bf7e394e37acf1bc2f2c20bce0e6ac3571f8daebc198b303fafb7a393be39a98fb9c6a'
+            'b2fb0118e7a0b7f5eddb52f5be5f9be316b7a83b4fe1f66bd145e2b8a1c649d19e69f4b5fb584022750bfa23417a12460a35153250247b771d1cda430a627d8d'
+            'e67df340ba6f423a240ed9843e9f0da94f288d79c793bb22c6a3972a953e2e0b3f3994d03ba03148837d591e18ff480c3aaa566439910463f86f4cf106757bdb'
+            '89a008351bec34d8d3628b237001cdf2009688f9bf4059b64b79fd6d73f3b9402e35c017ec4a134c288dd6ff055272206f2f882139083a698db18e5309d95691'
+            'e86ea69f6414478d050d530f1c9b17acb83fbf1e784403d1e8515c871c339935e16bdcfb6bf86884c7f105148d2e145de5dffaad940ef81c67181637b6a17d26'
+            '4b876bfda55520085fe52d15a3091e64a7f1a550cc9084ce5ffea16fd275b59bd9ecdc149b0270dda7aafbd8dd6b6ae9ea93028cde13ac983441a5b1ff27bb32'
+            '24f003325b51db698ebc8b354fabeea154fa157846796b5bb141486042e9b09f29d79bf6c3f26df423a8a8e936118279dcf70ccc2784578cc2a23dbb91056f37'
+            'b028217144afa1888d8d27d59dbbe239ef4e0c5d68a4efa34b6a9f00cc2d859807ef95c11f1a4ea760685ddbca8ec001848adab37d9c4cd6950cbbeb4c89220f'
+            'ec35afdcd973c8fb1396c0d930aa9b5ce7567c3bac1d29996dfb1ab3c76c482d1bfa721d44072613434fc8ab98f1358e14538f6e7c32a362333cb7a563d0c32f'
+            '60ba8f7f10b7191e34ba86e46797584a5fdcb1cd59dbfadbcb34c84d321d4b08c29a26e633d65ac39873a8e8bebab7cc17fd20c8d21fed8754b50da179b27a38'
             'ba7b7a053c78bf1e403c2fae293a128cd2b5dd24142fd362c40296c8c8fbdee28a5100498226f27f713457c1953ee846b3a02ad2738f1d697977f443e780fc2a'
             'c99b280a2546b95f254850cbc306e0f0345068fc03df19dbc23258dacd91b7b01fc84167b0030e52ea9dc650ff541dc27591514f0828bb923e92b0c7c5f40674'
             '14dbf64d40a20057ad59bf5084d6849bd5a7bf38c9e9b5bb7ad8d49863b9afca555255a56218c0ed001f62b453ef331fee5273c6982f3af6baeb960f52ffd70b'
@@ -333,7 +391,7 @@ sha512sums=('5abe52981a9f493174afb908bc1c1a4901bc522c38c2da7ba15d5b907f06f9c4a68
             '389f51ba3943815f7cce13f6029cb5b196edbc9c27245f7d96ccb3231b61f76522d50e9010e9ead73d968266edace559c8f783738ee0e9ab8290fb324a230bc6'
             '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
             'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
-            '5ca603bd098595fb990ba81af89954ec9ac7326a36b565826918e773cc894f8159b620c3b04d1a847bf09804204781271f6ad8ffd2f9d7690b7464851d25a53c')
+            '599b0d857fc6cee7853dd85a71157eae764bd5b369e5b1501a79d52eae4b14a6503197204589f160a8a8588e97e4be2a5f26c2e847a5344bfe5690a5c21486fe')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -476,6 +534,10 @@ prepare() {
 		scripts/config --enable CONFIG_ANDROID_BINDER_IPC
 		scripts/config --enable CONFIG_ANDROID_BINDERFS
 		scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
+
+        ### Switch controller drivers
+                scripts/config --module CONFIG_HID_NINTENDO
+                scripts/config --enable CONFIG_NINTENDO_FF
 
 	### mgLRU stuff
 		scripts/config --enable CONFIG_LRU_GEN
