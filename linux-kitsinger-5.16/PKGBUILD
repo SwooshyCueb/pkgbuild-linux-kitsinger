@@ -61,7 +61,7 @@ _tlock_debug=
 pkgbase=linux-kitsinger-5.16
 # pkgname=('linux-kitsinger-5.16' 'linux-kitsinger-5.16-headers' 'linux-kitsinger-5.16-docs')
 _major=5.16
-_minor=15
+_minor=20
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -76,7 +76,7 @@ makedepends=('kmod' 'bc' 'libelf' 'python-sphinx' 'python-sphinx_rtd_theme'
 
 _aufs_repo_name="aufs5-standalone"
 _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
-_aufs_fragment="#commit=a5c609156cb988491fc5da9dade523846664f3b1"
+_aufs_fragment="#commit=b7b3978e300446aa452817aee752457e8b9c883f"
 
 #_lucjanpath="https://raw.githubusercontent.com/sirlucjan/kernel-patches/master/${_major}"
 _lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/raw/master/${_major}"
@@ -149,8 +149,6 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "${_lucjanpath}/${_fixes_path}/0019-ACPICA-Use-original-data_table_region-pointer-for-ac.patch"
         "${_lucjanpath}/${_fixes_path}/0020-ACPICA-Use-original-pointer-for-virtual-origin-table.patch"
         "${_lucjanpath}/${_fixes_path}/0021-ACPICA-Avoid-subobject-buffer-overflow-when-validati.patch"
-        "${_lucjanpath}/${_fixes_path}/0022-drm-amd-amdgpu-amdgpu_cs-fix-refcount-leak-of-a-dma_.patch"
-        "${_lucjanpath}/${_fixes_path}/0023-drm-amd-display-Fix-memory-leak.patch"
         "${_lucjanpath}/${_fixes_path}/0024-mm-Increment-kswapd_waiters-for-throttled-direct-rec.patch"
         "${_lucjanpath}/${_fixes_path}/0025-mm-Lower-the-non-hugetlbpage-pageblock-size-to-reduc.patch"
         "${_lucjanpath}/${_fixes_path}/0026-mm-Don-t-hog-the-CPU-and-zone-lock-in-rmqueue_bulk.patch"
@@ -222,16 +220,17 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # le9 + mgLRU stuff
         # pretty confident these git repos aren't going anywhere
         #"${_hakavlad_gh}/le9-patch/f64c95f700c05ecbd8cde7e008ebfd404cb8832a/le9ec_patches/le9ec-5.15.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0001-mm-x86-arm64-add-arch_has_hw_pte_young.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0002-mm-x86-add-CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0003-mm-vmscan.c-refactor-shrink_node.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0004-mm-multigenerational-lru-groundwork.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0005-mm-multigenerational-lru-mm_struct-list.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0006-mm-multigenerational-lru-aging.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0007-mm-multigenerational-lru-eviction.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0008-mm-multigenerational-lru-user-interface.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0009-mm-multigenerational-lru-Kconfig.patch"
-        "${_lucjanpath}/${_lru_le9_path}/0010-mm-vmscan-add-sysctl-knobs-for-protecting-the-workin.patch"
+        # Disabled temporarily because I suspect it's causing stability issues
+        #"${_lucjanpath}/${_lru_le9_path}/0001-mm-x86-arm64-add-arch_has_hw_pte_young.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0002-mm-x86-add-CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0003-mm-vmscan.c-refactor-shrink_node.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0004-mm-multigenerational-lru-groundwork.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0005-mm-multigenerational-lru-mm_struct-list.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0006-mm-multigenerational-lru-aging.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0007-mm-multigenerational-lru-eviction.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0008-mm-multigenerational-lru-user-interface.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0009-mm-multigenerational-lru-Kconfig.patch"
+        #"${_lucjanpath}/${_lru_le9_path}/0010-mm-vmscan-add-sysctl-knobs-for-protecting-the-workin.patch"
         # https://lore.kernel.org/linux-mm/20220309021230.721028-1-yuzhao@google.com/T/
         #"3001-mm-x86-arm64-add-arch_has_hw_pte_young.patch::${_mglru_t}-2-${_mglru_s}/raw"
         #"3002-mm-x86-add-CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG.patch::${_mglru_t}-3-${_mglru_s}/raw"
@@ -248,7 +247,8 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         #"3013-mm-multi-gen-LRU-admin-guide.patch::${_mglru_t}-14-${_mglru_s}/raw"
         #"3014-mm-multi-gen-LRU-design-doc.patch::${_mglru_t}-15-${_mglru_s}/raw"
         #"${_hakavlad_gh}/le9-patch/f4fdc45b4e66f1bf8861eb7157c409a025899e96/le9ec_patches/le9ec-5.15-MGLRU.patch"
-        "${_hakavlad_gh}/disable-i915-gem-shrinker/4e6da2a9b0602d3f80b418026d0a8bf188fc0de6/disable-drm-i915-gem-shrinker-5.10.patch"
+        # Disabled temporarily because I suspect it's causing stability issues
+        #"${_hakavlad_gh}/disable-i915-gem-shrinker/4e6da2a9b0602d3f80b418026d0a8bf188fc0de6/disable-drm-i915-gem-shrinker-5.10.patch"
 
         # https://clbin.com/VCiYJ
         "0001-pcie-reset-kludge.patch"
@@ -257,8 +257,9 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         # vanish, so instead of pulling the files from the repositories, they will be included in this one.
 
         # https://github.com/Frogging-Family/linux-tkg/tree/master/linux-tkg-patches/5.16
-        "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
-        "0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
+        # Disabled temporarily because I suspect it's causing stability issues
+        #"0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
+        #"0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
 
         # https://github.com/kevall474/kernel-patches/tree/main/5.13/misc-patches
         "vm.max_map_count.patch"
@@ -284,7 +285,7 @@ source=("https://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
 # https://patchwork.kernel.org/project/linux-mm/patch/20220311090119.2412738-1-maobibo@loongson.cn/
 # https://patchwork.kernel.org/project/linux-mm/patch/20220309002550.103786-1-npache@redhat.com/
 
-sha512sums=('6f0245740ebebc6aa687c5fb1226aee492d543fd202f88963a488cfa609e30d3d1116c362638be83f201cf08380b9c696a1d2ccb1e0934f84dde14eeb9b4ca25'
+sha512sums=('21c55ab96ac571a16a4731089625f24918ec410849a8351304894bbb2b47f336586cd9d8f39a6b2e9b920ef0142dfbf758075dd6da606c3b9e936b5960cdc7bd'
             'SKIP'
             'SKIP'
             '5cb79731f957372cbd3ddaf93ac1cbc6eca4a526225f5bbe9c5eed11529fbefa66934ac5002410505df84281144da15e39326a8df886fe45da937304ed0b6fcf'
@@ -317,8 +318,6 @@ sha512sums=('6f0245740ebebc6aa687c5fb1226aee492d543fd202f88963a488cfa609e30d3d11
             '8cb9bf7871b31902ee74c46134a2b75c030c2eacf051b6480d8bea7970967d72a07853d8baf261d9645875283ca201201f27c846901b35a9ed5b4093b9803b50'
             'c480df4c48842d323f8ce88b6059b6e75773bdf15b8cd83f7ac56ff4dd3776e71f020fdaa60e40366016b5890061ccad35102e7d2eb5ca030c275b6086d1600e'
             '6a37f6a611d1b7149f4d589cc46fa6b0e29d65bd15bd7350207c0ed7c23621f68ef6ecd4d17715eea3b6073bdcd9209045fd5d1ef19838fe29b6254371e7b3e8'
-            'f968e1debf2e9203c14407557c675354f7a3e98b83596394e2997a9e93b8e45d5faaa89dba0b5f3ac471f850b303888c939fcb6fd5edaae4ef41b5fd6b48426e'
-            'bcb7574b51d994db81e122cc56582efaa60905cd431d9a42e30d2515e1a1d3afce88ba26140751036d4ce4e39f59600192d78f3835c000f8d0ac144f290e9b66'
             'ef598ce6b1ceaa126e9f2616cf89f6dc524fe221181f5609deebf16e368a05f9c7127005d6cc2e69baca1b10479a7675b42eee76693c35c883a4e20a3b54a71a'
             'd9b7dac5b27b7e45d5d6d51f544ff6774569f6777f601d89ae30792df6b5a5b5d8fcdb0ae660044db6bed3a269790d018dff784b559488327e5346ea936c2667'
             'b08b8929317c9bb8cfb962562ed055bb5033f1e9cad92490f62aaba96fbebafb916466e2c0c6947ae95fd04b9ab2300b93dd2981fc1dcbafd0bae8f8a3299a80'
@@ -370,20 +369,7 @@ sha512sums=('6f0245740ebebc6aa687c5fb1226aee492d543fd202f88963a488cfa609e30d3d11
             '16df1c1730726ec161be304a843af72148177ec9becd63b03cfdb301662a86d4fa7a78957efbc52a098761617992bde16fccead5d0dacc5318735020bffb45c7'
             'a279af97b27d6da76799093aa99962fc924b007fe1c9df7bd2496ea41d6ec1299c4cf5e1c61d368ef6df84054da0201fde024e44a12ffc5534bf6b82026b7144'
             'b65389b44817cb710a9f787a76dd5fa0c99f0db4a05b7b582ebe1e85cd02ea05f7503dfc4659ad39251a10c9ff5709c12466c52b227de1c07f87b35a14fe4ad7'
-            '0661ec0d6f96af7cfb8b517de8ef6c2c51bf1b7056c0c59ec2b992fc5c71a991b707e036d1a749383b2972d1c1d52b3e551b23fc33534906ed6865c40d950e77'
-            '59eef01a26b32766ff8cb03873e9c7dee4442b39d67965a7e4f04041d7189b1aba5980a2f184ceb40bec2cb48a9116eb5e4c17f0d48667623480ddf0cf96f24f'
-            'f69aeedd4cb87244e71cd71cecb3eab78a9f266d2d42871ec3d43d43640cd40ce0f859c2ac14b0506d352cc9489306517e4aae41f8d913d37de544563bf3e59f'
-            '9b8aa7d13b14b969267fec514e558c91ca98bba5de1001c8319b0e762b30ba24c154aa96973a97e3034855d6d6ff4aa5ec4f7be423a4df4b2251e4e054a37fce'
-            'be38f53391bc04922b6712d65c2eb679b2f9683a46b473d6ee953bb559a3aa85f991961534995966e0fe187bdbaa69be12f4d39032d82d3dd9c8922ea379fc38'
-            '2eaf4c0450330116cc8e3637809c512988c4a58aca09eab835bc3fdd5e05592755e84dc3ca9c67259014c899e041825982e14032166f666abe8acea4de1280f1'
-            '28483022c7e5608026e6e0512421bdd7704180ffb28bc803bf0680064493f09c125d81a9584892c1c2c57b2dea88609af8bfed1ba3b4782d379599216321f305'
-            '097353f2a924d570f52664941b7db79c482ba46ead3187536c6d4e5c404b1ae68315a9513ca165ed8d2945b4d643d43d67cbc55baab341e1290541f5142c1d4a'
-            '7d03430fd617ab3ad3e1dac77ea7d7ea50f6e691c09f3bc634335c67622da3ab283f9b2e345504d41e762033861932653b759399832c98a9d6ae769fc71cb667'
-            '744a27917c3299ba7faa84eb77ffd10c763a23304fa9a26d1689cce7c89c98725e885e3ca03e998c57c3a1b6cb093e5dd48abd57597bb86b2a030f0d830a1580'
-            '5156083c4e764bf47d46c6bb5fec958a22f88c4842c4549d6992e663ff0c7caf9af616c0949f0905d93c768005ebdfc39b6a129ef2a50e5f9dc600a34ab9ec76'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
-            '389f51ba3943815f7cce13f6029cb5b196edbc9c27245f7d96ccb3231b61f76522d50e9010e9ead73d968266edace559c8f783738ee0e9ab8290fb324a230bc6'
-            '9193db6debe578bd69c338b24bcfa26e0ae719a78c5f63b442d02d7790ee59397eeb85fe683ed96ad053ab784c9860295c0d149405cb826031b6eb129ca45a0a'
             'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
             '90f8c978bde10c80770431c3d8686b6f8c10e2c9645dddb9e8772312eb0cb1129bcfc6af5b86477c5616b723da25f629859092b1af178da7bd71c7b89e1de97d')
 
@@ -459,11 +445,15 @@ prepare() {
 		cp -r {Documentation,fs} "${kern_srcdir}"
 		cp include/uapi/linux/aufs_type.h "${kern_srcdir}/include/uapi/linux"
 		popd > /dev/null
+		# Kludge for 7a0921a23cae42e9fa5ce964f6907181b6dc80d8
+		sed -i '/^EXPORT_SYMBOL(__fput_sync);$/d' fs/file_table.c
 		local aufs_patch_fname
 		for aufs_patch_fname in "${_aufs_patches[@]}"; do
 			_msg3 "Applying AUFS patch $aufs_patch_fname..."
 			patch -Np1 < "${aufs_srcdir}/${aufs_patch_fname}"
 		done
+		# Kludge for 7a0921a23cae42e9fa5ce964f6907181b6dc80d8
+		sed -i 's/^EXPORT_SYMBOL_GPL(__fput_sync);$/EXPORT_SYMBOL(__fput_sync);/' fs/file_table.c
 
 	### Patching sources
 		local src
