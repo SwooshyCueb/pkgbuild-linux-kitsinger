@@ -611,9 +611,9 @@ prepare() {
 		scripts/config --enable CONFIG_ANDROID_BINDERFS
 		scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
 
-        ### Switch controller drivers
-                scripts/config --module CONFIG_HID_NINTENDO
-                scripts/config --enable CONFIG_NINTENDO_FF
+	### Switch controller drivers
+		scripts/config --module CONFIG_HID_NINTENDO
+		scripts/config --enable CONFIG_NINTENDO_FF
 
 	### mgLRU stuff
 		scripts/config --enable CONFIG_LRU_GEN
