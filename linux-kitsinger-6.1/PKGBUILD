@@ -61,7 +61,7 @@ _tlock_debug=
 pkgbase=linux-kitsinger-6.1
 # pkgname=('linux-kitsinger-6.1' 'linux-kitsinger-6.1-headers' 'linux-kitsinger-6.1-docs')
 _major=6.1
-_minor=7
+_minor=22
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -80,145 +80,194 @@ makedepends=(
 
 _aufs_repo_name="aufs5-standalone"
 _aufs_repo="https://github.com/sfjro/${_aufs_repo_name}.git"
-_aufs_fragment="#commit=9e031a3ed9e56b52e3c73adb694842d04e900ed1"
+_aufs_fragment="#commit=2049a4559234e81aa4f112396cab2304d3522bda"
 
-_lucjan_sha="3726fff09c2e7677c1011f0fff7718858b07cc56"
-_lucjanpath="https://gitlab.com/sirlucjan/kernel-patches/-/raw/${_lucjan_sha}/${_major}"
+_lucjan_sha="e17337a336a59c05440e8627cb5f1452c0481526"
+_lucjan_path="https://gitlab.com/sirlucjan/kernel-patches/-/raw/${_lucjan_sha}/${_major}"
 
-_arch_path="arch-patches-v14-sep"
-_futex_path="futex-patches-v4"
-_futex_patch="0001-futex-${_major}-Add-entry-point-for-FUTEX_WAIT_MULTIPLE-op.patch"
-_fixes_path="fixes-miscellaneous-v28-sep"
-_ntfs_path="ntfs3-cachyos-patches-v3-sep"
+_lucjan_arch_path="${_lucjan_path}/arch-patches-v19-sep"
+_lucjan_fixes_path="${_lucjan_path}/fixes-miscellaneous-v43-sep"
+_lucjan_ddcci_path="${_lucjan_path}/ddcci-patches-v2-sep"
+_lucjan_crypto_path="${_lucjan_path}/crypto-patches-sep"
+_lucjan_ntfs3_path="${_lucjan_path}/ntfs3-cachyos-patches-v5-sep"
+_lucjan_drm_path="${_lucjan_path}/drm-patches-v2-sep"
+_lucjan_ext4_path="${_lucjan_path}/ext4-patches-v4-sep"
 
-_clr_sha="9c48f04142b252acbdc82ffa7c20faba5dc6f903"
+_clr_sha="74e253325b575983a85a4d17b60a03af7fd02a09"
 _clr_path="https://raw.githubusercontent.com/clearlinux-pkgs/linux/${_clr_sha}"
 
+_arch_gh="https://github.com/archlinux/linux/commit"
 _zen_gh="https://github.com/zen-kernel/zen-kernel/commit"
 
-_xanmod_sha=4ba17e3181e82204446e7e3e1bec927028043558
+_neptune_gl="https://gitlab.com/evlaV/linux-integration/-/commit"
+
+_xanmod_sha=c527f69aa31ddb2cc15b86951bd3c2610df77872
 _xanmod_path="https://raw.githubusercontent.com/xanmod/linux-patches/${_xanmod_sha}/linux-${_major}.y-xanmod/"
 
-_kernel_git_path="https://git.kernel.org/pub/scm/linux/kernel/git"
-_akpm_mm_path="${_kernel_git_path}/akpm/mm.git/patch/"
+_kernel_git="https://git.kernel.org/pub/scm/linux/kernel/git"
+_torvalds_path="${_kernel_git}/torvalds/linux.git/patch/"
 
 _amdgfx_path="https://lore.kernel.org/amd-gfx"
 _joshie_s="joshua@froggi.es"
-
-_mmpw_path="https://patchwork.kernel.org/project/linux-mm/patch"
-
-_lkml_path="https://lore.kernel.org/lkml"
-# For whatever reason, the mwait pathset threads from lore.kernel.org have a different URL pattern
-_mwait_e="1654538381.git-series.wyes.karny@amd.com"
 
 source=("https://www.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.sign"
         "${_aufs_repo_name}::git+${_aufs_repo}${_aufs_fragment}"
 
-        "${_lucjanpath}/${_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
-        "${_lucjanpath}/${_arch_path}/0002-Revert-drm-display-dp_mst-Move-all-payload-info-into.patch"
-        "${_lucjanpath}/${_arch_path}/0003-mm-add-vma_has_recency.patch"
-        "${_lucjanpath}/${_arch_path}/0004-mm-support-POSIX_FADV_NOREUSE.patch"
-        "${_lucjanpath}/${_arch_path}/0005-btrfs-fix-invalid-leaf-access-due-to-inline-extent-d.patch"
-        "${_lucjanpath}/${_arch_path}/0006-wifi-mac80211-fix-initialization-of-rx-link-and-rx-l.patch"
+        "1001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged.patch::${_arch_gh}/c8ad9c833e6b9340fbfe25cfd2317206adc671d9.patch"
 
-        "${_lucjanpath}/${_futex_path}/${_futex_patch}"
+        # Lucjan has a differnet set of patches for arch. Let's continue using them.
+        #"${_lucjan_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
+        "${_lucjan_arch_path}/0002-mm-add-vma_has_recency.patch"
+        "${_lucjan_arch_path}/0003-mm-support-POSIX_FADV_NOREUSE.patch"
+        "${_lucjan_arch_path}/0004-Revert-drm-i915-improve-the-catch-all-evict-to-handl.patch"
+        "${_lucjan_arch_path}/0005-drm-i915-improve-the-catch-all-evict-to-handle-lock-.patch"
+        #"${_lucjan_arch_path}/0006-tpm-disable-hwrng-for-fTPM-on-some-AMD-designs.patch"
 
-        "${_lucjanpath}/${_fixes_path}/0001-mm-Change-dirty-writeback-defaults.patch"
-        "${_lucjanpath}/${_fixes_path}/0002-ZEN-mm-Lower-the-non-hugetlbpage-pageblock-size-to-r.patch"
-        "${_lucjanpath}/${_fixes_path}/0003-leds-trigger-Add-block-device-LED-trigger.patch"
-        "${_lucjanpath}/${_fixes_path}/0004-docs-Add-block-device-blkdev-LED-trigger-documentati.patch"
-        "${_lucjanpath}/${_fixes_path}/0005-elevator-remove-redundant-code-in-elv_unregister_que.patch"
-        "${_lucjanpath}/${_fixes_path}/0006-blk-wbt-remove-unnecessary-check-in-wbt_enable_defau.patch"
-        "${_lucjanpath}/${_fixes_path}/0007-blk-wbt-make-enable_state-more-accurate.patch"
-        "${_lucjanpath}/${_fixes_path}/0008-blk-wbt-don-t-show-valid-wbt_lat_usec-in-sysfs-while.patch"
-        "${_lucjanpath}/${_fixes_path}/0009-elevator-add-new-field-flags-in-struct-elevator_queu.patch"
-        "${_lucjanpath}/${_fixes_path}/0010-blk-wbt-don-t-enable-throttling-if-default-elevator-.patch"
-        "${_lucjanpath}/${_fixes_path}/0011-mm-vmscan-make-rotations-a-secondary-factor-in-balan.patch"
-        "${_lucjanpath}/${_fixes_path}/0012-objtool-Optimize-elf_dirty_reloc_sym.patch"
-        "${_lucjanpath}/${_fixes_path}/0013-kbuild-revive-parallel-execution-for-.tmp_initcalls..patch"
-        "${_lucjanpath}/${_fixes_path}/0014-padata-Do-not-mark-padata_mt_helper-as-__init.patch"
-        "${_lucjanpath}/${_fixes_path}/0015-modpost-Include-.text.-in-TEXT_SECTIONS.patch"
-        "${_lucjanpath}/${_fixes_path}/0016-epoll-ep_autoremove_wake_function-should-use-list_de.patch"
-        "${_lucjanpath}/${_fixes_path}/0017-Fix-sound-on-ASUS-Zenbook-UM5302TA.patch"
-        "${_lucjanpath}/${_fixes_path}/0018-Initialize-ata-before-graphics.patch"
-        "${_lucjanpath}/${_fixes_path}/0019-hugetlb-unshare-some-PMDs-when-splitting-VMAs.patch"
-        "${_lucjanpath}/${_fixes_path}/0020-mm-remove-PageMovable-export.patch"
-        "${_lucjanpath}/${_fixes_path}/0021-hwmon-nct6775-Fix-incorrect-parenthesization-in-nct6.patch"
-        #"${_lucjanpath}/${_fixes_path}/0022-bitmap-switch-from-inline-to-__always_inline.patch"
-        "${_lucjanpath}/${_fixes_path}/0023-x86-acpi-boot-Do-not-register-processors-that-cannot.patch"
-        "${_lucjanpath}/${_fixes_path}/0024-kthread_worker-check-all-delayed-works-when-destroy-.patch"
-        "${_lucjanpath}/${_fixes_path}/0025-xfs-fix-incorrect-i_nlink-caused-by-inode-racing.patch"
-        "${_lucjanpath}/${_fixes_path}/0026-xfs-fix-off-by-one-error-in-xfs_btree_space_to_heigh.patch"
-        "${_lucjanpath}/${_fixes_path}/0027-xfs-get-root-inode-correctly-at-bulkstat.patch"
-        "${_lucjanpath}/${_fixes_path}/0028-xfs-Fix-deadlock-on-xfs_inodegc_worker.patch"
-        "${_lucjanpath}/${_fixes_path}/0029-xfs-fix-extent-busy-updating.patch"
-        "${_lucjanpath}/${_fixes_path}/0030-Revert-mm-compaction-fix-set-skip-in-fast_find_migra.patch"
-        "${_lucjanpath}/${_fixes_path}/0031-mm-mremap-fix-mremap-expanding-for-vma-s-with-vm_ops.patch"
+        "${_lucjan_path}/futex-patches-v4/0001-futex-${_major}-Add-entry-point-for-FUTEX_WAIT_MULTIPLE-op.patch"
 
-        "${_lucjanpath}/${_ntfs_path}/0001-fs-ntfs3-Add-comments-about-cluster-size.patch"
-        "${_lucjanpath}/${_ntfs_path}/0002-fs-ntfs3-Add-hidedotfiles-option.patch"
-        "${_lucjanpath}/${_ntfs_path}/0003-fs-ntfs3-Change-destroy_inode-to-free_inode.patch"
-        "${_lucjanpath}/${_ntfs_path}/0004-fs-ntfs3-Add-option-nocase.patch"
-        "${_lucjanpath}/${_ntfs_path}/0005-fs-ntfs3-Rename-variables-and-add-comment.patch"
-        "${_lucjanpath}/${_ntfs_path}/0006-fs-ntfs3-Add-overflow-check-for-attribute-size.patch"
-        "${_lucjanpath}/${_ntfs_path}/0007-Revert-ntfs3-rework-xattr-handlers-and-switch-to-POS.patch"
-        "${_lucjanpath}/${_ntfs_path}/0008-fs-ntfs3-Fix-df-mask-display-in-proc-mounts.patch"
-        "${_lucjanpath}/${_ntfs_path}/0009-fs-ntfs3-Fix-attr_punch_hole-null-pointer-derenferen.patch"
-        "${_lucjanpath}/${_ntfs_path}/0010-fs-ntfs3-Use-kmalloc_array-for-allocating-multiple-e.patch"
-        "${_lucjanpath}/${_ntfs_path}/0011-fs-ntfs3-Fix-junction-point-resolution.patch"
-        "${_lucjanpath}/${_ntfs_path}/0012-fs-ntfs3-Use-strcmp-to-determine-attribute-type.patch"
-        "${_lucjanpath}/${_ntfs_path}/0013-fs-ntfs3-Don-t-use-uni1-uninitialized-in-ntfs_d_comp.patch"
-        "${_lucjanpath}/${_ntfs_path}/0014-fs-ntfs3-Validate-attribute-data-and-valid-sizes.patch"
-        "${_lucjanpath}/${_ntfs_path}/0015-fs-ntfs3-Eliminate-unnecessary-ternary-operator-in-n.patch"
-        "${_lucjanpath}/${_ntfs_path}/0016-fs-ntfs3-Add-windows_names-mount-option.patch"
-        "${_lucjanpath}/${_ntfs_path}/0017-fs-ntfs3-Document-windows_names-mount-option.patch"
-        "${_lucjanpath}/${_ntfs_path}/0018-fs-ntfs3-Fix-hidedotfiles-mount-option-by-reversing-.patch"
-        "${_lucjanpath}/${_ntfs_path}/0019-fs-ntfs3-Make-hidedotfiles-mount-option-work-when-re.patch"
-        "${_lucjanpath}/${_ntfs_path}/0020-fs-ntfs3-Add-hidedotfiles-to-the-list-of-enabled-mou.patch"
-        "${_lucjanpath}/${_ntfs_path}/0021-fs-ntfs3-Document-the-hidedotfiles-mount-option.patch"
-        "${_lucjanpath}/${_ntfs_path}/0022-fs-ntfs3-Rename-hidedotfiles-mount-option-to-hide_do.patch"
-        "${_lucjanpath}/${_ntfs_path}/0023-fs-ntfs3-Add-system.ntfs_attrib_be-extended-attribut.patch"
-        "${_lucjanpath}/${_ntfs_path}/0024-fs-ntfs3-Document-system.ntfs_attrib_be-extended-att.patch"
-        "${_lucjanpath}/${_ntfs_path}/0025-fs-ntfs3-Fix-endian-conversion-in-ni_fname_name.patch"
-        "${_lucjanpath}/${_ntfs_path}/0026-fs-ntfs3-Add-functions-to-modify-LE-bitmaps.patch"
-        "${_lucjanpath}/${_ntfs_path}/0027-fs-ntfs3-Use-_le-variants-of-bitops-functions.patch"
-        "${_lucjanpath}/${_ntfs_path}/0028-fs-ntfs3-Add-ntfs_bitmap_weight_le-function-and-refa.patch"
-        "${_lucjanpath}/${_ntfs_path}/0029-fs-ntfs3-Fix-sparse-problems.patch"
-        "${_lucjanpath}/${_ntfs_path}/0030-fs-ntfs3-Remove-unused-functions.patch"
-        "${_lucjanpath}/${_ntfs_path}/0031-fs-ntfs3-Simplify-ntfs_update_mftmirr-function.patch"
-        "${_lucjanpath}/${_ntfs_path}/0032-fs-ntfs3-Fixing-work-with-sparse-clusters.patch"
-        "${_lucjanpath}/${_ntfs_path}/0033-fs-ntfs3-Change-new-sparse-cluster-processing.patch"
-        "${_lucjanpath}/${_ntfs_path}/0034-fs-ntfs3-Fix-wrong-indentations.patch"
-        "${_lucjanpath}/${_ntfs_path}/0035-fs-ntfs3-atomic_open-implementation.patch"
-        "${_lucjanpath}/${_ntfs_path}/0036-fs-ntfs3-Fixing-wrong-logic-in-attr_set_size-and-ntf.patch"
-        "${_lucjanpath}/${_ntfs_path}/0037-fs-ntfs3-Changing-locking-in-ntfs_rename.patch"
-        "${_lucjanpath}/${_ntfs_path}/0038-fs-ntfs3-Restore-correct-state-after-ENOSPC-in-attr_.patch"
-        "${_lucjanpath}/${_ntfs_path}/0039-fs-ntfs3-Correct-ntfs_check_for_free_space.patch"
-        "${_lucjanpath}/${_ntfs_path}/0040-fs-ntfs3-Check-fields-while-reading.patch"
-        "${_lucjanpath}/${_ntfs_path}/0041-fs-ntfs3-Fix-incorrect-if-in-ntfs_set_acl_ex.patch"
-        "${_lucjanpath}/${_ntfs_path}/0042-fs-ntfs3-Use-ALIGN-kernel-macro.patch"
-        "${_lucjanpath}/${_ntfs_path}/0043-fs-ntfs3-Fix-wrong-if-in-hdr_first_de.patch"
-        "${_lucjanpath}/${_ntfs_path}/0044-fs-ntfs3-Improve-checking-of-bad-clusters.patch"
-        "${_lucjanpath}/${_ntfs_path}/0045-fs-ntfs3-Make-if-more-readable.patch"
+        "${_lucjan_fixes_path}/0001-mm-Change-dirty-writeback-defaults.patch"
+        "${_lucjan_fixes_path}/0002-ZEN-mm-Lower-the-non-hugetlbpage-pageblock-size-to-r.patch"
+        "${_lucjan_fixes_path}/0003-leds-trigger-Add-block-device-LED-trigger.patch"
+        "${_lucjan_fixes_path}/0004-docs-Add-block-device-blkdev-LED-trigger-documentati.patch"
+        "${_lucjan_fixes_path}/0005-elevator-remove-redundant-code-in-elv_unregister_que.patch"
+        "${_lucjan_fixes_path}/0006-blk-wbt-remove-unnecessary-check-in-wbt_enable_defau.patch"
+        "${_lucjan_fixes_path}/0007-blk-wbt-make-enable_state-more-accurate.patch"
+        "${_lucjan_fixes_path}/0008-blk-wbt-don-t-show-valid-wbt_lat_usec-in-sysfs-while.patch"
+        "${_lucjan_fixes_path}/0009-elevator-add-new-field-flags-in-struct-elevator_queu.patch"
+        "${_lucjan_fixes_path}/0010-blk-wbt-don-t-enable-throttling-if-default-elevator-.patch"
+        "${_lucjan_fixes_path}/0011-mm-vmscan-make-rotations-a-secondary-factor-in-balan.patch"
+        "${_lucjan_fixes_path}/0012-objtool-Optimize-elf_dirty_reloc_sym.patch"
+        "${_lucjan_fixes_path}/0013-kbuild-revive-parallel-execution-for-.tmp_initcalls..patch"
+        "${_lucjan_fixes_path}/0014-padata-Do-not-mark-padata_mt_helper-as-__init.patch"
+        "${_lucjan_fixes_path}/0015-modpost-Include-.text.-in-TEXT_SECTIONS.patch"
+        "${_lucjan_fixes_path}/0016-epoll-ep_autoremove_wake_function-should-use-list_de.patch"
+        "${_lucjan_fixes_path}/0017-Fix-sound-on-ASUS-Zenbook-UM5302TA.patch"
+        "${_lucjan_fixes_path}/0018-Initialize-ata-before-graphics.patch"
+        "${_lucjan_fixes_path}/0019-mm-remove-PageMovable-export.patch"
+        #"${_lucjan_fixes_path}/0020-hwmon-nct6775-Fix-incorrect-parenthesization-in-nct6.patch"
+        "${_lucjan_fixes_path}/0021-bitmap-switch-from-inline-to-__always_inline.patch"
+        #"${_lucjan_fixes_path}/0022-x86-acpi-boot-Do-not-register-processors-that-cannot.patch"
+        "${_lucjan_fixes_path}/0023-kthread_worker-check-all-delayed-works-when-destroy-.patch"
+        "${_lucjan_fixes_path}/0024-xfs-fix-incorrect-i_nlink-caused-by-inode-racing.patch"
+        "${_lucjan_fixes_path}/0025-xfs-fix-off-by-one-error-in-xfs_btree_space_to_heigh.patch"
+        "${_lucjan_fixes_path}/0026-xfs-get-root-inode-correctly-at-bulkstat.patch"
+        "${_lucjan_fixes_path}/0027-xfs-Fix-deadlock-on-xfs_inodegc_worker.patch"
+        "${_lucjan_fixes_path}/0028-xfs-fix-extent-busy-updating.patch"
+        "${_lucjan_fixes_path}/0029-x86-pm-Force-out-of-line-memcpy.patch"
+        "${_lucjan_fixes_path}/0030-mm-compaction-Rename-compact_control-rescan-to-finis.patch"
+        "${_lucjan_fixes_path}/0031-mm-compaction-Check-if-a-page-has-been-captured-befo.patch"
+        "${_lucjan_fixes_path}/0032-mm-compaction-Finish-scanning-the-current-pageblock-.patch"
+        "${_lucjan_fixes_path}/0033-mm-compaction-Finish-pageblocks-on-complete-migratio.patch"
+        "${_lucjan_fixes_path}/0034-Revert-Revert-mm-compaction-fix-set-skip-in-fast_fin.patch"
+        "${_lucjan_fixes_path}/0035-x86-cpu-Use-cpu_feature_enabled-when-checking-global.patch"
+        #"${_lucjan_fixes_path}/0036-ACPI-Don-t-build-ACPICA-with-Os.patch"
+        "${_lucjan_fixes_path}/0037-lib-string-Use-strchr-in-strpbrk.patch"
+        #"${_lucjan_fixes_path}/0038-Bluetooth-Fix-issue-with-Actions-Semi-ATS2851-based-.patch"
+        "${_lucjan_fixes_path}/0039-ext4-Fix-possible-corruption-when-moving-a-directory.patch"
+        #"${_lucjan_fixes_path}/0040-randstruct-disable-Clang-15-support.patch"
 
-        "${_lucjanpath}/v4l2loopback-patches/0001-media-v4l2-core-add-v4l2loopback.patch"
+        #"${_lucjan_crypto_path}/0001-crypto-x86-ghash-fix-unaligned-access-in-ghash_setke.patch"
+        "${_lucjan_crypto_path}/0002-crypto-x86-ghash-use-le128-instead-of-u128.patch"
+        "${_lucjan_crypto_path}/0003-crypto-x86-ghash-add-comment-and-fix-broken-link.patch"
 
-        # https://lore.kernel.org/lkml/20221027043810.350460-1-yury.norov@gmail.com/
-        "${_lucjanpath}/bitmap-patches-sep/0001-bitmap-switch-from-inline-to-__always_inline.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0002-bitmap-improve-small_const-case-for-find_next-functi.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0003-bitmap-add-tests-for-find_next_bit.patch"
-        # https://lore.kernel.org/lkml/20221208183101.1162006-1-yury.norov@gmail.com/
-        "${_lucjanpath}/bitmap-patches-sep/0004-lib-find-introduce-find_nth_and_andnot_bit.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0005-cpumask-introduce-cpumask_nth_and_andnot.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0006-sched-add-sched_numa_find_nth_cpu.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0007-cpumask-improve-on-cpumask_local_spread-locality.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0008-lib-cpumask-reorganize-cpumask_local_spread-logic.patch"
-        # https://lore.kernel.org/lkml/20221028164959.1367250-1-vschneid@redhat.com/
-        "${_lucjanpath}/bitmap-patches-sep/0009-sched-topology-Introduce-sched_numa_hop_mask.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0010-sched-topology-Introduce-for_each_numa_hop_mask.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0011-net-mlx5e-Improve-remote-NUMA-preferences-used-for-t.patch"
-        "${_lucjanpath}/bitmap-patches-sep/0012-lib-cpumask-update-comment-for-cpumask_local_spread.patch"
+        "${_lucjan_ddcci_path}/0001-drivers-ddcci-add-drivers-for-DDCCI.patch"
+        "${_lucjan_ddcci_path}/0002-drivers-ddcci-add-drivers-for-DDCCI.patch"
+        "${_lucjan_ddcci_path}/0003-drivers-ddcci-add-drivers-for-DDCCI.patch"
+        "${_lucjan_ddcci_path}/0004-ddcci-6.1-update-to-the-latest-git-HEAD.patch"
+        "${_lucjan_ddcci_path}/0005-ddcci-6.1-fix-UnicodeDecodeError-for-htmldocs.patch"
+        "${_lucjan_ddcci_path}/0006-ddcci-6.1-fix-bullet-list-newlines.patch"
+
+        "${_lucjan_ntfs3_path}/0001-fs-ntfs3-Add-comments-about-cluster-size.patch"
+        "${_lucjan_ntfs3_path}/0002-fs-ntfs3-Add-hidedotfiles-option.patch"
+        "${_lucjan_ntfs3_path}/0003-fs-ntfs3-Change-destroy_inode-to-free_inode.patch"
+        "${_lucjan_ntfs3_path}/0004-fs-ntfs3-Add-option-nocase.patch"
+        "${_lucjan_ntfs3_path}/0005-fs-ntfs3-Rename-variables-and-add-comment.patch"
+        "${_lucjan_ntfs3_path}/0006-fs-ntfs3-Add-overflow-check-for-attribute-size.patch"
+        "${_lucjan_ntfs3_path}/0007-Revert-ntfs3-rework-xattr-handlers-and-switch-to-POS.patch"
+        "${_lucjan_ntfs3_path}/0008-fs-ntfs3-Fix-df-mask-display-in-proc-mounts.patch"
+        "${_lucjan_ntfs3_path}/0009-fs-ntfs3-Use-kmalloc_array-for-allocating-multiple-e.patch"
+        "${_lucjan_ntfs3_path}/0010-fs-ntfs3-Fix-junction-point-resolution.patch"
+        "${_lucjan_ntfs3_path}/0011-fs-ntfs3-Use-strcmp-to-determine-attribute-type.patch"
+        "${_lucjan_ntfs3_path}/0012-fs-ntfs3-Don-t-use-uni1-uninitialized-in-ntfs_d_comp.patch"
+        "${_lucjan_ntfs3_path}/0013-fs-ntfs3-Eliminate-unnecessary-ternary-operator-in-n.patch"
+        "${_lucjan_ntfs3_path}/0014-fs-ntfs3-Add-windows_names-mount-option.patch"
+        "${_lucjan_ntfs3_path}/0015-fs-ntfs3-Document-windows_names-mount-option.patch"
+        "${_lucjan_ntfs3_path}/0016-fs-ntfs3-Fix-hidedotfiles-mount-option-by-reversing-.patch"
+        "${_lucjan_ntfs3_path}/0017-fs-ntfs3-Make-hidedotfiles-mount-option-work-when-re.patch"
+        "${_lucjan_ntfs3_path}/0018-fs-ntfs3-Add-hidedotfiles-to-the-list-of-enabled-mou.patch"
+        "${_lucjan_ntfs3_path}/0019-fs-ntfs3-Document-the-hidedotfiles-mount-option.patch"
+        "${_lucjan_ntfs3_path}/0020-fs-ntfs3-Rename-hidedotfiles-mount-option-to-hide_do.patch"
+        "${_lucjan_ntfs3_path}/0021-fs-ntfs3-Add-system.ntfs_attrib_be-extended-attribut.patch"
+        "${_lucjan_ntfs3_path}/0022-fs-ntfs3-Document-system.ntfs_attrib_be-extended-att.patch"
+        "${_lucjan_ntfs3_path}/0023-fs-ntfs3-Fix-endian-conversion-in-ni_fname_name.patch"
+        "${_lucjan_ntfs3_path}/0024-fs-ntfs3-Add-functions-to-modify-LE-bitmaps.patch"
+        "${_lucjan_ntfs3_path}/0025-fs-ntfs3-Use-_le-variants-of-bitops-functions.patch"
+        "${_lucjan_ntfs3_path}/0026-fs-ntfs3-Add-ntfs_bitmap_weight_le-function-and-refa.patch"
+        "${_lucjan_ntfs3_path}/0027-fs-ntfs3-Fix-sparse-problems.patch"
+        "${_lucjan_ntfs3_path}/0028-fs-ntfs3-Remove-unused-functions.patch"
+        "${_lucjan_ntfs3_path}/0029-fs-ntfs3-Simplify-ntfs_update_mftmirr-function.patch"
+        "${_lucjan_ntfs3_path}/0030-fs-ntfs3-Fixing-work-with-sparse-clusters.patch"
+        "${_lucjan_ntfs3_path}/0031-fs-ntfs3-Change-new-sparse-cluster-processing.patch"
+        "${_lucjan_ntfs3_path}/0032-fs-ntfs3-Fix-wrong-indentations.patch"
+        "${_lucjan_ntfs3_path}/0033-fs-ntfs3-atomic_open-implementation.patch"
+        "${_lucjan_ntfs3_path}/0034-fs-ntfs3-Fixing-wrong-logic-in-attr_set_size-and-ntf.patch"
+        "${_lucjan_ntfs3_path}/0035-fs-ntfs3-Changing-locking-in-ntfs_rename.patch"
+        "${_lucjan_ntfs3_path}/0036-fs-ntfs3-Restore-correct-state-after-ENOSPC-in-attr_.patch"
+        "${_lucjan_ntfs3_path}/0037-fs-ntfs3-Correct-ntfs_check_for_free_space.patch"
+        "${_lucjan_ntfs3_path}/0038-fs-ntfs3-Check-fields-while-reading.patch"
+        "${_lucjan_ntfs3_path}/0039-fs-ntfs3-Fix-incorrect-if-in-ntfs_set_acl_ex.patch"
+        "${_lucjan_ntfs3_path}/0040-fs-ntfs3-Use-ALIGN-kernel-macro.patch"
+        "${_lucjan_ntfs3_path}/0041-fs-ntfs3-Fix-wrong-if-in-hdr_first_de.patch"
+        "${_lucjan_ntfs3_path}/0042-fs-ntfs3-Improve-checking-of-bad-clusters.patch"
+        "${_lucjan_ntfs3_path}/0043-fs-ntfs3-Make-if-more-readable.patch"
+
+        #"${_lucjan_drm_path}/0001-drm-display-Don-t-block-HDR_OUTPUT_METADATA-on-unkno.patch"
+        #"${_lucjan_drm_path}/0002-drm-connector-print-max_requested_bpc-in-state-debug.patch"
+        #"${_lucjan_drm_path}/0003-drm-connector-Drop-COLORIMETRY_NO_DATA.patch"
+        #"${_lucjan_drm_path}/0004-drm-connector-Convert-DRM_MODE_COLORIMETRY-to-enum.patch"
+        #"${_lucjan_drm_path}/0005-drm-connector-Pull-out-common-create_colorspace_prop.patch"
+        #"${_lucjan_drm_path}/0006-drm-connector-Allow-drivers-to-pass-list-of-supporte.patch"
+        #"${_lucjan_drm_path}/0007-drm-connector-Print-connector-colorspace-in-state-de.patch"
+        #"${_lucjan_drm_path}/0008-drm-amd-display-Always-pass-connector_state-to-strea.patch"
+        #"${_lucjan_drm_path}/0009-drm-amd-display-Register-Colorspace-property-for-DP-.patch"
+        #"${_lucjan_drm_path}/0010-drm-amd-display-Set-colorspace-for-HDMI-infoframe.patch"
+        #"${_lucjan_drm_path}/0011-drm-amd-display-Send-correct-DP-colorspace-infopacke.patch"
+        #"${_lucjan_drm_path}/0012-drm-amd-display-Always-set-crtcinfo-from-create_stre.patch"
+        #"${_lucjan_drm_path}/0013-drm-amd-display-Add-support-for-explicit-BT601_YCC.patch"
+        #"${_lucjan_drm_path}/0014-drm-amd-display-Add-debugfs-for-testing-output-color.patch"
+        #"${_lucjan_drm_path}/0015-drm-amd-display-Add-default-case-for-output_color_sp.patch"
+        #"${_lucjan_drm_path}/0016-drm-amd-display-Don-t-restrict-bpc-to-8-bpc.patch"
+        #"${_lucjan_drm_path}/0017-drm-amd-display-Fallback-to-2020_YCBCR-if-the-pixel-.patch"
+        #"${_lucjan_drm_path}/0018-drm-amd-display-Refactor-avi_info_frame-colorimetry-.patch"
+        #"${_lucjan_drm_path}/0019-drm-amd-display-Use-COLORIMETRYEX_BT2020YCC-for-COLO.patch"
+        #"${_lucjan_drm_path}/0020-drm-amd-display-Calculate-output_color_space-after-p.patch"
+        #"${_lucjan_drm_path}/0021-drm-amd-display-Hook-up-content_type-property.patch"
+        #"${_lucjan_drm_path}/0022-drm-amd-display-Remove-unused-display_content_suppor.patch"
+
+        "${_lucjan_ext4_path}/0001-fs-ext4-replace-ternary-operator-with-min-max-and-mi.patch"
+        "${_lucjan_ext4_path}/0002-ext4-remove-redundant-variable-err.patch"
+        "${_lucjan_ext4_path}/0003-ext4-check-the-return-value-of-ext4_xattr_inode_dec_.patch"
+        "${_lucjan_ext4_path}/0004-ext4-split-ext4_journal_start-trace-for-debug.patch"
+        "${_lucjan_ext4_path}/0005-ext4-simplify-fast-commit-CRC-calculation.patch"
+        "${_lucjan_ext4_path}/0006-ext4-init-quota-for-old.inode-in-ext4_rename.patch"
+        "${_lucjan_ext4_path}/0007-ext4-print-file-system-UUID-on-mount-remount-and-unm.patch"
+        "${_lucjan_ext4_path}/0008-ext4-replace-kmem_cache_create-with-KMEM_CACHE.patch"
+        "${_lucjan_ext4_path}/0009-ext4-make-ext4_mb_initialize_context-return-void.patch"
+        "${_lucjan_ext4_path}/0010-ext4-handle-redirtying-in-ext4_bio_write_page.patch"
+        "${_lucjan_ext4_path}/0011-ext4-move-keep_towrite-handling-to-ext4_bio_write_pa.patch"
+        #"${_lucjan_ext4_path}/0012-ext4-remove-nr_submitted-from-ext4_bio_write_page.patch"
+        "${_lucjan_ext4_path}/0013-ext4-drop-pointless-IO-submission-from-ext4_bio_writ.patch"
+        "${_lucjan_ext4_path}/0014-ext4-add-support-for-writepages-calls-that-cannot-ma.patch"
+        "${_lucjan_ext4_path}/0015-ext4-provide-ext4_do_writepages.patch"
+        "${_lucjan_ext4_path}/0016-ext4-move-percpu_rwsem-protection-into-ext4_writepag.patch"
+        "${_lucjan_ext4_path}/0017-ext4-switch-to-using-ext4_do_writepages-for-ordered-.patch"
+        "${_lucjan_ext4_path}/0018-jbd2-switch-jbd2_submit_inode_data-to-use-fs-provide.patch"
+        "${_lucjan_ext4_path}/0019-ext4-switch-to-using-write_cache_pages-for-data-jour.patch"
+        "${_lucjan_ext4_path}/0020-mm-export-buffer_migrate_folio_norefs.patch"
+        "${_lucjan_ext4_path}/0021-ext4-stop-providing-.writepage-hook.patch"
+
+        "${_lucjan_path}/v4l2loopback-patches/0001-media-v4l2-core-add-v4l2loopback.patch"
 
         # lucjan no longer includes separated clearlinux patches
         "${_clr_path}/0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch"
@@ -228,31 +277,52 @@ source=("https://www.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
         "${_clr_path}/0117-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch"
         "${_clr_path}/0123-print-CPU-that-faults.patch"
 
-        #"${_lucjanpath}/${_lqx_path}/0001-zen-Allow-MSR-writes-by-default.patch"
-        # TODO: This patch was moved at some point. Consider keeping the ll patches we use in our own repo.
-        #"${_lucjanpath}/ll-patches/0005-mm-set-8-megabytes-for-address_space-level-file-read.patch"
-
         "${_xanmod_path}/x86/0001-x86-kconfig-more-uarches-for-kernel-5.17.patch"
         "${_xanmod_path}/x86/0002-XANMOD-Makefile-Move-ARM-and-x86-instruction-set-sel.patch"
-        #"${_xanmod_path}/android_anbox/0001-SAUCE-ashmem-turn-into-module.patch"
         "${_xanmod_path}/android_anbox/0001-SAUCE-binder-turn-into-module.patch"
         "${_xanmod_path}/android_anbox/0002-SAUCE-binder-give-binder_alloc-its-own-debug-mask-fi.patch"
         "${_xanmod_path}/xanmod/0008-XANMOD-kconfig-add-500Hz-timer-interrupt-kernel-conf.patch"
+        "${_xanmod_path}/xanmod/0009-XANMOD-dcache-cache_pressure-50-decreases-the-rate-a.patch"
         "${_xanmod_path}/xanmod/0010-XANMOD-mm-vmscan-vm_swappiness-30-decreases-the-amou.patch"
+        "${_xanmod_path}/xanmod/0011-XANMOD-sched-autogroup-Add-kernel-parameter-and-conf.patch"
 
         # https://lore.kernel.org/amd-gfx/20210105220359.1392555-1-joshua@froggi.es/
         #"0000-drm-amdgpu-dont-limit-gtt-size-on-apus.patch::${_amdgfx_path}/20210105220359.1392555-1-${_joshie_s}/raw"
 
-        # lucjan hasn't been keeping the zen patches updated
-        # https://github.com/zen-kernel/zen-kernel/commits/6.1/zen-sauce
-        "1001-ZEN-Add-VHBA-driver.patch::${_zen_gh}/ecf47767080ed4ab1e5d1c2dc0eec0518e713a45.patch"
-        "1002-ZEN-PCI-Add-Intel-remapped-NVMe-device-support.patch::${_zen_gh}/8f951cdf30840ae40705506386ecd43453ad3d29.patch"
-        "1003-ZEN-Input-evdev-use-call_rcu-when-detaching-client.patch::${_zen_gh}/379cbab18b5c75c622b93e2c5abdfac141fe9654.patch"
-        "1004-ZEN-intel-pstate-Implement-enable-parameter.patch::${_zen_gh}/7052cfb177a2ffcc2a8066e9f722f40c80f28259.patch"
-        "1005-ZEN-mm-Disable-watermark-boosting-by-default.patch::${_zen_gh}/817b89f071edfda3fbe87c1dd1e78be848ca593d.patch"
-        "1006-ZEN-mm-Stop-kswapd-early-when-nothings-waiting-for-i.patch::${_zen_gh}/167602079fa211e9db4cb2c5921382d335d65eb9.patch"
-        "1007-ZEN-mm-Increment-kswapd_waiters-for-throttled-direct.patch::${_zen_gh}/6eda5d78611dc65d486531aa798c330d0ea63e52.patch"
-        "1008-ZEN-mm-Dont-hog-the-CPU-and-zone-lock-in-rmqueue_bul.patch::${_zen_gh}/f22bc56be85e69c71c8e36041193856bb8b01525.patch"
+        "2001-ZEN-Add-VHBA-driver.patch::${_zen_gh}/ecf47767080ed4ab1e5d1c2dc0eec0518e713a45.patch"
+        "2002-ZEN-PCI-Add-Intel-remapped-NVMe-device-support.patch::${_zen_gh}/8f951cdf30840ae40705506386ecd43453ad3d29.patch"
+        "2003-ZEN-Input-evdev-use-call_rcu-when-detaching-client.patch::${_zen_gh}/379cbab18b5c75c622b93e2c5abdfac141fe9654.patch"
+        "2004-ZEN-intel-pstate-Implement-enable-parameter.patch::${_zen_gh}/7052cfb177a2ffcc2a8066e9f722f40c80f28259.patch"
+        "2005-ZEN-mm-Disable-watermark-boosting-by-default.patch::${_zen_gh}/817b89f071edfda3fbe87c1dd1e78be848ca593d.patch"
+        "2006-ZEN-mm-Stop-kswapd-early-when-nothings-waiting-for-i.patch::${_zen_gh}/167602079fa211e9db4cb2c5921382d335d65eb9.patch"
+        "2007-ZEN-mm-Increment-kswapd_waiters-for-throttled-direct.patch::${_zen_gh}/6eda5d78611dc65d486531aa798c330d0ea63e52.patch"
+        "2008-ZEN-mm-Dont-hog-the-CPU-and-zone-lock-in-rmqueue_bul.patch::${_zen_gh}/f22bc56be85e69c71c8e36041193856bb8b01525.patch"
+
+        # https://gitlab.com/evlaV/linux-integration/-/commits/6.1/features/valve-extra/
+        #"3001-HID-hid-steam-Add-Steam-Deck-support.patch::${_neptune_gl}/f73d380f28ac62d883ce88ff81ea9ada78c1c021.patch"
+        "3002-xpad-Treat-Qanba-controllers-as-Xbox360-controller.patch::${_neptune_gl}/b8c3316d88b61e7bab352e5b4710d5fe47cd88e8.patch"
+        "3003-Input-xpad-add-support-for-HORIPAD-FPS-for-Nintend.patch::${_neptune_gl}/f430c816139520cbf248a013d2219d4dfe69d42d.patch"
+        #"3004-fix-for-unpowered-dock-S3-cycle.patch::${_neptune_gl}/a78934122b38b0dd6336a7f4d3dd2bb244a549b3.patch"
+        #"3005-Fix-DP-HDMI-combo-sleep-wake-in-Desktop.patch::${_neptune_gl}/9195e1307917a37aff63460ea2bfb5968b39a4e3.patch"
+        #"3006-amd-display-only-accept-async-flips-for-fast-updat.patch::${_neptune_gl}/cf5992d6c3dd80071e3b9561f902cf41116a987e.patch"
+        #"3007-drm-document-DRM_MODE_PAGE_FLIP_ASYNC.patch::${_neptune_gl}/7ddb5e65b1ec22fb7ce63a17135afd9ccfc6d646.patch"
+        #"3008-drm-introduce-drm_mode_config.atomic_async_page_fl.patch::${_neptune_gl}/c7b990a26f58722e82c3f9653eb7468156a5b87b.patch"
+        #"3009-drm-allow-DRM_MODE_PAGE_FLIP_ASYNC-for-atomic-comm.patch::${_neptune_gl}/2eff00e26e33c3c3d8ccd49b2a3c7f0e6ee6fca0.patch"
+        #"3010-drm-introduce-DRM_CAP_ATOMIC_ASYNC_PAGE_FLIP.patch::${_neptune_gl}/1f5eb2369f4f568ad5b27e58b0fb81711afb9c57.patch"
+        #"3011-amd-display-indicate-support-for-atomic-async-page.patch::${_neptune_gl}/b9ece82fa9051053db5a80a2d9ad2e4ecede4b0b.patch"
+        #"3012-USB-gadget-f_hid-Add-Get-Feature-report.patch::${_neptune_gl}/19ce6c5438a179a38c24bf25204b698a03bbda31.patch"
+        #"3013-Increased-DP-Alt-mode-timeout-from-200ms-to-500ms..patch::${_neptune_gl}/cf43f657c678a0e468ed386682d838a21f40a904.patch"
+        #"3014-fix-unpowered-dock-sleep-wake-no-display-issue-in-.patch::${_neptune_gl}/c3e1b4f84ee99ed1a29f29a5ddc024ec78865334.patch"
+        #"3015-fix-for-dmub-stuttering.patch::${_neptune_gl}/9d7582959e2af87bcd7ab4ba46260f6967167db8.patch"
+        "3016-Input-xpad-fix-PowerA-EnWired-Controller-guide-but.patch::${_neptune_gl}/d47b7cd81d54449001d92606866781005edf07df.patch"
+        #"3017-HID-hid-steam-Steam-Deck-lizard-mode-fixes.patch::${_neptune_gl}/3c09433294bf0d9e77e74f95099ba6f69b3d9632.patch"
+        #"3018-HID-hid-steam-More-Lizard-Mode-fixes.patch::${_neptune_gl}/65cad4acb57a7c7c7bb9a67e4cd2fe1c42d25f69.patch"
+        "3019-Input-xpad-add-support-for-8BitDo-Ultimate-Wireles.patch::${_neptune_gl}/dd93d6b7f2d63665c2f8f4beaaa32b0c612347a1.patch"
+        #"3020-HID-hid-steam-Add-rumble-on-Deck.patch::${_neptune_gl}/3d6a63bb67fc8c4df6b51a9e582098ce8fef3348.patch"
+        "3021-Input-xpad-Fix-the-usage-of-usb_control_msg.patch::${_neptune_gl}/ac918127770aa90e04af4b45551528b1a1e2f65b.patch"
+
+        # https://gitlab.com/evlaV/linux-integration/-/commits/6.1/features/tcp-timewait/
+        "0000-tcp-Also-use-tcp_fin_timeout-as-TCP-TIME_WAIT-time.patch::${_neptune_gl}/ef76035f50a1147a0d39b3d9c1b80b92a2961028.patch"
 
         # The rest of the patches came from random git repositories or places around the web.
         # In my experience, random git repositories tend to vanish,
@@ -291,69 +361,9 @@ source=("https://www.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
 # PKGBULD change: Don't package files created by depmod (seems jank?)
 # https://github.com/archlinux/svntogit-packages/commit/a65a47973b7676de60add0f40277900a91c115f1
 #
-# OverlayFS support for IDMAPPED Layers
-# https://www.phoronix.com/scan.php?page=news_item&px=OverlayFS-IDMAPPED-Layers
-#
-# Pull patches from SteamOS kernel (ugh)
-# https://gitlab.com/evlaV/linux-neptune
-#
-# Multi-threaded VFIO page-pinning
-# https://www.phoronix.com/scan.php?page=news_item&px=VFIO-Multi-Thread-Pinning
-# https://lore.kernel.org/lkml/20220106004656.126790-1-daniel.m.jordan@oracle.com/
-#
-# AMD nested virtualization improvements (meh)
-# https://www.phoronix.com/scan.php?page=news_item&px=Linux-5.18-More-KVM
-#
-# sysfs phyiscal location
-# https://www.phoronix.com/scan.php?page=news_item&px=Linux-5.19-Physical-Location
-#
 # le9
 # https://github.com/hakavlad/le9-patch
 # https://github.com/hakavlad/disable-i915-gem-shrinker
-#
-# decrease VFS cache reclamation rate
-# https://github.com/xanmod/linux-patches/blob/407ef639bd3d0de1df32ee819e695cb8e7108806/linux-5.17.y-xanmod/xanmod/0005-XANMOD-dcache-cache_pressure-50-decreases-the-rate-a.patch
-#
-# kernel param and config option to enable/disable autogroup by default
-# https://github.com/xanmod/linux-patches/blob/407ef639bd3d0de1df32ee819e695cb8e7108806/linux-5.17.y-xanmod/xanmod/0006-XANMOD-sched-autogroup-Add-kernel-parameter-and-conf.patch
-#
-# VFIO power management improvements
-# https://www.phoronix.com/scan.php?page=news_item&px=Linux-VFIO-Better-PM
-# https://lore.kernel.org/lkml/20220425092615.10133-1-abhsahu@nvidia.com/T/
-#
-# I/O alignment info in statx
-# https://www.phoronix.com/scan.php?page=news_item&px=Statx-FAT-Creation-Time
-# https://lore.kernel.org/lkml/20220518235011.153058-1-ebiggers@kernel.org/T/
-#
-# Process Adaptive autoNUMA
-# https://www.phoronix.com/scan.php?page=news_item&px=AMD-PAN-Linux-RFC
-# https://lore.kernel.org/lkml/20220128052851.17162-1-bharata@amd.com/
-#
-# Scheduler improvements for NUMA
-# https://www.phoronix.com/scan.php?page=news_item&px=Linux-5.18-Scheduler
-#
-# Fix for NUMA imbalancing issue
-# https://www.phoronix.com/scan.php?page=news_item&px=Linux-Fix-Inconsistent-NUMA
-# https://lore.kernel.org/lkml/20220520103519.1863-1-mgorman@techsingularity.net/
-#
-# Steam Deck platform driver
-# https://lore.kernel.org/lkml/20220206022023.376142-1-andrew.smirnov@gmail.com/
-#
-# AMD x2AVIC and hybrid-AVIC
-# https://www.phoronix.com/scan.php?page=news_item&px=AMD-x2AVIC-Linux-KVM-SVM
-# https://lore.kernel.org/lkml/20220519102709.24125-1-suravee.suthikulpanit@amd.com/
-#
-# iommu/amd: Use try_cmpxchg64 in alloc_pte and free_clear_pte
-# https://lore.kernel.org/lkml/20220525145416.10816-1-ubizjak@gmail.com/
-#
-# iommu/amd: Set translation valid bit only when IO page tables are in used
-# https://lore.kernel.org/lkml/20220509074815.11881-1-suravee.suthikulpanit@amd.com/
-#
-# iommu/amd: Do not call sleep while holding spinlock
-# https://lore.kernel.org/lkml/20220314024321.37411-1-suravee.suthikulpanit@amd.com/
-#
-# KVM: SVM: Optimize AVIC incomplete IPI #vmexit handling
-# https://lore.kernel.org/lkml/20220420154954.19305-1-suravee.suthikulpanit@amd.com/
 #
 # iwlwifi: Make missed beacon timeout configurable
 # https://bugzilla.kernel.org/show_bug.cgi?id=203709
@@ -390,121 +400,149 @@ source=("https://www.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
 # https://github.com/CachyOS/kernel-patches/blob/master/6.1/misc/0001-PCI-Allow-BAR-movement-during-boot-and-hotplug.patch
 #
 # re-add ashmem (or maybe dkms module?)
-#
-# revert floppy FDRAWCMD removal
 
 ######################
 ## For observation: ##
 ######################
 #
-# Huge NUMA performance regression in 5.18
-# https://www.phoronix.com/scan.php?page=news_item&px=Linux-5.18-NUMA-Regression-Fix
-# https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patches/mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
+# SteamOS kernel
+# https://gitlab.com/evlaV/linux-integration
+#
+# Multi-threaded VFIO page-pinning
+# https://www.phoronix.com/scan.php?page=news_item&px=VFIO-Multi-Thread-Pinning
+# https://lore.kernel.org/lkml/20220106004656.126790-1-daniel.m.jordan@oracle.com/
+#
+# Process Adaptive autoNUMA
+# https://www.phoronix.com/scan.php?page=news_item&px=AMD-PAN-Linux-RFC
+# https://lore.kernel.org/lkml/20220128052851.17162-1-bharata@amd.com/
+#
+# Everything this person submits (amd vm stuff)
+# https://lore.kernel.org/lkml/?q=suravee.suthikulpanit%40amd.com
 #
 # Parallel CPU bringup issues with early Zen CPUs
 # https://www.phoronix.com/scan.php?page=news_item&px=Parallel-CPU-Bringup-AMD-Snag
 #
 # eBPF in HID subsystem
 # https://www.phoronix.com/scan.php?page=news_item&px=HID-eBPF-New-Attempt
+#
+# FDRAWCMD removal (revert once it's done)
 
-sha512sums=('8b9bb3fbbea2d61314145cf6e4e1140372821a1e9ff79c4da363039c54fe73481106a5a85df0141dd449f4a21e946093a7430b14896b601c5a8b1f776107b35c'
+sha512sums=('9db5360c85a2e8c7d1a3a37e0d79dafe3561566e098394a15e8cb48929a7afa74b203d3d67c286a8ddb4359a0ba8d45f33678219f9ccb8f728d1c4d4455fd27f'
             'SKIP'
             'SKIP'
-            '89cb3681e26ac717a58553dcc8dc2003596d077b636123f7808ad456dd5fb38f423dc051bd84461b3103b04437a024b04aa4bfc21da5c873fad8fb287adb4acf'
-            '526b3d94d72c78e5ef45547492cc21040951d04bc1b47cd3543c9c6257e2377ce3306d834c8ec56afa5cfa7daef56001f0f3733957f88e1ed92cff86415034f0'
-            '2a5302ce47eae582d68eeafbb34c9e7cdcf5b26de36a0f39154cffec1b4a45cc3fbcec51af98efe26b53be271e391e6bc2a94a4d8bdd49174aa5eaf777581de0'
-            'e6bedff938448b6e1853eefc52985ed1edd08e6e81ca5fb7d62d61d3d335ff66818dc2fef0603559e92ed31321c6fe020054a143287ec160d5efef6ee53c84bc'
-            'ade44bcd7cad063882dbce88ed56aeeb9dec4fc2fbf5dd2e1375bbb3c466c390b492211e74b78600753020b6d4f52d0b58e425cc3433134b5a79c27a677697b0'
-            'fc3d9d192aee58819c99a97eb911867890a6f01f60d42f3419f7920d5f6dedd8bb332a6de24320bc6fb78a2ee4510fc0071a9ab9ce83da4bdb3aaf4c6b53a59b'
+            '585936efdc49fb3dac1fe8aa9b44e75a5e5ee84dee0828e4aac5c403f2cfe2579aa7b6fa081e299c54c9280c1678200522a1112fd3eb8288d3740130ed25b0ff'
+            '7913a43f5b360769c87be5bd6538fd131b09703498abdf613859c9e6a58cf0a346b42b119531338a703a43abe5a135f910c9d295f8d840dcd54ce7e1df91e5ec'
+            '338474b2332176fc5b704e9c71f61937fdc8352b553f3326726db99be8024451108b5b03eea3071ea839964c769f8bbe4cbb6ed0c6a549043c442a00d43c3a11'
+            '62b9b1b2923052cc6b1a117c6de6065f9007051285944138ce773fb5e662b0af072fe1e43c9377f9f006b9423c325eec5da61a1358feaac949914876726e08f6'
+            '6e7c39fb68d6ebde6673d9c67082549950778bdab4f6489775db0b2a92cb3408e7b0e482c39208d30538eae0c372dd032c11e28fa2fe74bc1ac2d28a1a1cfbba'
             'f9050bce5f0d02ae7ba7af018dc712d056250012d362f38cb7b5a6bee0ba1ad6325a9f590a9934fc35448a1203d8f6b9d244d00f642fe4534c0a1088ef3f8c46'
-            'a1949873cc2ae133a30cb1b8eb71579b49fcdf24e2c58bdac3770da86a89a9106854c7b1ff8283e178aed0f21cfcd62d98707547230305905854ab0886cd7985'
-            'aa6a124f4e164c7a0d0043bd3d2db1a25eaa4630be57c03e42957fee34fcf54e9922c460c072941356faacd1c751807ace772906e9a5e14786bef239997600fd'
-            '64757cf46e974e74481bc52b0b5d5e66296bfb47939470a6030b925d0842304830b5e412325cf097c8d73e35eb402b16201201d9175d1d26fa84d4b5bf69c55f'
-            '9a114ed66d256444e71d0a3903627d57555f27a657d102d5ef945b354ed2af0f3476b6554f8891027ca25e1ecc6fec38bba32f5ebcd0532f3f6e94fa5f86424c'
-            'b830485e37b8131d11a7559b6387d5473c7dc43472da28c0fb88e243e055130ce9b2533d1b0dfca4a7f1fd4f4252edb95c24ca063f5da86e11a50845bdc39286'
-            '4ec0da409b4b4501db2d305b013ac80bd1188e82646360b2010926c3a0752f188c046f5147e607d0c71b8b43c5a5fed15f28a89e8acd5990c4c8a188887a24cc'
-            '7f429514e25c27f3e1fffbae2292dec9f5bd9beed45ac02515d0548575973bd2ee4aad5ef6f76592179d7d2a91df90d0c2c4c95dab761f34bd7ad57130af05dd'
-            'a480a3a7865f8cf9f488b991df61b3102aed1140e16757126064dc0361aeb2c43c5e67c4f3426fd90fe47d962b521528038e56c07d3d25eba7d6d6b520c6211f'
-            '2e5ec8506f5b9d9a7b2323bd6cc8094734f478487d6d530d10e2a2f03c18cb4b10a31b2539898d7fc5df1bc16c61366541d8749b85803cc8f2cfec86324530fc'
-            '1a71bc1b52741309142065302fb77fcf77f431959dd529811545cb928cddb3eaef3ef7175a292ee91b21e8a35bf33352b9e67e14b384679fd608780b0c01aed3'
-            '236d9eb969aa549cf0ef0a503e9e490001c634b5257b7a12d2eabaec48f82131f089195ee93b7cf7567f2637ae71ae5f3ab09c03a48c8cdd2321b66e1fb275e7'
-            'bee6e051b43a9f3cd60b0a33151cab16b7d233b360ca7e9b0786f6a4dccf32ddd24346ce0f4787a675dbdfe954e8c1a756b92385b019d62bae301367506ce334'
-            'c82cca5743003a6e7fa36ac1748cb349c70b15898362efc01631dd35f99031ad6295d87edc61c0ffee5145a0429019c02a87e99e8497d158c7dc7cd0ca118c8e'
-            '581a36f33f9a7f8fba045e4e66a413ce1d6dc463ae13251abef5ac7f3216e28ef669ad4e0371f85e18805247c493bec140cc4fcb043b978dbe571efa9dc297e4'
-            'a98c5b74b41c5a093995c40cf4777c19c6c398d9b543163ba9c73b1b2a5d9586b0575f2e2d4c2fe6d0c9b62c258d358071ef143284e0e67f96059af3adf39fbd'
-            '7d7acc673c87a912e9571d9f2ad9acfa93b2198a32e66c4eabbaa49388a65e438038c8c49d6122e1818e43a5f556b7029a56ce3a25481c101fb448e4ab95ee47'
-            'daa0461d1066d377d79c0c665b9fc97d56985bf4add883f454ce48c5bfa2d70ad2b341ccf8093d1d2cbbdbbf65c8cc1d3d149c194ce7eb88aa017fb1b87578e9'
-            '972e10a5296f2532d961fa40657110e5889776ac0a004195d6adb6dcaf02fa7b8ab35aef9269b84d9f11ce822055dbb13aba1835cc2d954dc64052437dd7b684'
-            '7d749e20c96247d8cb605b907c39ee60332546c536a65f805018e36e166f828edb24571032ee909869a5206fb3682027b654b80c11541827ead1c5d8d8ade093'
-            'a05b2eb9e63973f797a4d1bcad91501b6387790a59f2ead122f18e65fa6e68f9bcc7aba314c62d182add411a830db565870fc97cf01760e67a4c9aa4a5467577'
-            'cd0cde0bc5f1545377aa24e2c42bd384942d983439b7250fe54912ee8eb3e168d22f73489fc8aa79975c9ad5086c75eba8c8d66f241f1c5022fa256aa02d23a7'
-            '57a473eaad75e727488e84b0673b65e5be5d96139ccdf47913db06a8bad2246d8666b17da0d6369b8fc579810c487349b9fe4b4f84001a52e726aaa25dd0077c'
-            'b0eb3928ae6e766da05995a46cc9317dd47723f59e480ca71568e1f2b81b0bd6713f9a990f48ecca7ef3acdfd54bed72f5f74688af83f0a1f5939a0b54b5d84e'
-            '9862d81162c01502abba0bdab9a94fee4c044bf50ed500c8164a6ee662f751a3767ced3dc8adb059aba6942e54d7b8126ffc54511ce93790bafedd71b1cb006c'
-            'a2cc4f1914e3804b9cb7f5065d0a7593f4e666f371c4b53cf88b367533b1f6a81aa7b11187c753c64e50b2df01deb103b1278e889ef53730e9a41a1df9c860db'
-            '9464ae9d000abfe1dc9118405ee09928ed5f4ccee0e6f66a7dcc6877897f071dab6e76de9584351752177735d96fe60f9cab432ed57d56e6288e52b89255802f'
-            'eb1c11222f8b1c43f0351fa4395d638a9f26c0117b6a9dc4510f4c416eaf45dbc7f4ed5ceb5123269a89b46dd5d6e8c4df22337e36ba36f47b42bcd54437776c'
-            '3bfccaeb5afc42df37c1bce2a27e2573b59477d946aa947e094843e434ead1619cd6b54c8617fcae1d5cafd5ea5495ab90aae74b955ce8e186ae524d5afadd04'
-            '9f4095232225299bcdbbe6a82fb57161ab712b538c17e06f4dea02a21d883765ab44da7e2cfa1dd3c00c16c942dd8de1ada32519dd9c39847c0bc20042ed6101'
-            '684d244b3b55b7d7923debd2a9d3caa401d51dc6c2d0782241cf831aea7c87fb9a0936ab38b6bc78ff1d91d670138a592b911e8016f8c28206422fcf37b4dce4'
-            '9e3b38f0fe3be7b301b38f33300bae67fc5cb613c8b833ec17beede874a51f55d3202a92da2b83f9c8ee6595842a50facfede8d0455c5cd198c9be03b22193d8'
-            '6782e7596a325e35725f073bcf8547237f65c95cea67146bca0ad814a80d83151aa77de679af242674d99ca4bb5da414e666f0cada02dd2761d7bd0fe0410b20'
-            '36800c86512bd591754c5dfb3d4d8a55ca6ee367ca7979d3ed345d676c51d6180fe34ecf1fbff0ebef532a38ea6d122838f203285857ff24b589ab77044ad4db'
-            '44bb6fa1a4652384f1539998e0e2fe6a2becab3e4324e472a635d9313072a036e0e14276c79c54697dc806cc73e03fe8e3b1a98886c3c85c007e45189bb4d65b'
-            '7e9797678bf9d4adefe4cfd18f6a0579ef2ad02d9d94ebeae7f970440eeaae72810f34296805c96cb90a3cdced67b3f288d1c529cea6b81aa2512b9898b80d41'
-            '85ed73ec8fe3abe5a8023c5f56ad906f0360508018e0a689f274df9a221d4fcd06e6d0966533a97356c6c8e440c10c36e2776d71331b5bf58af95c338236f1c0'
-            'b34f169c329bd526ad2f73c1862224707b9b794c4866654a247bbdf12eabe7ff1ddf5b34b9e82734dac6fb868f43770f3fb51d509a787400b58d76981b046f11'
-            '31fe6dca67cc4826be62278f8333a3fb1d2c6f21fdcd6c00002813ae1c903ef7fba936f652db07a7c4888e8b64570389a12ce1933d3b1b6e9a735b3b6d1098c4'
-            'b1461847bd6cb4d38822f17faff7783474d9a8b0943efc3271763bbfa204aa6faef89a2b6e9cb82fce0298ded42f2cec7f4ea2b129bd3d527ed0a6bde49c38ac'
-            'c71cad9e9bc1cb44a9e0d66663c41a206a66fee6988cb1b175efa6bf17279cf540003285af7ff49f7422dafa45137bd894564446aa2830f75fe6170aaab85555'
-            '6865b14becbedf9735b6e7bb42b5db8c12c3a75f5038121259402c50a3df220e9ea3986dbd2dcab5186a0943c253185924ce807d33f22d5ac4d2ef94d6a3fbcd'
-            '358c8ec58d62d69b9a5321089172a12078f46f849da6ed711cb2486723fb7e5e4f0cb063b6ccdf9cd67c82c9b257e4e938b4df199c5367ab7b9316c0b93743a8'
-            '1be2618f1c1002bba930b21546a4763db5a8515d05c319aa44261dfc49db291cd465936248b4093cef191b340b5ee5b0daec1759366691f98083be412728362b'
-            'c5658d86af2c84d7c85d587338fca14e295c3ebf264a3d63457f8f3ff63ac7e83e6dc5a42ddffa13c0c63373042a8d9313e6049e8abe0019bd217188af77ea7a'
-            '8dc81e0f21b9071fae4ee6f42529a674b0e1624212bcc0044e814a2d7077d70472cc0e9df8a6c8afb7e6951112a55db4892572c2fd951763dddfc628f0ebc919'
-            'bdfedfc8df2a47381cd769a6dad51af563d2f51126aea3fec23b400e7a724f9ab65a18902eb64c8d2ee06ecd081781776ed705fc8d09dcc2b2f67dee6c1cbeea'
-            '643d043e4e96c0b4a259307b5dc72e1360c7aedf19ee1559c8a4fd7edae830c46098d1478e7cb8b49e95715e03b0a3d0a7d018f7ce31c4f995f729d682127df2'
-            '5fcc821d283940d59df88066c6f7a805a585be57e9068f57969cb285640899f6e20fe6ff3b4a1848e7b7b300b88e51dbcaa0dfaefd717f198ad2c19e3fee8a97'
-            '5030f04358b8e262588421f2427d83959b0709c0cdcee1d912d5260f3b78303d218575b282182a295f53abbb22595ebf2ec6aa9ff3325d9522d5069a39f65e92'
-            '171de00cdc49dd58e680d3f7648666e465339cd974b028408be723189affecdc97dd5ec447f378b9717bc6ae6913ccf9bd96200c1c1b83802209607692567fe6'
-            'd18ddd500f049bbaab6549fbc7a17164bfd3956ae2d7452d0ed9c436f0db124a1f0e1dd578d8978431dd4d45243aacf06ab25bbb532c5c48a2452339849ff08d'
-            '3d3c0ccc30625e4649b7488a79f775256befd5fdeff5edcc796bb3bf9a285c33697af1fa498987e807958eab23af48fa6cbb039818232db4c0504f09264affe0'
-            '6b7fcb7bce0df39f7f561d51052ed2645d0b708c7bf2ea7e0140cd09859defab0f2a003ee50112edbb1b2436ae9301010f4fe67f538697d3931cae73524e426e'
-            'f6149ba072bb4b4993caf672b2997620f01f15cf0ea6ed5400946007e378f17229e3d85b55a5bb4871cedef8a1b943e4fa78e0db6958fe416d0e2b82b3c825b0'
-            '40eb5562f2d29082686f895f8ddd0976cd9e87cd7b426c793ad13a218ca68f813bf26b7fe5f5cadbe3cdc9001790655d440a78aa47dc95be6381868b5b3b8b9c'
-            'eee7d8664d0114edceca4333eb233272c31f1c7e59e4f9ae5cd861a314ffa7af90c42c64df0b5dc4331eeda00ab2e7052580c51fd02ff47063cc1c3f5b34b762'
-            '463a2e5fb0b8dc6bb4fa134a5ba1210f968bbc6f9400e10dff7db5d5e857893f15bfc4466899590c7f39a9142df483b6189d084e1b7c8eadc0f00c040a5712c1'
-            'ec1743d493aea8e9cb97614a44f8b826ba9147bdd1da14a8efc49d8de9a74ccb92078ff23c3f28a6c5a5c3a96b8eda15aaef11b2e24b9e9e21264cd74956260e'
-            '90aaf0bc24a08e652720cadeaa5d0f0b3dbb94b68ddfa2c15ce09d8c80cadd585c7412978868a7adbbe0ad751157e6cb6815867d78dcf3c7548785f556bba7c1'
-            '1ccf8af983f8b243c1a01c9d343933ccf28ac3a20c368eeb552e1ec9fa40401cf62b39a0fe2b7338876a3f9409dc17444a6b76799fd02b826fed49d6263c0ad0'
-            '475f23217815a6e243e1e72fecd5c5d4f12dff9517b64cfad4865ee408274e69fc07ced3ddb64f84ba89ad7250886a88f8fd88bb05d23a3a16d2f57717567ae6'
-            '2a74a4072aa50d7941c1054be43b10831af4917feb6b62585a916e47d1c1c80467aac389c585c3ed7e97b91a603b731663d1f449b8eea2b89a7aa0ca1a3fc484'
-            'cdcc89f82d156185c07bbff73c9d2dedcc2ba4be70fc15e8e107280ef318406733fc4fcc84f1ae48a0151d209e6f9c531b279e5943c0c2d82110db8744f01346'
-            '2e9a468642beb8333b77940d1bad5c551fee9b0270b18dceb01b5d6ed2e3068767b88ecaaa458ac64ac4729e59dfa7e5f7e5abaf0435eca5e31d8f872250fd16'
-            '227d7e489bd2ee04488db9110d9526b1c078db57e254e4b61fa791938587cb8cc829253b77f68a0d381c8d751a140feb5017f87b2cd85218b2466cc2ef0d6d22'
-            'f0d3400ed82cd958838ef06cf20407c380466d30034bede36fa1e3ad0bd210572dd056de4c72c486ac3c694521b001d0cc2abf09b06683d69c1ca4cec564be76'
-            '6cfa25a7a39ee25ab8a3f8fc485fbbfeae012c69fb08f2572e92eaaf93eb0c310a7525bcf939d8f6743e25a37956e6d1a784a65fbf16ed2b7d89ff6c074494fc'
-            '8d0126ec9dde511f1bf97992100401bef1af01a1fc5a879f53775da2fb6e5cf87279efda7569f45539ec995efefcbcf3c90e3f16309ecf4950d05dc665614eed'
-            '340bbe1fb618901ba1995fb1ce85318bdf368f94b29a12760558094ae3a596911d72322827a0a5210aaccd6e793237e78101c22ee4f7d20ae083d11ea7342e17'
-            '60ed3c5f00d3ea13a520a7ede5174b2c4f672831738da9865080d6eb4e7c3294ea1af6bd440c7a3e264cd6b38e1dfcd9cec116bbdcf412fde103f7d786b240c1'
-            '25961ad4aa9dbcde80835970f9b3bbdf197f18c0a1b5231b8ae603b92b9b08cb85f3e8fd90466e791c85349005eba8009fe59723302d72c4e15654d9212a2352'
-            'f226ea5f343c321b757f32ebaf9f77be4defc85c61621a62ddd4867fa25e236f8564a0f8a96656419acf82f7bbb111c1673c1627a481bebbd3c404b280f5c91b'
-            '5c0d6bc963e49ad7f12a74bc1656d4a71866d003b7671ea0dc68378a97b894fb5e0d59f0ab01d73a4427c452b5f6cf35552c4e9c59605da46518d3d36aaf6b93'
-            'a816436abd8b39429a10cb3980e9b2d6905827b0401ba17c9d9ee0dd11555bde5798c0e60b43d29cd7aaf8bcde28da43c5d2f244444b5a112266a6dc8ed74d6c'
-            '39f1d66a4ae44997b49f383f6dbf2aa1f1290f60b94fc589cebef44d3e98180335e0d139be629124c8ba143fdedd974f8fceda5c6c8ee6c8e5bcf8beee980b2f'
+            '1a52a7035eac78f74c369d7404cebbb7ea576a48a458688852c2af9dfc9750a539036362a290820afd23ea06599260b1cfc78ad0c0b4b3158532436ec820ba43'
+            '57baf1454426bd7d02cac0f194040d9a1e0cc13323435139da01fdad328a4e4a2d38a913bb61c73260db0067a5a037f80eb98f729708a57678980a354c7d1571'
+            '90951d87a55d5c69527ac255ecef5b4d4dfe42b0cee2a8a0b2875c64b25a630e0ee1da818c0c641539d9bcfda81fcd5592743141a0ed7b408da6c65717b03314'
+            '7431144f19b6b0f0fc26f8bef29c0785bb4d8e89df10674bd3029b233ec01aca5978bf4c602bd63c9e6338d768ff6bc861de71b61fef22ac4b97d9b48e3afb68'
+            '32fcef15baf174a6be1456ba723bf61017b59fbf4cec35c0e2962379f39337be68d39856a6a7b9f9658ca8472c800c0d40bf4041e952dfe4d75514aa01b50916'
+            '08999661fe5aca09bf1656c5903a065d86524f291da515fc87fff47c6f9ead8b86f13e86c6176d0c2c12255f9ceea0d20dac2897c936982b4bd69d6a817e74bd'
+            'a0f37036ce5a2f2933e1f27edd68f674aef429749e9667cb471a6583c4d4d49b91963593df7e0a62a2edf47bedc17fded24e00c27537d791a07559fbe6fe5832'
+            'ee22c6f37e6394918715bc297b456a0f275145daa14a5ddd0b8851b6d74074e3263a296660ab28bfa890016fc6ff5ff6261fa5d1c5cfc70ffe830be0fcf01803'
+            '4b97fc0ee9f7de7f9ab24e7c9bb25814dbc07f8e07997f4e40536b80d691562ef3fee1e9d6424f5d4022a152b052916e1cb652fbba9232f27c9e19498a9eb73c'
+            '3eddab649b8f327d582335b0bd4a3e491adfc7aaf33ec53f1ca0f94d8006d14b7f2d8eb4f551c59322a9dff25e2668a62322439fdc0a5bc620e4ae460ed87550'
+            '649917935347ccced069866384af81375abbc280274879271c1fb507ffff0811f2b443d850e0796a7cf50fb53a014db2e77869320d7af0c3adfc5bb2584d0d19'
+            '4b797f66e1b6253509be1f8518f38b71f83eea5ad175003960ffd5e67ce422b0e680348755a71a0c862d1af3e3469fcccdb9797f23ab93133661e8b1dcab2b00'
+            '3695b7a5dfbdeb18e46e4d1516627af9184a4daad84425bc848166c429be994d53e733278eddfdaac4d1e0c23daece5dc2bcacbd8b4ceb9792a028eb6da19508'
+            '23299d959be3b7fac8b7d7a76e0812cbf88d28acfe1a5df6835686f00282d977059d3f47c9fb1e22599f409ca6ec06c651845f6686fb9ecfd961c8b3a9a74ba4'
+            'c99048731932823f86fd670d332eb8b7a4630e30ba8a0de9f0fe767f3f5fa1b84bdda2501f0e900e80a446a4481f0d2b3bd05baf74f17d865bd3505f678aca5f'
+            '5e5e6c6755a305af80b6305ddb5425a9bf84ddf9d755c9b2a1444cc52b03e407dcfcbd5d5cc8ff637d687bbb534e72f91a38f148d173b1f2cf805f4931f93dd0'
+            '9cd7a187195d560dfe22a542aafad68ac4c26a245a798efaaa94e57895fad7edbe81611446add078a73bd548854f035a0bbd0d417fc3b2e3d42f91e9d50aa358'
+            '14a7648015c1a4fd2547906f8b879ed70f9fe38418cf0f6c36ce400de1104972f537fdeeb915c500a73a131fa2f881a37f61adb00966f0f72ac03010536c1959'
+            'fa6af9137e99676a676e6d4367833f98e857993bf09d10d1edc685b90b566156d14039ed124ffc87b9242f2f6bc76f603801a328d0f2cc56934cffaa6e740e5b'
+            '58b234907fe83cbafd81318efd1e63e4500b8e443655b1740480170d4bc2fd19afcdf66033547b1137323ea1e44659c4c113fb68ace4d9480a8ba49f31d85806'
+            '097258b8b1e7699e0c88126ff77388f826a5bb3e16331dea40c293dea330bb8d097da25df4ccc696c3abd76a13d465bf86eb29a1bc5d886f8683700a7538f44b'
+            'c1b88d802d1f676ecffe8ea72a0e3462019d9ac95a59b5a84b1f4dc79fe0b9e6bf793b1674de21bb49cc7a7a0b070b1a01114e7dc973b546cec3ca5b29dd6807'
+            '5cd7798588dd37706bec78f2225cf943cdfe46f49c07f5cab51b408b16bc3b20a7aa836b54cb834f17d4656fcdcda9df5a972b046b48c452019ef8aab8227fba'
+            '2d9c28cb9375a3336fde990cf93ae2265264e1ed4a360e528dea97e83e45751a3df923181efb3c7fdd06f97bf48cd69830297c29da447620638da9f90d41307e'
+            'a3b3249a8e0d37a7fa6684dab9a54d7152b3794a6a7308a2f6f8d3a3494028d607412df83e50f676bc9f7863d7a8b575224400b0ab68f8a49ba538666407ee13'
+            'f452189a15e9adcdee2df05d6d126ae76aa7770c86e768cee6fa46f80b80091c4a5db2880ca1f7f75afa8602e0118405473e3b2f26b615218f375130713202eb'
+            'ae3582c726cd08cb994fb4f7335b1f21c78bfab2343f4377400c56b9c2aa04ac3190211173e4dd2de13fe58ab87c8ddec3241546727e6f841f4665e0855dee6c'
+            '9aa5ee3068457b0e82b2698ab5b1b27037dbfff7afd30bdb115da14bfec90ec1d7a73f7e45c32e1f28614ca19942317bd1c4753e14a8cb9d29c626647fbba82d'
+            '8e37d3eb566f7c0b017b72637e6dcd559093cd3641431b93adad47951b6000a559f88dd06b301ec0df1cd7f6fd8bd78794023575a8d5c263f7a7dd2451a77fac'
+            '6e9f5e772694ea0f1a85b139336b7d562829a67b4e7eff6adcf1f3c8a4593bf2729bf313bca6516f2272d422fb8689052cc83deb35245ad8c2f224a317610aea'
+            'f07afbdea17f26bb8940a99aa681e5d0ebbd97f84c49cbf2045bdde9b86366fc657299292f556fcbbf0505f3426f048e41b8b054960593849455bd83d6cb1a16'
+            'c5646336f836e96975ee49549d2da2667a97ee63a7b3d2fb6e9fdbe68508282928ff88f8c9eed15ae6354ff9c423ca50e9d5de71b2d18c3fbd56d27e70ff25b4'
+            'd1295e9630b9eec6660467ee1d8f81394487dc23f61a777df885e16277b7a30735e5420544380230413ca5612bd8e6867abb68cae660575516a2e184217e1f69'
+            '427cac1d305dba9c659b5690e3c761daffd8e69dcc763571df4cbb1b112cbe781e956a82189241ac4bfa0b2edf360a36163491ad2f7e34b001f23b869522c28f'
+            'b1f23ed1ca6b423fdcbfd577261f9f5928c690a3f5323d6850a7218b1f2aeeb0c362b4b9e8eabd43aab7d4a0bfe151a2f6dc0e7a23fb60da87f08eeb01eff6cc'
+            'd4041e2c390ee5823dd8c7b102789c0f47b5cbee0eca050913afd8d663677e02e22fdad881b4f1f3ec41595853cfc5ad1310ec67df82cdc189fa09020d160d55'
+            '6ba455321ba4d51e9209dedd272356e51f3935f965d5eced21f37d13c5494ccb62e971fb764f9c68b1a988ba391198f9914964753f51f514e81bafea9c12d815'
+            '2ba6d99d16f5ae5bed688b1a8763f3e1c4888a0d37bdd3e22f4b4729bf638b0acaefb43e0574f01744958a609a5457b961845cbdb522902fa6f2370759daa83a'
+            'c4e65577c155aedcbef2467c74c4ee37d700bf22a686db031ed2c7cbdf881f8a38c3b4b0bb9fe6dceba93f4188c30e105e03e97484f419e1deedf321c420de01'
+            '9272af92da5cda206425df95f9ab1fb779cf2c9527fd945cd2d499d27df393031b75f853466e8f2d3d72f598b328fd31bfecc2f26e20ebacc7d43af9bb582007'
+            '235ebdd68779539b9ff6504867953c0e074478b5f6966cf1998cbf8f45126cbb7ceeb55262aa1b7b6a127d2247deda7a7f161c2bfad763af2d17acbea5258d58'
+            '0ef191cba767f555b4c8c6c245158b664e37ac0eb8fd57a760c8d6c91b5afb1253f74a2def67725ce905d11a7862eb7606c8bc2af0ac82b6ff169f1c2836403b'
+            '2dff85f4292eecd407992220848d0c1a45eee308c45872dbdc0b62d82127e0b99fa8a6d659cca96a17acb5f13dada9b6b579794235538277f6c3a2a1bab2311e'
+            '1cadc8b2db3264ac9aa56bdff071ebd546cabf01c8f214d27aabd9d07b4f45abe1f2ffd294c00f697259226fc2eabe645a63f2e4759cac404fefe68db5fd2fd6'
+            'e49317bacb8893eef31e21131a5b8ac646bd1d55400ab2dde32ed0c73bcfe2859e57ae0e7a43d0534510e87980cd349e3db8c9c65d78c0806b6c9d679144de57'
+            '31dbfe0784a67f62b572018e163167a58cd0b87a9c6d4e20b094d048bd02846a296d7f41876da2d8a6623b301811b55d994c482e5733d913ff497bf24148249c'
+            '04e8af821760ee67b1193984604a3123aa5eabff7d0eb55781c0277ff734727331cf9415b042a29df27dbd53974ce257957ac097a619bf4730759325c477500c'
+            'af3f5d059a7003bef777be8f4854a76b160f100b28a2c9233fc6691db340d72dade40e61ec1a964b1e53540369d76eca830ba4f0f480cdb153bf8ea59a67c684'
+            '3919296a1bcac258b2734dc1a27f45d818754f424c37e34b37203bd965bb5a9b3f6cc45defcc243450ff48feed17985dde5de98e5d98eeb38f87494c7ff7bbb4'
+            'd171ce79855b1f10f243f4c4e2035b1b6108ef7b4c45bc110972f1569ce659031e9b4da2f01b3236a868ea82bb3068e416ac6a9c0e91d844a95556e020fa4495'
+            'ff6178491ae1d303a57ff301d53c92a9b87db6964275091dd82fdbd1857143f9ba791f47b935772b2350255817d6c0644a76ecbd75ad2038864604bd92d9e3fd'
+            '3c8fc2c32f442468379996e95446ff43fc9c15aa134ed28f26aa699284362db9060f490a553f918b9ac1be5c0431246846ce30c079a0a943d70d1e290804ff6a'
+            '094a44eed05fe7f7727a8f7fbff9cfb7e7ac5468a23ad542cdfcf1c7b5026e12bd6d8d56b0cfcc0e3556150ec9b25d22204154fbc063629d19fbb46ff66812e2'
+            'c4d92fb5cc901b7664529cb3e74c493730200f40de1f62c8f92aceca23657f0177344ae54bf38cd9968531b6d531c00945d77e4e3899beb1fdaf72890cd157ed'
+            '1813cb96b6ccce2c25f21ca8b0672d21a6382fee04c3254e95aab8dba80de0f8efccbc72e4624ebf0c5215b7495ddf098ad9ecc288b723c5ca8a683b877cb3df'
+            '45714b2ac14f3099f28ddf7df15fd33bb517c7667d6250e9f5fcdef4755de754be98fc198721dae3e9d7ae20dd22aa96dfcef331507b7a1878cff53f26cbfed6'
+            'ba03bdaec5e881cf984a9a3a7a1d338b45d1b58bdb168cd7a49af75e742114944a9a112b5d5a391aca1122a1d1d45d92681a6fe508760f9add1ecb504d06087a'
+            '61e93a3c48298a82c3c82de900bee0c494a1b6164332dcd799623f91961159a3bfd51157342377cd4987565fe0cdddc8225b55301bf655e6a83a5187e49a330f'
+            '759cc0fcbb7a76a79f7cd7d35bea84140517d0914988e121bfb16c2bdf6d538ac9b00bcc83289451f703afdd7f66cd945484450642959d076bef81b365b6a790'
+            'a281b3ba661b8409f5093d62ac33c59c7998f6c3afaa4213a36afede861c3f8107310a3e7576b98ea7693fa5279128dd74fc071d42949e2546a31537caf1e431'
+            '78f52ba8f5804c585b7ec2bcf9da21a5ccaf282de3531357cbada4d4fa4cf505eb1ed62d9a98b3f8205d7ba42e18a406184aa7c2d5404f16f77433c99eefcea5'
+            '1a5cf75716efcd1bedc4ece49da21b2dec65277a9afc1c5e9e206215cace523f67a9cfa423b8c6149daadf2f93ec6c2dec3a26f041081b4aca0613588b46442a'
+            '53bb483b1e76401017b3b3e9ed7a931624ceaac4b445e177b274fafaa4b5c44f2f302ac93db3b350f70dc6dcff29b6a21d1fa89d945256f686be64de0d7aadd1'
+            '962882b72cec5de72096997a7e4aed0d0653859f03e173ad5c6b59e6e582a35d3f08e69100311b8afdbf752bb5f8ece9680dddeb7d1c553f6a78e5d117a9c96f'
+            '4e2f2c63f9ecf8f7e40cb7dec2d384d2fca85083405c4f8103907a9cbb91d1080b252372b1896c3f7a283eeb0dda6d24d37945c00f6c957968f2cdf7395c0157'
+            '8d1e1066e1e065bbb4a74c9f36b6206b7ce384b3eab688f2d00a7abde527e1dae05e170d2b8918ce039123622273435f55400727ac8d782414af3847deaa12b4'
+            '077496a1aab6fcaac56bfb8d472b528f2a41d00b03c25862214a97ce255f0850cb06f501426ef050f6c1f2c8fce53dbf660e06d44d7205d34077671a8f05e6ce'
+            '869a6b3553d6d098378deedfaca915eaddf8bfe72ee8dc8ae180844e03d4ddf92a496d817e77408dd88a6ef6dce6d062cc19f413fb3dec2b68af4b0c28e6ed62'
+            'a3eb2c512c32489b0b7e5611aabfd1a50c3985c57f2f6c3425d825eb0e2264e075ebf6283127b73a0a1f6bda7f575600580d759a8ac3bfffa20cc826b340257d'
+            '605c77c43a558d5e97bada7a327a920e042854b3fea607dfe57b22fafb31170d6cff7e070fea1d7d387177b232373f0d6527a2db139ca9c33460760310f82f7c'
+            '27dec5dc8ed69c86a2589ce833d1c73327ba052e31342e5e0e9fc777554e38b54c540f20c94998848662b3fa0953e96e8ef78e7bd3cced428e891852d22dd515'
+            'fbc52ddfd96b32980df401f35a999e7021d6a0d1a087193ce56714569a5400a2a84558a10ebca031c1f31edc51094c60ff4f6dced1dd4eba14ecff2cd62904d9'
+            'eb4799f486d88310bbc6d24d99e15699590ea1c88228051f735a65e81773fd1ffafb5187f31830b741c1a24ecafc09e03928a9ddcde4e62f498dbb7f6b95bd00'
+            'a3e29d76d9a1b4bfeb84e539333f1cf22f448b4859e5c337dd4985f2e0946af4519f3abfce22efbd2843bf7106abe2d35f400d1bc3a13aa426e8196c1f98ae52'
+            '09b3c3cb5921342fa8408a95fa72b3b3a3a5bbf3bd2369826d78b63b48ab61663cd4ee55c976a6d4e67874af88c450a8276b0c2fa01684d948fd6d1b74070e9a'
+            '4d775141db7551fcc905b85a8f76c92c0f3274ac51ec7363b66f7c45873b3b274cedc94a1ff9733d2c5d3bfb7bd855de526705054a34c998bb14bd57b9d7a701'
+            '66f98c9345a578c3fc5036e182598a0a3dea171dd6ae2ed523a5be3451ed70bb489d854f7093497b8916ee108f52fadccf156dd097d32b4ff83ccaf2210d77b6'
+            'dc2ea0acbc5be9db0e365c695ae311f93b600b736a5c4e5a644aae722ac38ca2c6128a920d1c52f2e82590887a3aa742474e9ed6c9c767aff4bbf03ac9bd1aaa'
+            '7239a10df1bbcc9f3b33d3c2932ea4a6bd132e6dfddd346663351b95a131fddb71815509c4a4aeb15dff4e8a798930d74bb97936c1aae4fc11693f2af160c750'
+            '6fd58cc9adbbfb7518a60f95674917dd3475c82a05ea26b33ecf20f37512edbd89ef8e1af8bf2326ab0f346f20d6a5c25cf14b089876ee8877acd41f4587638a'
+            '8b72175a5e715c78c7e6e9be378cb302bb3b0b5a802a6cf05ce64fc32037b0c89442f9c1f98d494d3096f6a17d3fc700fcd3bc8a7f828cc4d069c53ae0f7cbf9'
+            '6dc3f6acdd43002d454e8e457939684fab523dd606bfe6e7c52ff969c1536a957e9fcd7aca7ed125a546f7cec50083efe5ca7e304644713e467b843a12f53b88'
+            'ed1219fd275055f59549cc742f519d0d406b66b0bb60c569a1d6435611c0ca13ba9be2644c975609f6570acf2446d9388ea72a858637e387a137966a9b5cc790'
+            'bc542fea21884de7391276129bb6da5ff162a55711764054cdf8f290d792113cd359e132af4720e0b98cf351c996bdbcf059d7ac523fdc5ff39556e7d5c86fd3'
+            '4ad10b6d8f31a9bd904f644ba2ffa7520227bb9b9194c53dd3763c669a1941fb2ae407a9082b8204aeb62913e012ac90e9241cabbb642bc6f11acc6fcf66a8b1'
+            'c2ba27d02bda62a34d7544a55095f471cb15c0f7cb212c57315a3e71d787c8248ae2054536a9f052bcadc0cc5482df36e2a37a05d515409b549a89c2d7f7d0ec'
+            '5827a9536a80fd95325bfa61c77c062e3121c33ba2cb8d96b2c604528a4f549fc27d000f314f1f463790cc1ab729555efbbdd145a299e8fc05125ea6e96ae46c'
+            '0d589908097ede6d7b64ef705e20363a493f941214458ff15a91e375d67fd3fcf91689dabca93ae55f0ed271fb8ae81e013e7dc356784e5757221b34d731cdf1'
+            '2e4183f1d0c8f464f6ddf42c653ad99a48d2aab660d295eec90f3be3c415caf6014c130d16192570ef13753cd921bbffa56b4d337adfce344cfdc0d0c0dee847'
+            '9db9480931eb5d68ae42d7a68339add30736cf2cc273cf3838720576ca213fa211d3b14381588a24250c88df2670f3d36010250d29f9c63261fded6d4d0df5c8'
+            '9366c1a8632d704471d27c38e428bec9aa38d4e0d471d90b22cafa912ded62f5ef5f3100888c6356efca42195c5c47a104ee1446a4c14aedceb79a7f24bdeafe'
+            'c15eab4aa37a0931bda226d812fec1a606523245df588f3c3b3c2455ea02515ffa11dac5f683f9925e8c03c4b347b438035c203614dc39c2fe950826843bfe5f'
+            'ded38e4c64bc5737509eb325bf27c838b053504c1d95943bbe8d5d4270f9be97de4d390efaa5284db7dc87c5b4b29e12a08e859ddea204633149019152c9636c'
+            '638fe7de2832a14ed12e744b20a55e0fd0f7d388770f07651e544243d42b73d6362b5fcf143b74a61a9712f81c6648c43e654883e8af8b9a49dd99e3271745cc'
+            '731f8814a7ebbd294d45b308eeee9b3d7a54691dbb90d1a915b681ff2286d8aa3c09a004d874240e545bc0b7be5a24c0fb4f27e4db67e8acc8734404622c661e'
+            '7e0c44cf932ff87c1242208083d1cadb20b85413bc10662fd712ffc5f864509fa2f76a2a0a29cb31bde869acaa3c7cfb8c751d977c2c322b51d2f73ec824f7a4'
+            'eb11d3ed09ea7dd7559843514d4d0116f29ac0e8692a8058d091fa292ff3ad691e73192047ba17081dd111c8b8717bba2e1648f921c9afdaea7c7e0666370b64'
+            '4beb1d28b36c99a1780db6a495ba936073e9822e3fe4391672ca38f26157ff58f53b9690299242145b63a83c398122969cbe70f94d16347cd6a483642f87177b'
+            '407087296d0aa6f9b7e6b9d6579804c3117bd2ddbccbcfd69be15049554a7e19ca2b6bb4e6b4f51af57770d1f52d368f4581591cd105f8c964dc7b8eeb9f28c6'
+            '7d341f46c66a07022f72b2ca029a4f75ef38ba577ce7bae4d13485d22e953abd1848d3cdd62d762b1ef155d73551862f727092d152a49e71e93b65375bf7a9cd'
+            '6a8dfb95b1df9f74fb302516e6ac191e463a8bec1ca3e1470cfda8b960fc299b99d8c3dcdf14b19c792f67306f52c44415a466d0e20e1b86866bee24dbf9d0e6'
+            'fdae68437773e753a59f28464f0ab7ab2f7060cd5213f1312d9e96303ba12a7e14e9230e5136dc4900603e8673dd7cd0fa250e8b297de74dedccc276f44afa3f'
+            'a04c1cfe11467b21929f33c7901eb78fc665d1cb8cb055a6610fabce3e7c6cc5b92274c18d03196a39c093edb6424dfbe57d6ba050eddbd919cee7b10814c2e2'
+            'c3079ade380c65ed0b8888d463acd7fb49356780950ae2dc9a366e1ff183ec7cc9437f81ba360b5116bcf6effe4b562ea3dbc3eef6144db3616bd6d7d42254b1'
+            'b42b3f1d17801a557b9f18aad9b84c2d40bdcbdf2aa75a63029d3a9c3348de1ac7522fde5c318065ef8c9efafce2b1ead83b7cf2f9b651284cf1b5d108653797'
+            '3a2a5221d1e94c9b4a1598af8cebca3c04311c6b211cbf93e398ce219c7d5050dc0319a06f23f53b138103e6f89f1ab5bcc54e5471a31bb98b7899eaf02bf781'
             '1c18b937f54931b38d253855c263cb87e08ce65b42e64b346fd315cb8bac3b8457778e58c383a33d86a95f0af0453674e5ec64e9ca9d902722e5ec2e12f510cb'
-            'fae6bd557209efd2cfdb1622ddcefa51922821af4065c74100759ebd6fec645d8638cabfadd092019fd88a555d212602aa92b1261c8a2082dc44c8a2293e3550'
-            '79ecc9abb3a50b2afc338ae6297f233eccd92f371f9c4a438d5938a35c72033bd83cc38ec9166c6fcc1d1001ca458b8bc7e117267d3e0357f178241e02b575ea'
-            '97e2a65d4a64c29814b675fc5709a9dd080ab59b33eaa670b0da671f6f3ed24bde8c3788d4f153694a47c58f6a56fd3532603b3cf21a953a2a7eded519b005a8'
-            '31272ed8fcdc8c6dbf7c91b867b103db9dbb246c83dd4a1d8143f20b0da0236cfacd2c721ca028a15e61e2b6d9829d84b5a413a25f295a598a12a320979a3a3d'
-            '346787aad64c6c7d5d8ef7918eac5b20b03a0c3721ea719ba6381a3c3464c4a789135aa741beaa197acc4bcbaf37fa66507511eb9c917cce7d6b1e532dc4e96a'
-            '3f49312a1cd3c1b0be53d3834ec2fc44accd12c62276abf27b66dc431cd8705d28fbb1feb2209491102059f3632961c7e9e8585a525562699bc4179c16233882'
-            '44c24bc542850ad62f6ceec28d39b13812dcfa3220868f9f901302333c40964949b6413ebe5c6407aebe910d96c854a7eb8b9042aa5a1d92ed38df8abccc7f75'
-            'a64dde25505df7de9cad96652487a4b873c52415ddd98c04762929629191b214f8aad7c579f6a60225a2b7fb60fa42039f55f566c7f17d1b90760543c79d25dc'
-            '3580f52bc48f7a4da93bf5a17fe1b11c72747408612d0330e3dc8ee0f9784ffc54951437bea5c567395dfa12fc599f8a63629c54b53c167c0c11baba72c3a726'
-            'e07acfd99acb3165b9f48803ca7645aaddd12f881b0c8fe1e17fab67540b3c6117037fbd748db0981ef8c4eb5e6eeefcf6acf4249463dcbac2a360e52dfc6f28'
-            'e81cd7ef3ba5240b85e2aeaca0f4e7a90ef5d9ce7e30fe89aad5b290ea5853fa8cfdb272ca8ef78e837373394d1496d24b874ebfe40b5fbc6583705914f8cf90'
-            'a7cbca23fd98727bd427b52e0ed00bea3792f8b4f2e7689d3230cb198512ebba55124a588400444782ad0d47d1eebd2d3aa9bf3d25f9983cf80fad90c451acac'
             '8a53deaf73a1fa8f7d68737a1ab446c18c73b1b1bb3e5eaec6ff39240eed1e76ed017504f180052e8ec7ccc26fc7f673ed5ddae2b1dc9f89b85288bbe54357bf'
             '24bbbe7f2ac4d24efd4eda13d72931380ed7d02ffc4fef5b6fd5bb7f6870e22b434f840bd5e6129eaa7cae78b949a231c9e2f9f131263fdafc7e0c65b2393aab'
             'ead629b352126972268e96e6f0b34b558b96fbc9d0efbb7b6c560671fe61c97272492509f190b682c2b7db0da485886a941f58a502d72095c208e492f2f4ccd0'
@@ -515,7 +553,9 @@ sha512sums=('8b9bb3fbbea2d61314145cf6e4e1140372821a1e9ff79c4da363039c54fe7348110
             '0a7b54b2c5f7ead39f33c86ba9aec30508b590e8d59d2f55b1d048f27fbc7fb70ec33e00a7165e860f43ed015e6228e53df77aac8560fd6cc967ceac21987214'
             '7ea69006922c16f78be85c613ff54218d9326bee91e8f0813e27028c17d6b3ee44a2e0df3ea5f5ac79ce1fa22b42294a01e0a6d9ddf32921bac73f7f07ca7ea5'
             'fe73ca62f65757d61b946c7d99aa8517d4712bd906c0044f8b7171b5af40ea5cc8a9cdabb9dc04e637b820942c5dc8a47eda9dec8d4fdf6fbfd47f439ce59396'
+            '663375bb30c7cc886c7f5c749d4d1c966648640f4dc66059f973eadc4b139fdd05827f0d1e3fd841a12297245a03407908562ac2fb9ee116df3fd6e57322be50'
             '79788d236f72018ae91e1330d447676bbf0a74327cff0eccacfa6c52cf79f69f4cd364d022c213d4e9a518a11005e65ccecea2880e7e8c43e49b18bb5c520100'
+            '728f392ee7d1f0114fc2a5a9615fc082b25617db4dda2b0f3ea19cba0764b3c074dd81f2b61f4e129e91fcd8a1a38b6d9845586291f0f7d5a040cc9875943b89'
             '81bed303b4092e2bbbcc24b0235d50a8a307e8fe55af9036dfc4f988a62aaed3319dfcef144d1b984d8a84cfdbd6376b797824d0c6c7a114d5eabebee168b874'
             'eec5247f41e411b6898fbf77fedcd3d550c247501dd0ac6413f04667bbc2c6cf302f4b1f9ef6567107d1349d67ca437bf785afe2aa907f4d729e5fde8240bcad'
             'c89ff0801f9042039debb07b1281c5d67f59d353bfb6b24adfaae86a601288dc1ea061905b13f5d74fc16bd77fb43d33ec5dfffc4387ef7e1d69cebe933095ab'
@@ -524,6 +564,12 @@ sha512sums=('8b9bb3fbbea2d61314145cf6e4e1140372821a1e9ff79c4da363039c54fe7348110
             '1914fa2875b1dfe529473b2f349364a9dc6aeaf6142fc17472d49e333730153967cec5655711623baf5a7614ccc6f9dfbb30ebe9fbd879b210f38bff894072ca'
             'dbc9cafa1d013d88afb1fa3f2a17f6a88d1aecbef97338228273b0a29950fb933d326fc66b5c5b841dc3422b0c072ce91dd0a3f907248581ac4a2306fffcd780'
             '78adeff5dc9edfc03833679136a928a79e50c74cb3abba0733b29ac69f4dc49e29bc45ee14f8b962ab3772c482354f214ff2129817b9577b376b3d0b3a0de4ea'
+            '68e81323c3c3b14b8841504a8da92d385954efc2c06c014964a59fe8d03d02fcc1c9f868600afcffb47092aab0242a45244a86c6940e7116073ee6bcec2dd0a5'
+            '65fbd3b360f05a24f1c19a4d7ff98e8906ca4c62f8d133cd219ddb6055bbbfd4062f50046f22252172ebd5e3c6db33b9e8a453b2cc92da00b779d1fbeffcda52'
+            '142a1f992fb7ce22465f74a923a76d5ed45a6f5a0f477b3faaba9d2319bc8184198e058da667b8579c57c8a9080e14305b2e47bb60d4f27a5a10ab97f375fa7a'
+            'b6d77188e9f97ad210f1d764504ce4d400060cfe91094ec0abf49544ebb88b38e2655c511986256552da933baff43fca003c367a856802cd76ab20b8dffcef3f'
+            '9c4c49654b77c8433f02ed66252d2be2ac40509ee938b77cd40791046b74f2b40104510b8225430b13e56ef4ee753637cb36db015e906b9e8d91221f4b5d09d7'
+            '259f2876215fa8edd08c6bea91321de0dccf78d6128d0ebabd9df70fdcfcbe7c52677679bb0e5a25de8eb0e5f8b91478c173a1480e49e86bbdc4222d1d0c34a9'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             '87f951227a2693ae3ba0b191e24667c073889f0a5c534439884cbcb61bf3a371465bc26300d6c36b716459fa9b0ba1db4dedb77d7dc9f724c80a308266161246'
             'b50c275e727367bf4ba4956efcc5a9fce23f0c54f34b9a7ef7913bfec83565ef3f3c664356b900896b13c7b4df87c15662bbfda7a072b226c61877fa13b8f359'
@@ -532,7 +578,7 @@ sha512sums=('8b9bb3fbbea2d61314145cf6e4e1140372821a1e9ff79c4da363039c54fe7348110
             '532f8e57a702f582273d06dedfd4d7b4ebe9f1fc7d05a2051f5a6cc0ecd51d7baa0d95812ef6ffde68817ef841a1905222ef06020e8cd23d3a58fa78b1a29eea'
             '5d6bc1a1552a7179a5f33445ac63e75add59653c3fd2175daeaa0b609576c98fd01ef856e9e35bfd91f20db933304463031d64faee2153616958603a63018755'
             'f2748495022b16ef93835b34bba1086b415bf90833836b150e0cae2652f6101c337895699476eb98a9ba5cb2eca9dfe9c9bcc2a23cdbc31bc402ab498fac48d4'
-            '101828b60715e8455e1001bd450acbb3bf0f1fe1755556ce1513b65793282656ca5a409f3801d2f34ae5ffaec751dab3f376c3e19d844e21fd09128e7a77d3fe')
+            'd0b98b7529636f79675808fa21968254b0b6d5fd91bc5ea7af945b59e8766efab90338979075d1f34aa5c8df481bfcc9b09c47ee25c3fd10713fa556f8191a80')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -764,7 +810,6 @@ prepare() {
 		scripts/config --disable NTFS3_FS_POSIX_ACL
 
 	### Android stuff
-		scripts/config --enable CONFIG_ASHMEM
 		scripts/config --enable CONFIG_ANDROID
 		scripts/config --enable CONFIG_ANDROID_BINDER_IPC
 		scripts/config --enable CONFIG_ANDROID_BINDERFS
