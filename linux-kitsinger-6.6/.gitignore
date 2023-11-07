@@ -1,0 +1,8 @@
+/aufs5-standalone
+
+/*.patch
+!/0001-pcie-reset-kludge.patch
+!/0002-ryzen3-noflr.patch
+!/0001-zen-Allow-MSR-writes-by-default.patch
+!/0005-mm-set-8-megabytes-for-address_space-level-file-read.patch
+!/vm.max_map_count.patch
