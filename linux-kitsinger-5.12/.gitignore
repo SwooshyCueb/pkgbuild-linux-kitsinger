@@ -1,7 +1,0 @@
-/aufs5-standalone
-
-/*.patch
-!/0001-pcie-reset-kludge.patch
-!/0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch
-!/0002-mm-Support-soft-dirty-flag-read-with-reset.patch
-!/vm.max_map_count.patch
