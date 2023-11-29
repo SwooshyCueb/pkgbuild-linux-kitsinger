@@ -61,10 +61,10 @@ _tlock_debug=
 pkgbase=linux-kitsinger-6.6
 # pkgname=('linux-kitsinger-6.6' 'linux-kitsinger-6.6-headers' 'linux-kitsinger-6.6-docs')
 _major=6.6
-_minor=0
+_minor=3
 pkgver=${_major}.${_minor}
-#_srcname=linux-${pkgver}
-_srcname=linux-${_major}
+_srcname=linux-${pkgver}
+#_srcname=linux-${_major}
 pkgrel=1
 pkgdesc='Linux with pcie-reset, futex2, etc'
 arch=('x86_64')
@@ -90,17 +90,16 @@ makedepends=(
 
 	# our stuff
 	git
-	kmod
 )
 
-_lucjan_sha="bef0b701da03fdcc6ccca250f5e14747c97cb27b"
+_lucjan_sha="de2f9000e4031d16fbd7788e1cd353d6ddce5220"
 _lucjan_path="https://gitlab.com/sirlucjan/kernel-patches/-/raw/${_lucjan_sha}/${_major}"
 
-_lucjan_arch_path="${_lucjan_path}/arch-patches-v2-sep"
-_lucjan_futex2dev_path="${_lucjan_path}/futex-dev-patches-v2-sep"
-_lucjan_fixes_path="${_lucjan_path}/fixes-miscellaneous-sep"
+_lucjan_arch_path="${_lucjan_path}/arch-patches-v3-sep"
+_lucjan_futex2dev_path="${_lucjan_path}/futex-dev-patches-v3-sep"
+_lucjan_fixes_path="${_lucjan_path}/fixes-miscellaneous-v2-sep"
 
-_clr_sha="c96983fde288aba2a9099bc49cc25378177e60b9"
+_clr_sha="7936ffab8408e4786a4c1ec42b91c2e3e5b68c25"
 _clr_path="https://raw.githubusercontent.com/clearlinux-pkgs/linux/${_clr_sha}"
 
 _zen_gh="https://github.com/zen-kernel/zen-kernel/commit"
@@ -124,6 +123,8 @@ source=(
 	"${_lucjan_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
 	"${_lucjan_arch_path}/0002-drivers-firmware-skip-simpledrm-if-nvidia-drm.modese.patch"
 	"${_lucjan_arch_path}/0003-sched-fair-Ratelimit-update-to-tg-load_avg.patch"
+	"${_lucjan_arch_path}/0004-ACPI-video-Use-acpi_video_device-for-cooling-dev-dri.patch"
+	"${_lucjan_arch_path}/0005-HID-amd_sfh-Check-that-sensors-are-enabled-before-se.patch"
 
 	"${_lucjan_path}/futex-patches/0001-futex-${_major}-Add-entry-point-for-FUTEX_WAIT_MULTIPLE-op.patch"
 
@@ -144,6 +145,7 @@ source=(
 	"${_lucjan_futex2dev_path}/0015-futex-selftests-Extend-the-futex-selftests.patch"
 	"${_lucjan_futex2dev_path}/0016-futex-selftests-Extend-the-futex-selftests-for-NUMA.patch"
 	"${_lucjan_futex2dev_path}/0017-futex-Force-futex-hash-collision.patch"
+	"${_lucjan_futex2dev_path}/0018-futex-Fix-hardcoded-flags.patch"
 
 	"${_lucjan_fixes_path}/0001-mm-Change-dirty-writeback-defaults.patch"
 	"${_lucjan_fixes_path}/0002-ZEN-mm-Lower-the-non-hugetlbpage-pageblock-size-to-r.patch"
@@ -160,8 +162,7 @@ source=(
 	"${_lucjan_fixes_path}/0013-leds-trigger-Adapt-blkdev_get_by_path-and-blkdev_put.patch"
 	"${_lucjan_fixes_path}/0014-mm-slub-Optimize-slub-memory-usage.patch"
 	"${_lucjan_fixes_path}/0015-x86-asm-bitops-Use-__builtin_clz-l-ll-to-evaluate-co.patch"
-	"${_lucjan_fixes_path}/0016-module-decompress-use-vmalloc-for-gzip-decompression.patch"
-	"${_lucjan_fixes_path}/0017-modpost-Optimize-symbol-search-from-linear-to-binary.patch"
+	"${_lucjan_fixes_path}/0016-modpost-Optimize-symbol-search-from-linear-to-binary.patch"
 
 	# lucjan no longer includes separated clearlinux patches
 	"${_clr_path}/0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch"
@@ -211,6 +212,9 @@ source=(
 	"0001-pcie-reset-kludge.patch"
 	# https://aur.archlinux.org/cgit/aur.git/tree/amd-noflr.patch?h=linux-x570-vfio-openrgb-sm2262%2Bsm2263
 	"0002-ryzen3-noflr.patch"
+	# https://bugzilla.kernel.org/show_bug.cgi?id=202055
+	# https://aur.archlinux.org/cgit/aur.git/tree/SM2262-SM2263.patch?h=linux-x570-vfio-openrgb-sm2262%2bsm2263
+	"0003-sm2262-sm2263-noflr.patch"
 
 	# dropped by lucjan and ZEN
 	# https://gitlab.com/sirlucjan/kernel-patches/-/tree/b4af42f0a6f490c5129cbd27b6b8132f55fd9179/5.18/lqx-patches-v2-sep
@@ -227,9 +231,6 @@ source=(
 ########################
 ## For consideration: ##
 ########################
-#
-# PKGBULD change: Don't package files created by depmod (seems jank?)
-# https://github.com/archlinux/svntogit-packages/commit/a65a47973b7676de60add0f40277900a91c115f1
 #
 # le9
 # https://github.com/hakavlad/le9-patch
@@ -260,6 +261,24 @@ source=(
 #
 # re-add ashmem (or maybe dkms module?)
 #
+# userfaultfd move option
+# https://lore.kernel.org/all/20231028003819.652322-1-surenb@google.com/
+#
+# mm/ksm: add fork-exec support for prctl
+# https://lore.kernel.org/lkml/20230922211141.320789-1-shr@devkernel.io/
+#
+# Smart scanning mode for KSM
+# https://lore.kernel.org/lkml/20230927162222.3827551-1-shr@devkernel.io/
+#
+# mm/ksm: Add ksm advisor
+# https://lore.kernel.org/lkml/20231028000945.2428830-1-shr@devkernel.io/
+#
+# mm: Fix for negative counter: nr_file_hugepages
+# https://lore.kernel.org/lkml/20231107181805.4188397-1-shr@devkernel.io/
+#
+# Handle more faults under the VMA lock
+# https://lore.kernel.org/all/20231006195318.4087158-1-willy@infradead.org/
+#
 # https://www.phoronix.com/news/Linux-6.7-x86-cpu-AMD-SVM
 # https://www.phoronix.com/news/AMD-More-Seamless-Boot
 # https://www.phoronix.com/news/VirtIO-Vsock-MSG-Zerocopy
@@ -269,19 +288,12 @@ source=(
 # lucjan patchsets
 # ext4-dev
 # kbuild-dev
-# ksm, uksmd
 # maple-lru
-# memory
-# mm-cachyos
-# net
-# userfaultfd
-# vma, vma-dev
+# uksmd
 #
 # patches used in previous versions in need of updating
-# "0003-sm2262-sm2263-noflr.patch"
 # "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
 # "0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
-# "vm.max_map_count.patch"
 
 ######################
 ## For observation: ##
@@ -310,78 +322,80 @@ source=(
 # FDRAWCMD removal (revert once it's done)
 # https://github.com/torvalds/linux/blob/master/drivers/block/floppy.c
 
-sha512sums=(
-	'458b2c34d46206f9b4ccbac54cc57aeca1eaecaf831bc441e59701bac6eadffc17f6ce24af6eadd0454964e843186539ac0d63295ad2cc32d112b60360c39a35'
-	'SKIP'
-	'a50ba8ed53b3da466f3da70aac3c9d4bb86fdcf07227fa075b18f0c8dbc2dd541d7a1dc06ba484db4a1481a42384c09389ab0e130a512be875990c25faa6d9ca'
-	'fdd496d3a588646b6e6c4379e960802122a2759d1d5066114884e6245c09b816a7102efd77d72797a10e75390c7127d68ab14919cd422633871edacda5a39ce3'
-	'e2a4923d25d449b142dfe8fdd1d8d7d3e38c231a7d3b5d69258e57dd8de06bea6b57014b3022f5fe6d97190233482e7e5d78294aea044ab4ae819dcaa547b37f'
-	'205f3a3bfc49733aa7537846ed1229f2803c32119048f58d748a357e775e8c59922ea7de5a342c497dd6a31874e21cee9bc8e5803d53c2e068ef57a65e658c02'
-	'ffd5b26d7cf5dc1425ba3ee4b123991c69621dcba930153da647d0e981afbf9b671224d191269fef3569bbb81ddac2aead096870725c9b49261a864bfc4a0eb8'
-	'f469f9cd8eb79863213633ae5efe1c8a0ba9a9ecbf963d3453e9bd00b506c01fe43cae001a6deed60f5b15a4541ef719d27a0557fffa8f9b8c06834db29ef713'
-	'3dc175aa5afb03789e90e1af6a63f5d9256b11838fd6f9dba704101f99b99154a4bb443b63731799c4f98342db12408c7fbb885be5b95d8c0d7ed51393adf772'
-	'd8b53e446ab3546b32f470759b1de8e7c0ad970bed2bf829f07940fdb93afca751f04f77191051b18ae403d0894d17b761e73ce68065919dd69e7678a6253f80'
-	'9f6a058d644dbefd77f1d31c7a566cbc83ca8d7ba97e0cb4e9d2a3f7c0890687cdc674d7d6ba3c75fea9b8a5cd87ffdf6f3910f5708160e4e9bb91826feb0668'
-	'341424c8650c2dc0e8f10e16525b6d2a2d08af3c492f069ddffee3b9013432689533bfe1b7ce551abb554a6186cd03cda8aafa9685c61db893e3d07e53d04a24'
-	'99d3f3e45986b4e0b031ab7936b31a6819d8c310a10fb905f75fac8b7ccbdf89e7364180b032402f81526c2d1884816062d8f6e7609a21a95f39e4f08442ff5d'
-	'3ffefc826618daed019b8aabda9f3e1f6a29d86c27c0930ca8625028a910ff0d6e56a1c28c1ab05a653af2dc76632a23e4ac1c0121a3eab9c45e9e30653a9177'
-	'e33a93ab6419e9a66a0d6dd94db905853fd7bfc465b3b1a2ed59e3fe951a64029c437e51af99f15fa45679d41552cda059df50a2d33122f6685b823bfd1d659a'
-	'd7a7832a0873ce82ec50613ba0c7248d3370235d56b4291915c61e1c072a2124f879eb1eeea7102f12e91ae4fdfe62ad64a76ba5bfc51cdac6ad9472f739b17a'
-	'e4bafa950d99e9e65f64434afa6f82db9e311d7e9c0dc0393111fb31d871672700d5757bf572bd50b6ab56e59145409877a08672f7376194a2a836ae9b201bb8'
-	'e0771e7c842ef76999324c3c97ac6e0794f40369a14076e3492ad5904945e149ceb5cffac36df1ae52b951dd278096f48321c2f29a69f7e02f92f9a611432871'
-	'904bfddabbc6b9cc5a5c55f8473117989a9b692bc75bb64b70920c89dc2a4ee101c817cf1420f5f95a3dab898aed745c1c04d6e0d533e281ebcc717780e74e02'
-	'3ffa3908eeff17441d45f66269654b4b5e5d25cbd3e555cf280eb1b266cf4d72336c7107e3546fa56266741a8121c881eb1a20dc23f364f3e02d8acf4517d8c8'
-	'ef5b203c8494cda044b3589a5fc8459ab2abd08f9aa4e8a877be12de1fe6808a8b57c8d888ccede165e9da2d6610daf91c7fbf696fe7fa370f5539586ee7bbd6'
-	'c374ed2774733388bf0fe2eb4ef22ac43980b61904272912300b283d8a2bd6c3a5b4a8375e3c785660608caae1413913dd0b5f4049f052b791b161c84436b6f3'
-	'4e25a53c15d02d8c649e657d8b42da192aea5dc478fccb95f976f8c0b2c8c4be5f82a126b5adc7ec57275848a9e75a3ef2b522f125676d2ad01c5784e63c7487'
-	'a382ded5c641336c827afa3c36b91d1dda35499c5c6b8ba1a602a4a5343eeca372e53e1b05144751e29727d0d14dc3b1bcaed4ae0886d87062d86350ea89e05e'
-	'f02b54de34066d712ac335c51bc17fdd295adb325ea94cc1b38e6b0d149f84ee59bdaf8d8a0b2dbf4860147538806d13b1619441f224f859dfc877e5204a656c'
-	'c91883db7c3d6a8c562765d0a02da8758866f7b039ce3e5e8d737bf9a62d5dec3706db0f3b720b11f682ec99d6dccaa7c123c7e3cc1609f7520550bdf201b148'
-	'a079e6393077b9ccf55f55decbe36a7102773da06e131bfa52ae8214dec8f6824e59fe7b3ecc5b629286817727586704a9466a2e44564c2f7668d8b845965d51'
-	'4fdfed4de2561b25971fcf67af15171895d73d64a6d82f190c033bd7b05430925143d481e9849e6b9b0c48a4edb6d9957cac8b32bb7c694f977e969b6429fb29'
-	'683c21ce7ff86fe888e95bf7d799c778224418c35b2c79d57835da38813a2a3fac9723a3ddeae745bab2e4c04b5aa2607ad487e546fe3fadaa2759938d3b8b47'
-	'b5b6dc3faab61165bc618bf8b638d6575993980af7decede26fdbdfc91d3ba1959066ab2f5ce46298c87d64604cc56bdfeb939c8610f06e6a23c8784f6264481'
-	'84e913f06c3d6ca786571e9c9f38c074b9356f748454f044a3b2846660ebd5eeacf6d782e6ea9e78ac7e2c6937ddf9e140785949fd2963afeb172edf632bd932'
-	'bb6b8a156414b3e341aad0a968496d6378bd93538ef435b3eb9de6affc5ec30a9cf944916cd0243cd513efa288d563b0e2d6a0078bf7ec54cccbe24714cfc4a5'
-	'4d80814323b8047c439bf61e55d8695e4fa6821bf686172ee4e4d433cb3b1aece076c906560c70f64a0af2a9b9c15bb89248666bcd64dccd976dd89bea2edba4'
-	'2cfeddec4f1730901a7619b1b13fffa12a6f9b555d8a4cd58af1ef848b58e1a91bfc2fbb53639ecb5faff1aa1066d06e7caf18c886c120be53b710b1ad49cfca'
-	'f2c39ad4cf44917b32752ff2c38d195fc56e97a0825650c959f6d198f465b39b94f38db947e822ec37bf4f539a16124d952269eb507e06308b7f9992a9044104'
-	'7773a818ef41a2f100f52e0d731857ef7c60dea82c53da35b47ad62ef3a8b9361f5acb31d4b4e7e6d431fe3bd3757cb9f9b9edfd08efbf74fc0a112850880604'
-	'91b81c550747773a89dd937ca2a21adc93c0f274508e207ce96b95ec2e9764b8972bce26bb2f4ae85fd51e5b054b443eb3b57541f3ab981ad98f60d8c9d6ce1b'
-	'0a99f71fa0ce28c13d7643a5d9139bcbd5337c100951cfb75dcd0dde46bc4563d0f8a320a496c0f2710e89a88c2d2fd96caa3df6b4a866082f9c69017c8cc673'
-	'c2a4cb5c775a5a9128736cc40f4a6544c73d1c6df458053cadc4bd64c9ec0b3a64f2342a5d637083c1f9a34bd10c3a00414b056803ade8240ed098ccb11c8e9b'
-	'3c09c617dc28a9726f41cb5a0044e2397d4343a0eeca9ea88b18b493a1408e4f7a81d551f3011d5223cbc882ad7cca5ba451c3589f0e444c55af6df4bba70a59'
-	'8a53deaf73a1fa8f7d68737a1ab446c18c73b1b1bb3e5eaec6ff39240eed1e76ed017504f180052e8ec7ccc26fc7f673ed5ddae2b1dc9f89b85288bbe54357bf'
-	'b88a71cbd2e9dab707312ad4108681b67f17e95c8962a6a4868392475483aa4e8d05673f97965ce1901162364235d69d7fa8888365e72f7514bc9cc5eba5e190'
-	'ead629b352126972268e96e6f0b34b558b96fbc9d0efbb7b6c560671fe61c97272492509f190b682c2b7db0da485886a941f58a502d72095c208e492f2f4ccd0'
-	'60c6cb60e31b64be1fe99d8844b4a92b7018b237320e458a124f209da4828a60adc5df942d4d6090f68a5eb8866a1b5193441e6bc9ca4e94a757784e0909a750'
-	'abd9e26d870848a12a274ffef19ff1ab495404c4e1787c0c07ce54eac2a1929698ee52c7ad6d0d17cd1d18dc53d7a40ee3acff911529a7d21951f351e2648bcc'
-	'eed111149b697e0725f803559096f9328b3b95c04a3cedcca8b718b12699ffa5ad0c9b74fecf8acbed66b06de6ea56c2f130d79a6b67e15bd2a748e10182443f'
-	'2061d716fd95efe7fc9b4d10a339a675b9cd05f7be77b33ceff31f70ad0179ccd0cc4ad7b51c60b0bec2fb645d6458f32a29c3e71614213e177bfec404ff30f5'
-	'33b4b9257fd559b73455727602be4f2d3cddf6d9648da72ead1e2794a61a624e8c46d630548fcb63ea53c3614ddb2ff8a563d61e70b9bb0cc84d0f111d5618de'
-	'29f42df0b94d44bf02de0a42e01e0e25bf37b8c6d48a7c179f53fc6e16dac0bd5fdedcdfab889ec2b418d665ac6b060c739374ab2cb27ab0e7d87073e70c61d8'
-	'ed5e6eb679716c340aab5642cad9fee3844288ce37756c47d93621bf49b0356d99db2536587c552324a82371d9840f4fc7b586cecc6e45a7680559d1c2fbf31c'
-	'ee9b9c204c6b5d82b0c48df6442ae53218d4a76c27cdc80d0896685fdcae307bd59506b46b7cb1feb2e13c476bbe0b0ff8510284033c2c1d2228e64755bf8159'
-	'324ddcd042edfea062a07abf12b9512ea93affe16d34740a54840a6333e5dd8773ff1732df94f258bb5546d98e24adbd365d41a350809b1cb278bcbfef30addc'
-	'72495e02ce42b4ba2ad9cabe48e2f8ab5a6515c1439fc811fbc3e090c1f1761f965040633dc4903749adf9ce2138f4a12a41eb51eabcd7a1618f5da528aa76fb'
-	'3fad7b808669a18f71c09cb3581ead1e859642af681d0678e89a2c3863274439fb7c8e6c869100cf2724052fd14f849731627ff0fad893270055f16f6d0b95c3'
-	'6ffc204c7ba8ae540fcd5871d7ddbaf37c2e91708945beac44ff9696a75f0e89b2e7fa3dc435c3e8cf2e07e6642575733ac1ca997dd0a6ab5312c5939b440140'
-	'c0af33a47b4a7048c027ac268acf570f0ec1dc30460bbbae13cbdb681cd7c5338ee3eed2f19c827a342a4b1417e2c83aeb8540c406292da9f5c9f889ddc583cd'
-	'c142a2a9644c77fef758233ba9f9da3c06da0fdbe0abd52de66fd3bac0840d50c4112a4bea7f2217b83a770c27c9b85fdce0b200f0bd69729f8d2ec9c723937f'
-	'b577917d235cc61e704277bcafe69e7139d92b9e4c024286b7671bed8874981465e0ebbcd5cf776578083dddf991291081dc52acc04d5ce0f0828ca8f08d0d18'
-	'da3ed348ecc9dca6459d3ce1ca4eaaa5f066c4b8a7cb4cde3f86a47a8a93f2384b1343b88e06fa0555b4fa3417e6032141c12d5f859ec89e3d5b29a1159a9a3c'
-	'd00874f9e3ad30b8b44fb3c7c26641c69d674bfb0ffceb7daa23eed21943b2034aba6df13af2a647dcf30e9ec515f2dd17744dc42bb8700f3ff20eb75af55408'
-	'c03499549a3c3a80b4b383da9529e0bee7dc72c1c8e42f0bffb2be2a14d131a356e478be6f67a98f866632d1d83519524bbc303c5453e95fd76e6b076ad5c395'
-	'4624dc95fb7612cb44adca950b339da0738920cf10e5e5f4452eb12b71462b5444a1b4b8b039767743cf8e7e9361f3d9c75e3ec2f294d0e52db685cc3bb99ac7'
-	'caacb4498ebe54b99af07c62d74bc0fb83c36005432eff86f0fccdb28597c37e1dd9101dc69e26b90fa7bf231a0b9e57a6ca20d98df8f10234dee0b7abb917da'
-	'a80d597776512853018aba5e58509538214fef8ba49c5309cfef81b6ccdfa9e30c443b608a1a3f3b81dbd5eabde2270fb779e78aa8a432b2abbf27130af4f282'
-	'259f2876215fa8edd08c6bea91321de0dccf78d6128d0ebabd9df70fdcfcbe7c52677679bb0e5a25de8eb0e5f8b91478c173a1480e49e86bbdc4222d1d0c34a9'
-	'310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
-	'87f951227a2693ae3ba0b191e24667c073889f0a5c534439884cbcb61bf3a371465bc26300d6c36b716459fa9b0ba1db4dedb77d7dc9f724c80a308266161246'
-	'532f8e57a702f582273d06dedfd4d7b4ebe9f1fc7d05a2051f5a6cc0ecd51d7baa0d95812ef6ffde68817ef841a1905222ef06020e8cd23d3a58fa78b1a29eea'
-	'5d6bc1a1552a7179a5f33445ac63e75add59653c3fd2175daeaa0b609576c98fd01ef856e9e35bfd91f20db933304463031d64faee2153616958603a63018755'
-	'f57391452b6696037554a08c36fffaf4e215e1021669d6a46b619d7619bd11f1fdd4dd99c169066e3c6e5bac7c911a6873df62e185ec870e7875d8179412ea31'
-)
+# Formatting of hashes is different because I copy-paste from makepkg --geninteg
+sha512sums=('012ca973ad421571b4652cfa45afbed4f6693a7962a494f77e0eb13c4b9ea1c033525f0fc070ef45089e12d0bcf7f68cc5f0798f2b406a860c7541e1f600eeda'
+            'SKIP'
+            'fad7a8360091a8ce7d5d515bbe4cf782fff03d0ea611417feb37866f28d5c67cba49629cc65a55ff91ee4c81b4fc4ea36fe461aa8cc9a43d66ec769d082dcd03'
+            '7b647d643ef7ce08c597b26359bc9be5a929f25d4a9aa8dae9d2f0a3c1840542db2b7955e7d3b3eeb67170cd433710c22475baf8b739c6bd3928ce5747bcafd1'
+            'a7a2d445d39cd1e033b7c46e3b1897de7b7d64a9709c11b5c27e77798161716830abe0e1192d388e86bd56f0f2ba374da4cb08ab11640759e8fbbbd5c17aa05a'
+            '2d49af624e7fc8738c8e1382dd2e7c8f33f287b9f44310000ebbed6098310f411acaff24c8aeca83eaf8700b82b1f9e32687f01f43c060cf1d52d63731e8cc6d'
+            '67a9099d6baed98fad0135860ef7ce08d55e76b148d702ae8cd5dce97703a1161bf1555af57a110027a153536e368368df4eb886730ae924ca0997936ad42317'
+            '205f3a3bfc49733aa7537846ed1229f2803c32119048f58d748a357e775e8c59922ea7de5a342c497dd6a31874e21cee9bc8e5803d53c2e068ef57a65e658c02'
+            'c7fe9886191676496db061217c8083b6b94178153643217f4b7ee5f77f6983ab99adf7d118a95800019318a1f71c5d1d18a81a7104895a343dbad9d8c8872bd5'
+            'd721c7709f4d0358da1f6e83576f49b6c512f4a7b930e7bc5544c671d1b1f87055dda1e6b68e14a805124849ea5b0b8ed7771e744326fa4de3c9061c1ec9407c'
+            '07c17066c523749172af8cb37952ce42e8c5110cd5694c4b96b7f4ecc22f129eb27de217915929b3bb7ed5d2c1f3f133c602a6a70b0ac402b4bb23f9e746daf7'
+            '968560ceaf3f839c4d3b178432cce3e01ba39a7d59c66f1495307f3171e7362d7b40f53c6cbf591d843715b359a84b95c0998d6bad1ddd5a7afa8dceb4ce33b2'
+            '6b0ba98376e053d8a15a3df74d2fc23656e00a05d73373313e43a97c088f60c2fd05d577799a16b4eeb0baa989fc88ee9fed17407134a09dd847ca2f296d1f3c'
+            'd5971ec5c854c442052271ff2990b0ee9332d3d7547ceae51aa1e29bf4781ba8b29b5849f32a58f9100674ce86132fe01c59ffcfd6f13569293612f2150813ba'
+            '6ad235192aba154b650e1b41f72c6864bd5da4c01c07ce72288f472c1fe441da78d73b0e5dc7384ff0959e0948403d419f909630b36d6e6bc06bf808583776fe'
+            '0e77dbadbd8d2942a459b3d6f30ff3dd2125e4870d30f6d17c308abc59b6345249b390676181a9044032c62e2bc03efdc4cb2c73baef10e9aa9362df5f169ba1'
+            'dd9a24343dbdce97ed9ef0ec954f8c5ab7e88227c6aadde2bbd797a986a7ae998ad9e3bb53816d78a187013713a22ed9d28933d5134c2a3d0966bf0e0c681a55'
+            '18bc6b0f5549a8c8c921250bfd5ef8a9ff4c398f2a53f84ab4503e337c67715bd1617bf9f2e6b0ac1ee37868959c11579bd8d5575b03fa157e6833f880907253'
+            '07d776eee9b00461a18ea4bcab185cc8e39213998ca13d07db5a1a175d515cc0b5e98798711ea18a68bdf1b4535bd4fc2cdfe7bfd5e9a62df78d431c3ee77f99'
+            '1051044810fec04f5ca3ede7cac14766c65bb38ba72721fd56ad338a96a334efaf022ab39bc760bedacdebc89fc83636582f6e86c9d94730c7fc659206d6d271'
+            '2ff344548df36e704ae3cbc54654fa5194023bf48099b5283d37fa87022a71590c703a633f1b3c301d32a90e4830c1ad76af36b98f3292bbbecbd63ac8d6f3a7'
+            '1eadfdbf72f62734aa84382e3bd07167ddf9d5a58e65d9d762dd4a2b03818c4881e433bf88360f9803c6649f130c9c406c1805b998ee2b69b2d9ed57aa69b5da'
+            'b8ede0ef5e64fe8dd9bed886a820793f764690612b061d4e3cc0132b976108fc3c80c3c3f361b5c34628ad8e4ab9163dd54f216b3109a8c260354dc3f4aa4597'
+            '369d3f7267cf45a59021a67b7f47721792dc7d21bad5fa4054729802a42fe53d795210e305288bcf8a9039437baa6aa2e650f2354b50d6f69c0fb0b41e3b7b57'
+            'd080960f673f8d10a620461c1a2604fde3293cf603a3423847bf9d7b1512d2c805f95f1326be346f1e035a7bc0b5fd53b5d8ba7e9801266efbc8b5242c8fb0c3'
+            'ff3a3a26e04fd04aaed0b13c13c3663a1a07ebe839601fa40fafe71dbbe24bafd176b8f050b179b5cd6c2778bbf4bd4c354cd52523ea132741fb2d3aaf800167'
+            '8123eba11eccd1f630268fad1b73ce596dfd6550720a94489bc333ff055d5e35557c44eb8be1c97b6e149a15378aec8ebc5fbefcf6dc151f26e5bdcad205851e'
+            '5b4e6460adc058c621a90e928dfca9337295ccd0a39ac84a2e62af431f1fb697d622f813cedf018d530fb6f4597eedfdec16d0c3b0164f444d3d6b7b4b5fe16e'
+            'acc989cde2aa58a8a65b75b35c43c3f737d60ef9d3ee6b0290fdb4638dbed3665aa9b7cd46cafad892f68b206cfc602189a19b513878e2854e1ea3c84b761770'
+            'e04d99308736bd890d8188e146f94a3459542edbae2d99c0998a3f4aa4633ef587a07e278f9f46f1b7cf17d8339b5717c0919336ee7a68d1d5593675b7e5b714'
+            'c8756c07fb0502c00c9344ae6bb67d9419a11dfd6d338dc2b5c8c85b0ba00c9b13d4b416bdc6600025a4d789ba43965138d6dfa5f53559d1772196f487e5f66f'
+            '1529220267695b7945b791663f7b5230d8058ed1e59d09ae03a7682696d4afdad04bdce6df2540c7e7afdf4e3962e67ee9e43c6b17c5f0ec6d7a67347dd2341d'
+            'aa0f797eedb103169910943bafa95844da5f4af9adafb913d37b85b816bedded1e1f87905f724a8ecf5fd8617db4d4fd5c5e4d7edfd80feec736d14346bc3cdb'
+            '45102fb3d99771ee8739f0cc9640e59570432850686f0b0856c5de4a57ccf096f23a8180b5284129aa6347243c865c67edea15e263d53f257dbb09bfc3511789'
+            'bc2ff90f2a15fff0ffefa21690f342bf1c0a2ab721e434d6e458461986ff47d64ec20e4cfee348061073f75be905d6704a854817bc800a352f54fffc1d55460b'
+            '899d3518f45c172af2d28655190b0d081ce570991f05a20b9f697a2bb98b96c6bee824cddf1534881c62e367a2ce36a149f8e68ef2894ff785137da6ad192fc3'
+            '4344c504d42e479a81c5236274f7baaa5c6126b0e5d92e7c5072ff8af0d3c3b3ea47eeece55101575b8e749a47c0fab4189a56dba023f528bd92d15da3ae87d3'
+            '7d6baa63a22873447ceb265a40d44e43cbf48f3026de897898e404f174ea27ad9d1a768827778566175c969b5a59ba7604037387e194a503c0cbafbcd17a0bbd'
+            'f6c3ab5abf2d584ec9b4317a4a9574a7d71e1cd4de46c2722269ace5dd55ba36aec557cafd10d100dc2f8a2c0a21fa3906953880687a61f097eda3cd19c166e9'
+            '8c73a63e54c675dda53b2d180373fff15ac6f7d8343d52e359452767d940ac51ab487a8a01f7366c8a254bb37e3c681e4a22012cac11585decd4d9a6530d5119'
+            '7b71648157047dddc7a43b717c51fc6d3397fafc8dc8dcc7631b292b0b664c0d24d99b8920918dee623e2a12405d4b02b168520bb889b52ae79652a1993fb473'
+            'aed3d1010607f9b35d1c836bac0cd2b0cfb7f572efb2baa2610b7777415f99a6a74a797adbe76b48c3eaf4f7d59cead07da2c3055a0b01b834efb1007b24a693'
+            '8a53deaf73a1fa8f7d68737a1ab446c18c73b1b1bb3e5eaec6ff39240eed1e76ed017504f180052e8ec7ccc26fc7f673ed5ddae2b1dc9f89b85288bbe54357bf'
+            'b88a71cbd2e9dab707312ad4108681b67f17e95c8962a6a4868392475483aa4e8d05673f97965ce1901162364235d69d7fa8888365e72f7514bc9cc5eba5e190'
+            'ead629b352126972268e96e6f0b34b558b96fbc9d0efbb7b6c560671fe61c97272492509f190b682c2b7db0da485886a941f58a502d72095c208e492f2f4ccd0'
+            '60c6cb60e31b64be1fe99d8844b4a92b7018b237320e458a124f209da4828a60adc5df942d4d6090f68a5eb8866a1b5193441e6bc9ca4e94a757784e0909a750'
+            'abd9e26d870848a12a274ffef19ff1ab495404c4e1787c0c07ce54eac2a1929698ee52c7ad6d0d17cd1d18dc53d7a40ee3acff911529a7d21951f351e2648bcc'
+            'eed111149b697e0725f803559096f9328b3b95c04a3cedcca8b718b12699ffa5ad0c9b74fecf8acbed66b06de6ea56c2f130d79a6b67e15bd2a748e10182443f'
+            '2061d716fd95efe7fc9b4d10a339a675b9cd05f7be77b33ceff31f70ad0179ccd0cc4ad7b51c60b0bec2fb645d6458f32a29c3e71614213e177bfec404ff30f5'
+            '33b4b9257fd559b73455727602be4f2d3cddf6d9648da72ead1e2794a61a624e8c46d630548fcb63ea53c3614ddb2ff8a563d61e70b9bb0cc84d0f111d5618de'
+            '29f42df0b94d44bf02de0a42e01e0e25bf37b8c6d48a7c179f53fc6e16dac0bd5fdedcdfab889ec2b418d665ac6b060c739374ab2cb27ab0e7d87073e70c61d8'
+            'ed5e6eb679716c340aab5642cad9fee3844288ce37756c47d93621bf49b0356d99db2536587c552324a82371d9840f4fc7b586cecc6e45a7680559d1c2fbf31c'
+            'ee9b9c204c6b5d82b0c48df6442ae53218d4a76c27cdc80d0896685fdcae307bd59506b46b7cb1feb2e13c476bbe0b0ff8510284033c2c1d2228e64755bf8159'
+            '324ddcd042edfea062a07abf12b9512ea93affe16d34740a54840a6333e5dd8773ff1732df94f258bb5546d98e24adbd365d41a350809b1cb278bcbfef30addc'
+            '72495e02ce42b4ba2ad9cabe48e2f8ab5a6515c1439fc811fbc3e090c1f1761f965040633dc4903749adf9ce2138f4a12a41eb51eabcd7a1618f5da528aa76fb'
+            '3fad7b808669a18f71c09cb3581ead1e859642af681d0678e89a2c3863274439fb7c8e6c869100cf2724052fd14f849731627ff0fad893270055f16f6d0b95c3'
+            '6ffc204c7ba8ae540fcd5871d7ddbaf37c2e91708945beac44ff9696a75f0e89b2e7fa3dc435c3e8cf2e07e6642575733ac1ca997dd0a6ab5312c5939b440140'
+            'c0af33a47b4a7048c027ac268acf570f0ec1dc30460bbbae13cbdb681cd7c5338ee3eed2f19c827a342a4b1417e2c83aeb8540c406292da9f5c9f889ddc583cd'
+            'c142a2a9644c77fef758233ba9f9da3c06da0fdbe0abd52de66fd3bac0840d50c4112a4bea7f2217b83a770c27c9b85fdce0b200f0bd69729f8d2ec9c723937f'
+            'b577917d235cc61e704277bcafe69e7139d92b9e4c024286b7671bed8874981465e0ebbcd5cf776578083dddf991291081dc52acc04d5ce0f0828ca8f08d0d18'
+            'da3ed348ecc9dca6459d3ce1ca4eaaa5f066c4b8a7cb4cde3f86a47a8a93f2384b1343b88e06fa0555b4fa3417e6032141c12d5f859ec89e3d5b29a1159a9a3c'
+            'd00874f9e3ad30b8b44fb3c7c26641c69d674bfb0ffceb7daa23eed21943b2034aba6df13af2a647dcf30e9ec515f2dd17744dc42bb8700f3ff20eb75af55408'
+            'c03499549a3c3a80b4b383da9529e0bee7dc72c1c8e42f0bffb2be2a14d131a356e478be6f67a98f866632d1d83519524bbc303c5453e95fd76e6b076ad5c395'
+            '4624dc95fb7612cb44adca950b339da0738920cf10e5e5f4452eb12b71462b5444a1b4b8b039767743cf8e7e9361f3d9c75e3ec2f294d0e52db685cc3bb99ac7'
+            'caacb4498ebe54b99af07c62d74bc0fb83c36005432eff86f0fccdb28597c37e1dd9101dc69e26b90fa7bf231a0b9e57a6ca20d98df8f10234dee0b7abb917da'
+            'a80d597776512853018aba5e58509538214fef8ba49c5309cfef81b6ccdfa9e30c443b608a1a3f3b81dbd5eabde2270fb779e78aa8a432b2abbf27130af4f282'
+            '259f2876215fa8edd08c6bea91321de0dccf78d6128d0ebabd9df70fdcfcbe7c52677679bb0e5a25de8eb0e5f8b91478c173a1480e49e86bbdc4222d1d0c34a9'
+            '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
+            '87f951227a2693ae3ba0b191e24667c073889f0a5c534439884cbcb61bf3a371465bc26300d6c36b716459fa9b0ba1db4dedb77d7dc9f724c80a308266161246'
+            '540cd6bdc2483a50687fe5fde1b48a32940c440032f82eaa33f2b0b1a546a462c7d8d8e4beee69f7cf51db5631beb310f9965793fac6f7a75971fa8dd6cc4e32'
+            '532f8e57a702f582273d06dedfd4d7b4ebe9f1fc7d05a2051f5a6cc0ecd51d7baa0d95812ef6ffde68817ef841a1905222ef06020e8cd23d3a58fa78b1a29eea'
+            '5d6bc1a1552a7179a5f33445ac63e75add59653c3fd2175daeaa0b609576c98fd01ef856e9e35bfd91f20db933304463031d64faee2153616958603a63018755'
+            '4c9dc7f1dc000808ae99840d8444b9e0db6c1f3f9980322bbbd0f6eeefa1ca7192438bd061c5c1e27defc0ac705b4fd536f5c9bd6ec13313764dc9ed4d543a94')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -537,6 +551,17 @@ prepare() {
 		scripts/config --enable CONFIG_CRASH_DUMP
 		scripts/config --enable CONFIG_PROC_VMCORE
 
+	### Better stack traces
+		scripts/config --enable CONFIG_STACK_VALIDATION
+
+	### vendor-reset compat
+		scripts/config --enable CONFIG_FTRACE
+		scripts/config --enable CONFIG_KPROBES
+		scripts/config --enable CONFIG_PCI_QUIRKS
+		scripts/config --enable CONFIG_KALLSYMS
+		scripts/config --enable CONFIG_KALLSYMS_ALL
+		scripts/config --enable CONFIG_FUNCTION_TRACER
+
 	### CPU optimization
 		# I want to be able to slap an HDD with this kernel on it in just about any machine
 		# I'm very, very unlikely to encounter any CPUs older than AMD K8
@@ -555,6 +580,7 @@ prepare() {
 		scripts/config --enable CONFIG_ANDROID_BINDER_IPC
 		scripts/config --enable CONFIG_ANDROID_BINDERFS
 		scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
+		#scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder,binderfs"
 
 	### Switch controller drivers
 		scripts/config --module CONFIG_HID_NINTENDO
@@ -674,9 +700,8 @@ _package() {
 	echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
 	msg2 "Installing modules..."
-	ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
-	#ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
-	#	DEPMOD=/doesnt/exist modules_install  # Suppress depmod
+	ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+		DEPMOD=/doesnt/exist modules_install  # Suppress depmod
 
 	## remove build and source links
 	#rm "$modulesdir"/{source,build}
