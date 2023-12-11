@@ -61,7 +61,7 @@ _tlock_debug=
 pkgbase=linux-kitsinger-6.6
 # pkgname=('linux-kitsinger-6.6' 'linux-kitsinger-6.6-headers' 'linux-kitsinger-6.6-docs')
 _major=6.6
-_minor=3
+_minor=6
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -92,10 +92,10 @@ makedepends=(
 	git
 )
 
-_lucjan_sha="de2f9000e4031d16fbd7788e1cd353d6ddce5220"
+_lucjan_sha="072c0ed24d87b2a1a44378e968de362f7540481f"
 _lucjan_path="https://gitlab.com/sirlucjan/kernel-patches/-/raw/${_lucjan_sha}/${_major}"
 
-_lucjan_arch_path="${_lucjan_path}/arch-patches-v3-sep"
+_lucjan_arch_path="${_lucjan_path}/arch-patches-v4-sep"
 _lucjan_futex2dev_path="${_lucjan_path}/futex-dev-patches-v3-sep"
 _lucjan_fixes_path="${_lucjan_path}/fixes-miscellaneous-v2-sep"
 
@@ -123,8 +123,7 @@ source=(
 	"${_lucjan_arch_path}/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch"
 	"${_lucjan_arch_path}/0002-drivers-firmware-skip-simpledrm-if-nvidia-drm.modese.patch"
 	"${_lucjan_arch_path}/0003-sched-fair-Ratelimit-update-to-tg-load_avg.patch"
-	"${_lucjan_arch_path}/0004-ACPI-video-Use-acpi_video_device-for-cooling-dev-dri.patch"
-	"${_lucjan_arch_path}/0005-HID-amd_sfh-Check-that-sensors-are-enabled-before-se.patch"
+	"${_lucjan_arch_path}/0004-HID-amd_sfh-Check-that-sensors-are-enabled-before-se.patch"
 
 	"${_lucjan_path}/futex-patches/0001-futex-${_major}-Add-entry-point-for-FUTEX_WAIT_MULTIPLE-op.patch"
 
@@ -232,10 +231,6 @@ source=(
 ## For consideration: ##
 ########################
 #
-# le9
-# https://github.com/hakavlad/le9-patch
-# https://github.com/hakavlad/disable-i915-gem-shrinker
-#
 # iwlwifi: Make missed beacon timeout configurable
 # https://bugzilla.kernel.org/show_bug.cgi?id=203709
 # https://lore.kernel.org/linux-wireless/20220226045047.643695-1-mikezackles@gmail.com/
@@ -284,12 +279,14 @@ source=(
 # https://www.phoronix.com/news/VirtIO-Vsock-MSG-Zerocopy
 # https://www.phoronix.com/news/MSI-EC-Linux-Cooler-Boost
 # https://www.phoronix.com/news/AMD-Linux-Fix-SR-Wakeups
+# https://www.phoronix.com/news/Linux-6.8-AMD-No-Serialize-MSR
 #
-# lucjan patchsets
+# lucjan patchsets:
 # ext4-dev
 # kbuild-dev
 # maple-lru
-# uksmd
+# uksmd/uksmd-futex-dev
+# v4l2loopback
 #
 # patches used in previous versions in need of updating
 # "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
@@ -321,15 +318,18 @@ source=(
 #
 # FDRAWCMD removal (revert once it's done)
 # https://github.com/torvalds/linux/blob/master/drivers/block/floppy.c
+#
+# le9
+# https://github.com/hakavlad/le9-patch
+# https://github.com/hakavlad/disable-i915-gem-shrinker
 
 # Formatting of hashes is different because I copy-paste from makepkg --geninteg
-sha512sums=('012ca973ad421571b4652cfa45afbed4f6693a7962a494f77e0eb13c4b9ea1c033525f0fc070ef45089e12d0bcf7f68cc5f0798f2b406a860c7541e1f600eeda'
+sha512sums=('ebc62f272fc9d99b75c6ab400de6f2ab2f739e5d055584168de6b73f7604e46fc30e18f1514efe4ff2048361fb7e57afda02097f30b65c3b85d488c61733d45e'
             'SKIP'
-            'fad7a8360091a8ce7d5d515bbe4cf782fff03d0ea611417feb37866f28d5c67cba49629cc65a55ff91ee4c81b4fc4ea36fe461aa8cc9a43d66ec769d082dcd03'
-            '7b647d643ef7ce08c597b26359bc9be5a929f25d4a9aa8dae9d2f0a3c1840542db2b7955e7d3b3eeb67170cd433710c22475baf8b739c6bd3928ce5747bcafd1'
-            'a7a2d445d39cd1e033b7c46e3b1897de7b7d64a9709c11b5c27e77798161716830abe0e1192d388e86bd56f0f2ba374da4cb08ab11640759e8fbbbd5c17aa05a'
-            '2d49af624e7fc8738c8e1382dd2e7c8f33f287b9f44310000ebbed6098310f411acaff24c8aeca83eaf8700b82b1f9e32687f01f43c060cf1d52d63731e8cc6d'
-            '67a9099d6baed98fad0135860ef7ce08d55e76b148d702ae8cd5dce97703a1161bf1555af57a110027a153536e368368df4eb886730ae924ca0997936ad42317'
+            '2958cabb2b42dcd66e2016e23f26ba67d0eb079e5419e36f93e5cc2cf3507b14aedc254374db0ea18ead88eea17dc05b18d35b6b5e456d7314fcfb33221871cd'
+            '4583df8a2893118a564d62f27e9cbe045bb2f5f3062cb987853c2d59c756168ac744b8247e06fff4e521affdd1ced1593884d05937fa45c69d9c0837031a0edc'
+            '1fe48f4caf0b5bb5ba86bf39931b3c01d0141105cf2d36750bf0f48e57ae5bb4e9a9d6340dc34e32b19f8d04936503c8971c0b678d77191d03621e3d245c6791'
+            '6f2e95b83813a3fe1addd690f348b8775b6066b273889b2430d7ff8d5dd6085ba1bbf13ba9f49fd0037326dc883a446f5f6a6c7d854a326168681f52286d0988'
             '205f3a3bfc49733aa7537846ed1229f2803c32119048f58d748a357e775e8c59922ea7de5a342c497dd6a31874e21cee9bc8e5803d53c2e068ef57a65e658c02'
             'c7fe9886191676496db061217c8083b6b94178153643217f4b7ee5f77f6983ab99adf7d118a95800019318a1f71c5d1d18a81a7104895a343dbad9d8c8872bd5'
             'd721c7709f4d0358da1f6e83576f49b6c512f4a7b930e7bc5544c671d1b1f87055dda1e6b68e14a805124849ea5b0b8ed7771e744326fa4de3c9061c1ec9407c'
