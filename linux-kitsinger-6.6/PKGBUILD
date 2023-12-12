@@ -65,7 +65,7 @@ _minor=6
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux with pcie-reset, futex2, etc'
 arch=('x86_64')
 url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
@@ -202,6 +202,10 @@ source=(
 
 	# https://gitlab.com/evlaV/linux-integration/-/commits/6.1/features/tcp-timewait/
 	"0000-tcp-Also-use-tcp_fin_timeout-as-TCP-TIME_WAIT-time.patch::${_neptune_gl}/ef76035f50a1147a0d39b3d9c1b80b92a2961028.patch"
+
+	# https://github.com/ROCm/ROCm/issues/2596
+	# https://lore.kernel.org/amd-gfx/5984374.lOV4Wx5bFT@daniel-desktop2/T/
+	"0000-Revert-drm-amdgpu-remove-vm-sanity-check-from-amdgpu.patch::${_amdgfx_path}/5984374.lOV4Wx5bFT@daniel-desktop2/raw"
 
 	# The rest of the patches came from random git repositories or places around the web.
 	# In my experience, random git repositories tend to vanish,
@@ -390,6 +394,7 @@ sha512sums=('ebc62f272fc9d99b75c6ab400de6f2ab2f739e5d055584168de6b73f7604e46fc30
             'caacb4498ebe54b99af07c62d74bc0fb83c36005432eff86f0fccdb28597c37e1dd9101dc69e26b90fa7bf231a0b9e57a6ca20d98df8f10234dee0b7abb917da'
             'a80d597776512853018aba5e58509538214fef8ba49c5309cfef81b6ccdfa9e30c443b608a1a3f3b81dbd5eabde2270fb779e78aa8a432b2abbf27130af4f282'
             '259f2876215fa8edd08c6bea91321de0dccf78d6128d0ebabd9df70fdcfcbe7c52677679bb0e5a25de8eb0e5f8b91478c173a1480e49e86bbdc4222d1d0c34a9'
+            'f2b6c7b97ed17ce9ffd755a2c204ec3e205ce08bc95c738e1ebf5a3ac9647e0dfaf459db0c60379fabdda4c44fb9ea15eb9e32caacca6733a9bb323dcfd649c2'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             '87f951227a2693ae3ba0b191e24667c073889f0a5c534439884cbcb61bf3a371465bc26300d6c36b716459fa9b0ba1db4dedb77d7dc9f724c80a308266161246'
             '540cd6bdc2483a50687fe5fde1b48a32940c440032f82eaa33f2b0b1a546a462c7d8d8e4beee69f7cf51db5631beb310f9965793fac6f7a75971fa8dd6cc4e32'
