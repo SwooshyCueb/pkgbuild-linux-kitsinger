@@ -61,11 +61,11 @@ _tlock_debug=
 pkgbase=linux-kitsinger-6.6
 # pkgname=('linux-kitsinger-6.6' 'linux-kitsinger-6.6-headers' 'linux-kitsinger-6.6-docs')
 _major=6.6
-_minor=8
+_minor=9
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux with pcie-reset, futex2, etc'
 arch=('x86_64')
 url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
@@ -92,7 +92,7 @@ makedepends=(
 	git
 )
 
-_lucjan_sha="64e57f5f077c92a212ba4c8965644a37e0c83189"
+_lucjan_sha="566387a04594bbefa935160cbdead273964e63de"
 _lucjan_path="https://gitlab.com/sirlucjan/kernel-patches/-/raw/${_lucjan_sha}/${_major}"
 
 _lucjan_arch_path="${_lucjan_path}/arch-patches-v6-sep"
@@ -205,13 +205,18 @@ source=(
 	# https://gitlab.com/evlaV/linux-integration/-/commits/6.1/features/tcp-timewait/
 	"0000-tcp-Also-use-tcp_fin_timeout-as-TCP-TIME_WAIT-time.patch::${_neptune_gl}/ef76035f50a1147a0d39b3d9c1b80b92a2961028.patch"
 
-	# https://github.com/ROCm/ROCm/issues/2596
+	# https://github.com/ROCm/ROCm/issues/2596#issuecomment-1775167987
 	# https://lore.kernel.org/amd-gfx/5984374.lOV4Wx5bFT@daniel-desktop2/T/
-	"0000-Revert-drm-amdgpu-remove-vm-sanity-check-from-amdgpu.patch::${_amdgfx_path}/5984374.lOV4Wx5bFT@daniel-desktop2/raw"
+	#"0000-Revert-drm-amdgpu-remove-vm-sanity-check-from-amdgpu.patch::${_amdgfx_path}/5984374.lOV4Wx5bFT@daniel-desktop2/raw"
 
 	# The rest of the patches came from random git repositories or places around the web.
 	# In my experience, random git repositories tend to vanish,
 	# so instead of pulling the files from the repositories, they will be included in this one.
+
+	# https://gitlab.freedesktop.org/drm/amd/-/issues/2991#note_2170818
+	# https://gitlab.freedesktop.org/drm/amd/-/issues/2991#note_2223691
+	# https://github.com/ROCm/ROCm/issues/2596#issuecomment-1874371163
+	"0000-Revert-drm-amdkfd-Relocate-TBA-TMA-to-opposite-side-.patch"
 
 	# https://clbin.com/VCiYJ
 	"0001-pcie-reset-kludge.patch"
@@ -293,6 +298,7 @@ source=(
 # maple-lru
 # uksmd/uksmd-futex-dev
 # v4l2loopback
+# le9uo
 #
 # patches used in previous versions in need of updating
 # "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
@@ -330,7 +336,7 @@ source=(
 # https://github.com/hakavlad/disable-i915-gem-shrinker
 
 # Formatting of hashes is different because I copy-paste from makepkg --geninteg
-sha512sums=('aa43e54d86db2bd699b59c5c6e9fbaba6565f0052a8068c316468c7bb4cec8dc98b6c92218f6914c9c3313fece7498efe547c2fb2c8b344da882d40fc3e032a8'
+sha512sums=('a6a9608b158408bb55737505058ee8d64a901af38230bf31d2eee007c3530503154067e5d37c1f86c36b60ba5dc24771047c6e91de24ed6a256c2f9ecbb9c2dc'
             'SKIP'
             'cbd648d5f3022f9378b6bc7ac25bc6017d8feddd42b046dab98853118444bab3754abde5e42ea900a8a70e08f0f1b4366683020ed26953db97a6fb4fb6e59cd3'
             'acc8a21a4377f7ac63bd2ff38aa61435e5cb4c004fdd903bb6c7be1432cc49aa309222fc7e816bf994fb3cbec4a43d57f63ed0a05b59ebaa5eab1fd968c5693f'
@@ -398,13 +404,13 @@ sha512sums=('aa43e54d86db2bd699b59c5c6e9fbaba6565f0052a8068c316468c7bb4cec8dc98b
             'caacb4498ebe54b99af07c62d74bc0fb83c36005432eff86f0fccdb28597c37e1dd9101dc69e26b90fa7bf231a0b9e57a6ca20d98df8f10234dee0b7abb917da'
             'a80d597776512853018aba5e58509538214fef8ba49c5309cfef81b6ccdfa9e30c443b608a1a3f3b81dbd5eabde2270fb779e78aa8a432b2abbf27130af4f282'
             '259f2876215fa8edd08c6bea91321de0dccf78d6128d0ebabd9df70fdcfcbe7c52677679bb0e5a25de8eb0e5f8b91478c173a1480e49e86bbdc4222d1d0c34a9'
-            'f2b6c7b97ed17ce9ffd755a2c204ec3e205ce08bc95c738e1ebf5a3ac9647e0dfaf459db0c60379fabdda4c44fb9ea15eb9e32caacca6733a9bb323dcfd649c2'
+            'a7467770d38de10f2e9522fe5dfc53fa86b1ef36ab026634fe5a703b74473de46d46936f94185b3881ba8f9c4c850ed6bc5007938124e0cba82895e3a351ce35'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             '87f951227a2693ae3ba0b191e24667c073889f0a5c534439884cbcb61bf3a371465bc26300d6c36b716459fa9b0ba1db4dedb77d7dc9f724c80a308266161246'
             '540cd6bdc2483a50687fe5fde1b48a32940c440032f82eaa33f2b0b1a546a462c7d8d8e4beee69f7cf51db5631beb310f9965793fac6f7a75971fa8dd6cc4e32'
             '532f8e57a702f582273d06dedfd4d7b4ebe9f1fc7d05a2051f5a6cc0ecd51d7baa0d95812ef6ffde68817ef841a1905222ef06020e8cd23d3a58fa78b1a29eea'
             '5d6bc1a1552a7179a5f33445ac63e75add59653c3fd2175daeaa0b609576c98fd01ef856e9e35bfd91f20db933304463031d64faee2153616958603a63018755'
-            '4c9dc7f1dc000808ae99840d8444b9e0db6c1f3f9980322bbbd0f6eeefa1ca7192438bd061c5c1e27defc0ac705b4fd536f5c9bd6ec13313764dc9ed4d543a94')
+            'd2e3c3a7148556e1284e8971a68393fb515f1a0ade49ad9d6077ba0f6ac091354aca903dd7a81c8ee74264f8946f85163ddf113f4d1d702ecbd3a0f1991a7145')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -840,6 +846,5 @@ done
 validpgpkeys=(
 	'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
 	'647F28654894E3BD457199BE38DBBDC86092693E'  # Greg Kroah-Hartman
-	'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
-	'C7E7849466FE2358343588377258734B41C31549'  # David Runge <dvzrv@archlinux.org>
+	'83BC8889351B5DEBBB68416EB8AC08600F108CDF'  # Jan Alexander Steffens (heftig)
 )
