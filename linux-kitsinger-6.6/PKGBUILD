@@ -61,11 +61,11 @@ _tlock_debug=
 pkgbase=linux-kitsinger-6.6
 # pkgname=('linux-kitsinger-6.6' 'linux-kitsinger-6.6-headers' 'linux-kitsinger-6.6-docs')
 _major=6.6
-_minor=9
+_minor=10
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
-pkgrel=2
+pkgrel=1
 pkgdesc='Linux with pcie-reset, futex2, etc'
 arch=('x86_64')
 url="https://github.com/SwooshyCueb/linux-kitsinger-PKGBUILD"
@@ -336,7 +336,7 @@ source=(
 # https://github.com/hakavlad/disable-i915-gem-shrinker
 
 # Formatting of hashes is different because I copy-paste from makepkg --geninteg
-sha512sums=('a6a9608b158408bb55737505058ee8d64a901af38230bf31d2eee007c3530503154067e5d37c1f86c36b60ba5dc24771047c6e91de24ed6a256c2f9ecbb9c2dc'
+sha512sums=('5f2de63021a30e9507713ca98515fa1de15f4958ba115beb2e2a4cf331d00f7e6520ac938f6a4732a68fa21da8c0e142b5db1c9be4f604a14bddc20ea596dc8b'
             'SKIP'
             'cbd648d5f3022f9378b6bc7ac25bc6017d8feddd42b046dab98853118444bab3754abde5e42ea900a8a70e08f0f1b4366683020ed26953db97a6fb4fb6e59cd3'
             'acc8a21a4377f7ac63bd2ff38aa61435e5cb4c004fdd903bb6c7be1432cc49aa309222fc7e816bf994fb3cbec4a43d57f63ed0a05b59ebaa5eab1fd968c5693f'
