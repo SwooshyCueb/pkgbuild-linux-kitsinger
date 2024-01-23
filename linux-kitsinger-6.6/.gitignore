@@ -6,4 +6,5 @@
 !/0003-sm2262-sm2263-noflr.patch
 !/0001-zen-Allow-MSR-writes-by-default.patch
 !/0005-mm-set-8-megabytes-for-address_space-level-file-read.patch
-!/0000-Revert-drm-amdkfd-Relocate-TBA-TMA-to-opposite-side-.patch
+!/0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch
+!/0002-mm-Support-soft-dirty-flag-read-with-reset.patch

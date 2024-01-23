@@ -61,7 +61,7 @@ _tlock_debug=
 pkgbase=linux-kitsinger-6.6
 # pkgname=('linux-kitsinger-6.6' 'linux-kitsinger-6.6-headers' 'linux-kitsinger-6.6-docs')
 _major=6.6
-_minor=10
+_minor=13
 pkgver=${_major}.${_minor}
 _srcname=linux-${pkgver}
 #_srcname=linux-${_major}
@@ -209,14 +209,14 @@ source=(
 	# https://lore.kernel.org/amd-gfx/5984374.lOV4Wx5bFT@daniel-desktop2/T/
 	#"0000-Revert-drm-amdgpu-remove-vm-sanity-check-from-amdgpu.patch::${_amdgfx_path}/5984374.lOV4Wx5bFT@daniel-desktop2/raw"
 
+	# https://gitlab.freedesktop.org/drm/amd/-/issues/2991
+	# https://github.com/ROCm/ROCm/issues/2596
+	# https://lore.kernel.org/amd-gfx/20240103043000.23971-1-ent3rm4n@gmail.com/
+	"0000-Revert-drm-amdkfd-Relocate-TBA-TMA-to-opposite-side-.patch::${_amdgfx_path}/20240103043000.23971-1-ent3rm4n@gmail.com/raw"
+
 	# The rest of the patches came from random git repositories or places around the web.
 	# In my experience, random git repositories tend to vanish,
 	# so instead of pulling the files from the repositories, they will be included in this one.
-
-	# https://gitlab.freedesktop.org/drm/amd/-/issues/2991#note_2170818
-	# https://gitlab.freedesktop.org/drm/amd/-/issues/2991#note_2223691
-	# https://github.com/ROCm/ROCm/issues/2596#issuecomment-1874371163
-	"0000-Revert-drm-amdkfd-Relocate-TBA-TMA-to-opposite-side-.patch"
 
 	# https://clbin.com/VCiYJ
 	"0001-pcie-reset-kludge.patch"
@@ -233,6 +233,11 @@ source=(
 	# dropped by lucjan
 	# https://gitlab.com/sirlucjan/kernel-patches/-/tree/b4af42f0a6f490c5129cbd27b6b8132f55fd9179/5.18/ll-patches
 	"0005-mm-set-8-megabytes-for-address_space-level-file-read.patch"
+
+	# WRITE_WATCH support for wine
+	# https://github.com/Frogging-Family/linux-tkg/tree/master/linux-tkg-patches/6.6
+	"0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
+	"0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
 
 	# the main kernel config files
 	'config'
@@ -299,10 +304,6 @@ source=(
 # uksmd/uksmd-futex-dev
 # v4l2loopback
 # le9uo
-#
-# patches used in previous versions in need of updating
-# "0001-mm-Support-soft-dirty-flag-reset-for-VA-range.patch"
-# "0002-mm-Support-soft-dirty-flag-read-with-reset.patch"
 
 ######################
 ## For observation: ##
@@ -336,7 +337,7 @@ source=(
 # https://github.com/hakavlad/disable-i915-gem-shrinker
 
 # Formatting of hashes is different because I copy-paste from makepkg --geninteg
-sha512sums=('5f2de63021a30e9507713ca98515fa1de15f4958ba115beb2e2a4cf331d00f7e6520ac938f6a4732a68fa21da8c0e142b5db1c9be4f604a14bddc20ea596dc8b'
+sha512sums=('c1598bb1116528525004a677e571117d2b5156cf8f60c84f73e11d9010032b1fd5aaf8e5d286679019db55abb699c2f55de2dbb332c0a96f6337eebd56220863'
             'SKIP'
             'cbd648d5f3022f9378b6bc7ac25bc6017d8feddd42b046dab98853118444bab3754abde5e42ea900a8a70e08f0f1b4366683020ed26953db97a6fb4fb6e59cd3'
             'acc8a21a4377f7ac63bd2ff38aa61435e5cb4c004fdd903bb6c7be1432cc49aa309222fc7e816bf994fb3cbec4a43d57f63ed0a05b59ebaa5eab1fd968c5693f'
@@ -404,13 +405,15 @@ sha512sums=('5f2de63021a30e9507713ca98515fa1de15f4958ba115beb2e2a4cf331d00f7e652
             'caacb4498ebe54b99af07c62d74bc0fb83c36005432eff86f0fccdb28597c37e1dd9101dc69e26b90fa7bf231a0b9e57a6ca20d98df8f10234dee0b7abb917da'
             'a80d597776512853018aba5e58509538214fef8ba49c5309cfef81b6ccdfa9e30c443b608a1a3f3b81dbd5eabde2270fb779e78aa8a432b2abbf27130af4f282'
             '259f2876215fa8edd08c6bea91321de0dccf78d6128d0ebabd9df70fdcfcbe7c52677679bb0e5a25de8eb0e5f8b91478c173a1480e49e86bbdc4222d1d0c34a9'
-            'a7467770d38de10f2e9522fe5dfc53fa86b1ef36ab026634fe5a703b74473de46d46936f94185b3881ba8f9c4c850ed6bc5007938124e0cba82895e3a351ce35'
+            'fbc98da3c3d92689905c12869a9c48ed548c625a8adb05a00ac0ef88a3765803e018afe9e07489a8e1760c755f9d76b28f00202f2f7b45cd41c1f4c05a933d3d'
             '310654b8bb11aa1af48d6fae21d0c6bcfe9f06c27828274c5749d0ab0d759e77441e8b5323b8c6665b23161c9d35c4a9743948cc1b474deb3b1d2c98752cbd97'
             '87f951227a2693ae3ba0b191e24667c073889f0a5c534439884cbcb61bf3a371465bc26300d6c36b716459fa9b0ba1db4dedb77d7dc9f724c80a308266161246'
             '540cd6bdc2483a50687fe5fde1b48a32940c440032f82eaa33f2b0b1a546a462c7d8d8e4beee69f7cf51db5631beb310f9965793fac6f7a75971fa8dd6cc4e32'
             '532f8e57a702f582273d06dedfd4d7b4ebe9f1fc7d05a2051f5a6cc0ecd51d7baa0d95812ef6ffde68817ef841a1905222ef06020e8cd23d3a58fa78b1a29eea'
             '5d6bc1a1552a7179a5f33445ac63e75add59653c3fd2175daeaa0b609576c98fd01ef856e9e35bfd91f20db933304463031d64faee2153616958603a63018755'
-            'd2e3c3a7148556e1284e8971a68393fb515f1a0ade49ad9d6077ba0f6ac091354aca903dd7a81c8ee74264f8946f85163ddf113f4d1d702ecbd3a0f1991a7145')
+            '856296070c06301c5fbe8ab874ef6f6e1b5ee258e0b84bbc90eddff4814400f3bf6804a83d232afb69328f4061ee30a34ed4b3af34a024b74e46951bf1581cee'
+            'b023a63a03a3935d83e92a7dfed7629c29dbf7d800000d7fe640e763b1a9325730b92406d69e420d4890be9184e5714aa1504f22f507d9287fcd519c27d6511a'
+            '77bbe7362f896572102d8f464bce03fb899a8fc5d854f84879d5fc367c8f6589c4ea9dbc57c0cbf53b5ba5e186d00e587e4daf79d69beaf2d8758e7557cb3ce4')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
